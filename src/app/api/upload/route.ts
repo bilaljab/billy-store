@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
-import path from 'path';
-import fs from 'fs';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
@@ -14,38 +12,39 @@ export async function POST(req: NextRequest) {
   const file = formData.get('image') as File;
   if (!file) return NextResponse.json({ error: 'No file' }, { status: 400 });
 
-  // Validate file size
   if (file.size > MAX_FILE_SIZE) {
-    return NextResponse.json({ error: 'File too large. Max 5MB allowed.' }, { status: 400 });
+    return NextResponse.json({ error: 'File too large. Max 5MB.' }, { status: 400 });
   }
 
-  // Validate MIME type
   if (!ALLOWED_MIME_TYPES.includes(file.type)) {
-    return NextResponse.json({ error: 'Invalid file type. Only images allowed.' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid file type.' }, { status: 400 });
   }
 
-  // Validate extension - extract safely, strip any path traversal
-  const originalName = path.basename(file.name); // strips any ../ etc
+  const originalName = file.name.split('/').pop() || 'image';
   const ext = originalName.split('.').pop()?.toLowerCase() || '';
   if (!ALLOWED_EXTENSIONS.includes(ext)) {
     return NextResponse.json({ error: 'Invalid file extension.' }, { status: 400 });
   }
 
-  // Validate magic bytes (first few bytes of file)
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
+
   if (!isValidImageBuffer(buffer, ext)) {
     return NextResponse.json({ error: 'File content does not match image type.' }, { status: 400 });
   }
 
+  // Use dynamic require to avoid bundling fs/path in edge runtime
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const path = require('path') as typeof import('path');
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const fs = require('fs') as typeof import('fs');
+
   const uploadDir = path.join(process.cwd(), 'public', 'uploads');
   if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-  // Generate safe random filename - never use user-supplied name
-  const safeFilename = `${Date.now()}-${crypto.randomUUID()}.${ext}`;
+  const safeFilename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
   const filepath = path.join(uploadDir, safeFilename);
 
-  // Ensure final path is within uploadDir (path traversal protection)
   if (!filepath.startsWith(uploadDir)) {
     return NextResponse.json({ error: 'Invalid path.' }, { status: 400 });
   }

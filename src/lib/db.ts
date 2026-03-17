@@ -1,6 +1,5 @@
 import { createClient, type Client, type Row } from '@libsql/client';
 import bcrypt from 'bcryptjs';
-import path from 'path';
 
 // Safely extract a value from a libsql Row field
 export function col(row: Row, key: string): unknown {
@@ -28,11 +27,15 @@ export function getDb(): Client {
     const authToken = process.env.TURSO_AUTH_TOKEN;
 
     if (url && authToken) {
-      // Production: Turso cloud database
+      // Production: Turso cloud - no filesystem needed
       _client = createClient({ url, authToken });
     } else {
-      // Development: local SQLite file - create directory only here, inside function
-      const fs = require('fs');
+      // Development only: local SQLite
+      // Dynamic require prevents bundler from including fs/path in production bundle
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const path = require('path') as typeof import('path');
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const fs = require('fs') as typeof import('fs');
       const dataDir = path.join(process.cwd(), 'data');
       if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
       _client = createClient({ url: 'file:' + path.join(process.cwd(), 'data', 'billy.db') });
