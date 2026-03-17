@@ -20,8 +20,12 @@ export function serializeProduct(r: Row) {
   };
 }
 
-const dataDir = path.join(process.cwd(), 'data');
-if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+// Only create local data directory in development (not on Vercel serverless)
+const isProduction = !!(process.env.TURSO_URL && process.env.TURSO_AUTH_TOKEN);
+if (!isProduction) {
+  const dataDir = path.join(process.cwd(), 'data');
+  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
+}
 
 let _client: Client | null = null;
 let _initialized = false;
