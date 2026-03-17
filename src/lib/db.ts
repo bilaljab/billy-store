@@ -1,17 +1,23 @@
-import { createClient, type Client } from '@libsql/client';
+import { createClient, type Client, type Row } from '@libsql/client';
 import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs';
 
-
-// Type-safe helper to convert libsql Row to a plain typed object
-// Needed because libsql Row is not directly castable with TypeScript strict mode
-export function toRow<T extends Record<string, unknown>>(row: unknown): T {
-  return row as unknown as T;
+// Safely extract a value from a libsql Row field (type is unknown in strict mode)
+export function col(row: Row, key: string): unknown {
+  return (row as Record<string, unknown>)[key];
 }
 
-export function toRows<T extends Record<string, unknown>>(rows: unknown[]): T[] {
-  return rows as unknown as T[];
+export function serializeProduct(r: Row) {
+  return {
+    id: Number(col(r, 'id')),
+    name: String(col(r, 'name') ?? ''),
+    description: String(col(r, 'description') ?? ''),
+    price: Number(col(r, 'price')),
+    image: col(r, 'image') ? String(col(r, 'image')) : null,
+    category: String(col(r, 'category') ?? 'games'),
+    featured: Number(col(r, 'featured') ?? 0),
+  };
 }
 
 const dataDir = path.join(process.cwd(), 'data');
@@ -24,15 +30,10 @@ export function getDb(): Client {
   if (!_client) {
     const url = process.env.TURSO_URL;
     const authToken = process.env.TURSO_AUTH_TOKEN;
-
     if (url && authToken) {
-      // Production: Turso cloud database
       _client = createClient({ url, authToken });
     } else {
-      // Development: local SQLite file
-      _client = createClient({
-        url: 'file:' + path.join(process.cwd(), 'data', 'billy.db'),
-      });
+      _client = createClient({ url: 'file:' + path.join(process.cwd(), 'data', 'billy.db') });
     }
   }
   return _client;
@@ -62,17 +63,27 @@ export async function initDb() {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  await db.execute(`CREATE TABLE IF NOT EXISTS settings (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+  )`);
+
+  await db.execute(`CREATE TABLE IF NOT EXISTS product_views (
+    product_id INTEGER PRIMARY KEY,
+    views INTEGER NOT NULL DEFAULT 0
+  )`);
+
   const a = await db.execute({ sql: 'SELECT id FROM admins WHERE username = ?', args: ['admin'] });
   if (a.rows.length === 0) {
     const adminPassword = process.env.ADMIN_PASSWORD;
     if (!adminPassword) throw new Error('ADMIN_PASSWORD environment variable is required');
-    const hash = bcrypt.hashSync(adminPassword, 12); // Increased cost from 10 to 12
+    const hash = bcrypt.hashSync(adminPassword, 12);
     await db.execute({ sql: 'INSERT INTO admins (username, password) VALUES (?, ?)', args: ['admin', hash] });
   }
 
   const c = await db.execute('SELECT COUNT(*) as c FROM products');
-  const countRow = c.rows[0] as unknown as { c: number } | undefined;
-  if (Number(countRow?.c ?? 0) === 0) {
+  const count = Number(col(c.rows[0], 'c') ?? 0);
+  if (count === 0) {
     const ps: [string, string, number, string, number][] = [
       ['God of War Ragnarok', 'المغامرة الملحمية الأسطورية مع كريتوس وأتريوس في عالم الأساطير النوردية.', 149, 'games', 1],
       ['Spider-Man 2', 'العودة مع بيتر باركر وميلز موراليس في مغامرة مذهلة عبر نيويورك.', 189, 'games', 1],

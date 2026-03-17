@@ -1,14 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, initDb } from '@/lib/db';
+import { getDb, initDb, serializeProduct } from '@/lib/db';
 import { isAuthenticated } from '@/lib/auth';
 
 function isValidImageUrl(url: string | null | undefined): string | null {
   if (!url) return null;
   const s = String(url).trim();
-  if (!s) return null;
-  // Allow relative /uploads/ paths or https:// URLs only - block javascript: data: etc
   if (s.startsWith('/uploads/') || s.startsWith('https://')) return s;
-  return null; // reject anything else
+  return null;
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -23,8 +21,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     args: [name, description, price, isValidImageUrl(image), category, featured ? 1 : 0, id],
   });
   const result = await db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] });
-  const r = result.rows[0];
-  return NextResponse.json({ id: Number(r.id), name: String(r.name ?? ''), description: String(r.description ?? ''), price: Number(r.price), image: r.image ? String(r.image) : null, category: String(r.category ?? 'games'), featured: Number(r.featured ?? 0) });
+  return NextResponse.json(serializeProduct(result.rows[0]));
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

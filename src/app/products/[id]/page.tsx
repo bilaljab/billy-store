@@ -42,7 +42,8 @@ async function getViews(id: string) {
     const db = getDb();
     await db.execute(`CREATE TABLE IF NOT EXISTS product_views (product_id INTEGER PRIMARY KEY, views INTEGER NOT NULL DEFAULT 0)`);
     const result = await db.execute({ sql: 'SELECT views FROM product_views WHERE product_id = ?', args: [id] });
-    return Number(result.rows[0]?.views ?? 0);
+    const r = result.rows[0];
+    return r ? Number((r as Record<string, unknown>)['views'] ?? 0) : 0;
   } catch { return 0; }
 }
 
