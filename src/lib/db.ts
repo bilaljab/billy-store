@@ -1,9 +1,8 @@
 import { createClient, type Client, type Row } from '@libsql/client';
 import bcrypt from 'bcryptjs';
 import path from 'path';
-import fs from 'fs';
 
-// Safely extract a value from a libsql Row field (type is unknown in strict mode)
+// Safely extract a value from a libsql Row field
 export function col(row: Row, key: string): unknown {
   return (row as Record<string, unknown>)[key];
 }
@@ -20,13 +19,6 @@ export function serializeProduct(r: Row) {
   };
 }
 
-// Only create local data directory in development (not on Vercel serverless)
-const isProduction = !!(process.env.TURSO_URL && process.env.TURSO_AUTH_TOKEN);
-if (!isProduction) {
-  const dataDir = path.join(process.cwd(), 'data');
-  if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
-}
-
 let _client: Client | null = null;
 let _initialized = false;
 
@@ -34,9 +26,15 @@ export function getDb(): Client {
   if (!_client) {
     const url = process.env.TURSO_URL;
     const authToken = process.env.TURSO_AUTH_TOKEN;
+
     if (url && authToken) {
+      // Production: Turso cloud database
       _client = createClient({ url, authToken });
     } else {
+      // Development: local SQLite file - create directory only here, inside function
+      const fs = require('fs');
+      const dataDir = path.join(process.cwd(), 'data');
+      if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
       _client = createClient({ url: 'file:' + path.join(process.cwd(), 'data', 'billy.db') });
     }
   }
