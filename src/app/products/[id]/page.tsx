@@ -46,8 +46,9 @@ async function getViews(id: string) {
   } catch { return 0; }
 }
 
-export default async function ProductDetailPage({ params }: { params: { id: string } }) {
-  const [product, discount, views] = await Promise.all([getProduct(params.id), getDiscount(), getViews(params.id)]);
+export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const [product, discount, views] = await Promise.all([getProduct(id), getDiscount(), getViews(id)]);
   if (!product) notFound();
 
   const categoryLabel = product.category === 'subscription' ? 'اشتراك PS Plus' : 'لعبة PlayStation';
