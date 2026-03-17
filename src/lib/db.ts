@@ -3,6 +3,17 @@ import bcrypt from 'bcryptjs';
 import path from 'path';
 import fs from 'fs';
 
+
+// Type-safe helper to convert libsql Row to a plain typed object
+// Needed because libsql Row is not directly castable with TypeScript strict mode
+export function toRow<T extends Record<string, unknown>>(row: unknown): T {
+  return row as unknown as T;
+}
+
+export function toRows<T extends Record<string, unknown>>(rows: unknown[]): T[] {
+  return rows as unknown as T[];
+}
+
 const dataDir = path.join(process.cwd(), 'data');
 if (!fs.existsSync(dataDir)) fs.mkdirSync(dataDir, { recursive: true });
 
@@ -60,7 +71,8 @@ export async function initDb() {
   }
 
   const c = await db.execute('SELECT COUNT(*) as c FROM products');
-  if (Number(c.rows[0]?.c ?? 0) === 0) {
+  const countRow = c.rows[0] as unknown as { c: number } | undefined;
+  if (Number(countRow?.c ?? 0) === 0) {
     const ps: [string, string, number, string, number][] = [
       ['God of War Ragnarok', 'المغامرة الملحمية الأسطورية مع كريتوس وأتريوس في عالم الأساطير النوردية.', 149, 'games', 1],
       ['Spider-Man 2', 'العودة مع بيتر باركر وميلز موراليس في مغامرة مذهلة عبر نيويورك.', 189, 'games', 1],

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getDb, initDb } from '@/lib/db';
+import { getDb, initDb, toRow } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/auth';
 
@@ -56,7 +56,7 @@ export async function POST(req: NextRequest) {
   await initDb();
   const db = getDb();
   const result = await db.execute({ sql: 'SELECT * FROM admins WHERE username = ?', args: [username] });
-  const admin = result.rows[0] as { id: number; username: string; password: string } | undefined;
+  const admin = result.rows[0] ? toRow<{ id: number; username: string; password: string }>(result.rows[0]) : undefined;
 
   // Constant-time comparison to prevent timing attacks
   const validPassword = admin ? bcrypt.compareSync(password, String(admin.password)) : false;
