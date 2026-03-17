@@ -12,7 +12,7 @@ function isValidImageUrl(url: string | null | undefined): string | null {
 }
 
 export async function GET(req: NextRequest) {
-  if (!isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   await initDb();
   const db = getDb();
   const result = await db.execute('SELECT * FROM products ORDER BY created_at DESC');
@@ -29,7 +29,7 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   await initDb();
   const body = await req.json();
   const { name, description, price, image, category, featured } = body;

@@ -70,7 +70,7 @@ export async function POST(req: NextRequest) {
   // Clear rate limit on successful login
   loginAttempts.delete(ip);
 
-  const token = signToken({ id: admin.id, username: admin.username });
+  const token = await signToken({ id: admin.id, username: admin.username });
   const res = NextResponse.json({ success: true });
 
   // Cookie: httpOnly + secure + sameSite=strict - NO token in response body

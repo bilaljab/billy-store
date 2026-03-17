@@ -13,7 +13,7 @@ function isValidImageUrl(url: string | null | undefined): string | null {
 }
 
 export async function POST(req: NextRequest) {
-  if (!isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   try {
     await initDb();

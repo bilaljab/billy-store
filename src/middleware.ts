@@ -31,7 +31,7 @@ export function middleware(req: NextRequest) {
       return NextResponse.redirect(new URL('/admin/login', req.url));
     }
     // Actually VERIFY the token, not just check it exists
-    const payload = verifyToken(token.value);
+    const payload = await verifyToken(token.value);
     if (!payload) {
       const redirectRes = NextResponse.redirect(new URL('/admin/login', req.url));
       redirectRes.cookies.delete('admin_token'); // clear invalid cookie
@@ -42,7 +42,7 @@ export function middleware(req: NextRequest) {
   // ── Prevent direct access to /admin/login if already logged in ──
   if (pathname === '/admin/login') {
     const token = req.cookies.get('admin_token');
-    if (token?.value && verifyToken(token.value)) {
+    if (token?.value && await verifyToken(token.value)) {
       return NextResponse.redirect(new URL('/admin/dashboard', req.url));
     }
   }

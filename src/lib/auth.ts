@@ -1,31 +1,38 @@
-import jwt from 'jsonwebtoken';
+import { SignJWT, jwtVerify } from 'jose';
 import { NextRequest } from 'next/server';
 
-const SECRET = process.env.JWT_SECRET;
-if (!SECRET || SECRET.length < 32) {
-  throw new Error('JWT_SECRET must be set in environment variables and be at least 32 characters');
+const SECRET_STRING = process.env.JWT_SECRET;
+if (!SECRET_STRING || SECRET_STRING.length < 32) {
+  throw new Error('JWT_SECRET must be set and be at least 32 characters');
 }
 
-export function signToken(payload: object): string {
-  return jwt.sign(payload, SECRET!, { expiresIn: '24h' }); // Reduced from 7d to 24h
+const SECRET = new TextEncoder().encode(SECRET_STRING);
+
+export async function signToken(payload: Record<string, unknown>): Promise<string> {
+  return new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('24h')
+    .sign(SECRET);
 }
 
-export function verifyToken(token: string): { id: number; username: string } | null {
+export async function verifyToken(token: string): Promise<{ id: number; username: string } | null> {
   try {
-    return jwt.verify(token, SECRET!) as { id: number; username: string };
+    const { payload } = await jwtVerify(token, SECRET);
+    return payload as { id: number; username: string };
   } catch {
     return null;
   }
 }
 
 export function getTokenFromRequest(req: NextRequest): string | null {
-  // Only accept from httpOnly cookie - NOT from Authorization header (prevents XSS token theft)
   const cookie = req.cookies.get('admin_token');
   return cookie?.value || null;
 }
 
-export function isAuthenticated(req: NextRequest): boolean {
+export async function isAuthenticated(req: NextRequest): Promise<boolean> {
   const token = getTokenFromRequest(req);
   if (!token) return false;
-  return verifyToken(token) !== null;
+  const result = await verifyToken(token);
+  return result !== null;
 }
