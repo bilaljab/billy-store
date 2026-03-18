@@ -8,6 +8,11 @@ export const metadata: Metadata = {
   title: 'Billy Store - متجر ألعاب بلايستيشن',
   description: 'تسوق أفضل ألعاب PlayStation 4 و 5 واشتراكات PS Plus بأسعار لا تُنافس. بيلي ستور - متجرك الموثوق للألعاب الرقمية.',
   keywords: 'بيلي ستور, ألعاب بلايستيشن, PS Plus, PS4, PS5, ألعاب رقمية, السعودية',
+  icons: {
+    icon: '/logo.jpg',
+    shortcut: '/logo.jpg',
+    apple: '/logo.jpg',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

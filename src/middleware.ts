@@ -3,6 +3,12 @@ import { verifyToken } from '@/lib/auth';
 
 export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
+
+  // Redirect favicon requests to logo - prevents 404 errors inflating error rate
+  if (pathname === '/favicon.ico' || pathname === '/favicon.png') {
+    return NextResponse.redirect(new URL('/logo.jpg', req.url));
+  }
+
   const res = NextResponse.next();
 
   // ── Security Headers (applied to ALL responses) ──
