@@ -37,6 +37,8 @@ export default function AdminDashboard() {
   const [annModal, setAnnModal] = useState(false);
   const [savingAnn, setSavingAnn] = useState(false);
   const [views, setViews] = useState<Record<number, number>>({});
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [deletingSelected, setDeletingSelected] = useState(false);
   const router = useRouter();
 
   // Token is handled via httpOnly cookie automatically - no localStorage needed
@@ -110,6 +112,33 @@ export default function AdminDashboard() {
     if (res.ok) { setModalOpen(false); fetchProducts(); }
     else { const d = await res.json(); setError(d.error || 'خطأ'); }
     setSaving(false);
+  };
+
+  const handleDeleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    setDeletingSelected(true);
+    for (const id of Array.from(selectedIds)) {
+      await fetch(`/api/admin/products/${id}`, { method: 'DELETE', credentials: 'include' });
+    }
+    setSelectedIds(new Set());
+    setDeletingSelected(false);
+    fetchProducts();
+  };
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (selectedIds.size === products.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(products.map(p => p.id)));
+    }
   };
 
   const handleDelete = async (id: number) => {
@@ -381,6 +410,23 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* Bulk action bar */}
+          {selectedIds.size > 0 && (
+            <div className="flex items-center gap-3 mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
+              <span className="text-red-400 text-sm font-bold">تم تحديد {selectedIds.size} منتج</span>
+              <div className="flex gap-2 mr-auto">
+                <button onClick={() => setSelectedIds(new Set())}
+                  className="text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-dark-border transition-all">
+                  إلغاء التحديد
+                </button>
+                <button onClick={handleDeleteSelected} disabled={deletingSelected}
+                  className="bg-red-500 hover:bg-red-600 text-white text-xs font-black px-4 py-1.5 rounded-lg transition-all disabled:opacity-50">
+                  {deletingSelected ? 'جاري الحذف...' : `🗑 حذف المحدد (${selectedIds.size})`}
+                </button>
+              </div>
+            </div>
+          )}
+
           {loading ? (
             <div className="text-center py-16 text-slate-500">جاري التحميل...</div>
           ) : products.length === 0 ? (
@@ -394,6 +440,12 @@ export default function AdminDashboard() {
               <table className="w-full">
                 <thead>
                   <tr className="border-b border-dark-border">
+                    <th className="px-4 py-3 w-10">
+                      <input type="checkbox"
+                        checked={selectedIds.size === products.length && products.length > 0}
+                        onChange={toggleSelectAll}
+                        className="w-4 h-4 accent-primary cursor-pointer" />
+                    </th>
                     <th className="text-right text-slate-500 text-sm font-semibold px-6 py-3">المنتج</th>
                     <th className="text-right text-slate-500 text-sm font-semibold px-4 py-3">الفئة</th>
                     <th className="text-right text-slate-500 text-sm font-semibold px-4 py-3">السعر</th>
@@ -403,7 +455,13 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {products.map(product => (
-                    <tr key={product.id} className="border-b border-dark-border/50 hover:bg-dark/30 transition-colors">
+                    <tr key={product.id} className={`border-b border-dark-border/50 hover:bg-dark/30 transition-colors ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
+                      <td className="px-4 py-4">
+                        <input type="checkbox"
+                          checked={selectedIds.has(product.id)}
+                          onChange={() => toggleSelect(product.id)}
+                          className="w-4 h-4 accent-primary cursor-pointer" />
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <div className="w-12 h-12 rounded-lg bg-dark border border-dark-border overflow-hidden flex-shrink-0">
