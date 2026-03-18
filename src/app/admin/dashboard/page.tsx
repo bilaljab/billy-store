@@ -32,6 +32,18 @@ export default function AdminDashboard() {
   const [discountForm, setDiscountForm] = useState({ percentage: '20', label: 'عرض خاص', active: true });
   const [discountModal, setDiscountModal] = useState(false);
   const [savingDiscount, setSavingDiscount] = useState(false);
+  const [targetedRules, setTargetedRules] = useState<any[]>([]);
+  const [targetedModal, setTargetedModal] = useState(false);
+  const [targetedForm, setTargetedForm] = useState({
+    type: 'range' as 'range' | 'product',
+    label: '',
+    percentage: '15',
+    active: true,
+    productIds: [] as number[],
+    minPrice: '',
+    maxPrice: '',
+  });
+  const [savingTargeted, setSavingTargeted] = useState(false);
   const [announcement, setAnnouncement] = useState<{ text: string; active: boolean } | null>(null);
   const [annForm, setAnnForm] = useState({ text: '', active: true });
   const [annModal, setAnnModal] = useState(false);
@@ -570,6 +582,134 @@ export default function AdminDashboard() {
               </button>
               <button onClick={() => setAnnModal(false)}
                 className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
+                إلغاء
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Targeted Discount Modal */}
+      {targetedModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setTargetedModal(false)}></div>
+          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-black text-white mb-2">🎯 خصم مستهدف</h3>
+            <p className="text-slate-400 text-sm mb-6">خصم على منتجات محددة أو نطاق سعري معين</p>
+
+            {/* Type selector */}
+            <div className="flex gap-2 mb-5">
+              <button onClick={() => setTargetedForm({...targetedForm, type: 'range', productIds: []})}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'range' ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
+                💰 نطاق سعري
+              </button>
+              <button onClick={() => setTargetedForm({...targetedForm, type: 'product', minPrice: '', maxPrice: ''})}
+                className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'product' ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
+                🎮 منتجات محددة
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              {/* Label */}
+              <div>
+                <label className="block text-slate-400 text-sm font-semibold mb-2">اسم العرض</label>
+                <input type="text" value={targetedForm.label}
+                  onChange={e => setTargetedForm({...targetedForm, label: e.target.value})}
+                  placeholder="مثال: عرض الألعاب الغالية"
+                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+              </div>
+
+              {/* Percentage */}
+              <div>
+                <label className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
+                <div className="relative">
+                  <input type="number" min="1" max="90" value={targetedForm.percentage}
+                    onChange={e => setTargetedForm({...targetedForm, percentage: e.target.value})}
+                    className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-primary transition-colors"
+                    placeholder="15" />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light text-2xl font-black">%</span>
+                </div>
+              </div>
+
+              {/* Range fields */}
+              {targetedForm.type === 'range' && (
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-400 text-sm font-semibold mb-2">السعر من (ر.س)</label>
+                    <input type="number" value={targetedForm.minPrice}
+                      onChange={e => setTargetedForm({...targetedForm, minPrice: e.target.value})}
+                      placeholder="0 (بدون حد أدنى)"
+                      className="w-full bg-dark border border-dark-border rounded-xl px-3 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                  </div>
+                  <div>
+                    <label className="block text-slate-400 text-sm font-semibold mb-2">السعر إلى (ر.س)</label>
+                    <input type="number" value={targetedForm.maxPrice}
+                      onChange={e => setTargetedForm({...targetedForm, maxPrice: e.target.value})}
+                      placeholder="∞ (بدون حد أعلى)"
+                      className="w-full bg-dark border border-dark-border rounded-xl px-3 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                  </div>
+                  <div className="col-span-2">
+                    <p className="text-slate-600 text-xs">
+                      {targetedForm.minPrice && targetedForm.maxPrice && `سيُطبق على المنتجات من ${targetedForm.minPrice} إلى ${targetedForm.maxPrice} ر.س`}
+                      {targetedForm.minPrice && !targetedForm.maxPrice && `سيُطبق على المنتجات فوق ${targetedForm.minPrice} ر.س`}
+                      {!targetedForm.minPrice && targetedForm.maxPrice && `سيُطبق على المنتجات تحت ${targetedForm.maxPrice} ر.س`}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {/* Product selector */}
+              {targetedForm.type === 'product' && (
+                <div>
+                  <label className="block text-slate-400 text-sm font-semibold mb-2">اختر المنتجات</label>
+                  <div className="max-h-48 overflow-y-auto space-y-1 bg-dark rounded-xl border border-dark-border p-2">
+                    {products.map(p => (
+                      <label key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-dark-card cursor-pointer">
+                        <input type="checkbox"
+                          checked={targetedForm.productIds.includes(p.id)}
+                          onChange={() => {
+                            const ids = targetedForm.productIds.includes(p.id)
+                              ? targetedForm.productIds.filter(id => id !== p.id)
+                              : [...targetedForm.productIds, p.id];
+                            setTargetedForm({...targetedForm, productIds: ids});
+                          }}
+                          className="w-4 h-4 accent-primary" />
+                        <span className="text-white text-sm">{p.name}</span>
+                        <span className="text-slate-500 text-xs mr-auto">{p.price} ر.س</span>
+                      </label>
+                    ))}
+                  </div>
+                  {targetedForm.productIds.length > 0 && (
+                    <p className="text-primary-light text-xs mt-1">تم تحديد {targetedForm.productIds.length} منتج</p>
+                  )}
+                </div>
+              )}
+
+              {/* Preview */}
+              {targetedForm.percentage && (
+                <div className="bg-primary/10 border border-primary/30 rounded-xl p-3 text-sm">
+                  <p className="text-primary-light font-bold mb-1">معاينة:</p>
+                  <p className="text-slate-300">سعر 100 ر.س → <span className="text-red-400 font-black">{(100 * (1 - parseFloat(targetedForm.percentage || '0') / 100)).toFixed(0)} ر.س</span></p>
+                </div>
+              )}
+
+              {/* Active toggle */}
+              <div className="flex items-center gap-3">
+                <button type="button" onClick={() => setTargetedForm({...targetedForm, active: !targetedForm.active})}
+                  className={`w-12 h-6 rounded-full transition-all duration-300 relative ${targetedForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
+                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${targetedForm.active ? 'right-1' : 'left-1'}`}></div>
+                </button>
+                <span className="text-slate-300 text-sm">{targetedForm.active ? '✅ مفعّل' : '⏸ موقوف'}</span>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button onClick={saveTargetedRule} disabled={savingTargeted}
+                className="flex-1 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all">
+                {savingTargeted ? 'جاري الحفظ...' : '💾 حفظ القاعدة'}
+              </button>
+              <button onClick={() => setTargetedModal(false)}
+                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl">
                 إلغاء
               </button>
             </div>
