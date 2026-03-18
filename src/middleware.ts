@@ -57,5 +57,9 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  // Only run middleware on page routes and API routes that need protection
+  // Skip: static files, images, fonts, icons
+  matcher: [
+    '/((?!_next/static|_next/image|.*\.(?:ico|png|jpg|jpeg|svg|webp|woff|woff2|ttf)).*)',
+  ],
 };

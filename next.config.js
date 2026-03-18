@@ -1,14 +1,19 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Disable source maps in production (prevents source code exposure)
   productionBrowserSourceMaps: false,
+
   images: {
-    unoptimized: true,
-    // Only allow images from trusted domains
-    domains: ['localhost'],
+    // Enable Next.js image optimization instead of unoptimized
+    // This auto-converts to WebP and resizes for faster loading
+    unoptimized: false,
+    remotePatterns: [
+      { protocol: 'https', hostname: '**' },
+    ],
+    // Cache optimized images for 1 year
+    minimumCacheTTL: 31536000,
+    formats: ['image/webp', 'image/avif'],
   },
 
-  // Add security headers for production
   async headers() {
     return [
       {
@@ -23,20 +28,34 @@ const nextConfig = {
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
         ],
       },
-      // Prevent uploads from being executed as scripts
+      // Cache static assets aggressively
+      {
+        source: '/_next/static/(.*)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
+        ],
+      },
+      // Cache public images for 7 days
       {
         source: '/uploads/(.*)',
         headers: [
-          { key: 'Content-Type', value: 'application/octet-stream' },
+          { key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Content-Disposition', value: 'inline' },
+        ],
+      },
+      {
+        source: '/:file(.*\\.(?:jpg|jpeg|png|webp|svg|ico))',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=604800, stale-while-revalidate=86400' },
         ],
       },
     ];
   },
 
-  // Disable powered-by header
   poweredByHeader: false,
+
+  // Compress responses
+  compress: true,
 }
 
 module.exports = nextConfig

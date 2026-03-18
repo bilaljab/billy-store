@@ -7,6 +7,9 @@ export async function GET() {
     const db = getDb();
     const result = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'announcement'", args: [] });
     if (!result.rows[0]) return NextResponse.json(null);
-    return NextResponse.json(JSON.parse(String(col(result.rows[0], 'value'))));
+    const data = JSON.parse(String(col(result.rows[0], 'value')));
+    const res = NextResponse.json(data);
+    res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    return res;
   } catch { return NextResponse.json(null); }
 }

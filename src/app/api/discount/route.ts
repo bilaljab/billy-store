@@ -9,6 +9,8 @@ export async function GET() {
     if (!result.rows[0]) return NextResponse.json(null);
     const discount = JSON.parse(String(col(result.rows[0], 'value')));
     if (!discount.active) return NextResponse.json(null);
-    return NextResponse.json(discount);
+    const res = NextResponse.json(discount);
+    res.headers.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    return res;
   } catch { return NextResponse.json(null); }
 }

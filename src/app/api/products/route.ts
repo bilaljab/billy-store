@@ -16,5 +16,7 @@ export async function GET(req: NextRequest) {
   sql += ' ORDER BY created_at DESC';
 
   const result = await db.execute({ sql, args });
-  return NextResponse.json(result.rows.map(serializeProduct));
+  const res = NextResponse.json(result.rows.map(serializeProduct));
+  res.headers.set('Cache-Control', 'public, s-maxage=30, stale-while-revalidate=120');
+  return res;
 }
