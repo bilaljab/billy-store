@@ -1,4 +1,21 @@
 import Navbar from '@/components/layout/Navbar';
+
+// ISR: serve from cache, rebuild in background every 30 seconds
+// This means near-instant page loads after first visit
+export const revalidate = 30;
+
+// Pre-render all product pages at build time for instant loads
+export async function generateStaticParams() {
+  try {
+    const { getDb, initDb } = await import('@/lib/db');
+    await initDb();
+    const db = getDb();
+    const result = await db.execute('SELECT id FROM products');
+    return result.rows.map(r => ({ id: String((r as Record<string, unknown>)['id']) }));
+  } catch {
+    return [];
+  }
+}
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
