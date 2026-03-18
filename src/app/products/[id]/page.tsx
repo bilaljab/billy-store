@@ -6,52 +6,52 @@ import { notFound } from 'next/navigation';
 import ProductActions from '@/components/ui/ProductActions';
 import RelatedProducts from '@/components/ui/RelatedProducts';
 
-async function getProduct(id: string) {
+// Single DB connection for all data on this page
+async function getPageData(id: string) {
   try {
-    const { getDb, initDb } = await import('@/lib/db');
+    const { getDb, initDb, col } = await import('@/lib/db');
     await initDb();
     const db = getDb();
-    const result = await db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] });
-    const r = result.rows[0];
+
+    // Run all 3 queries in parallel with single DB connection
+    const [productResult, discountResult, viewsResult] = await Promise.all([
+      db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] }),
+      db.execute({ sql: "SELECT value FROM settings WHERE key = 'discount'", args: [] }),
+      db.execute({ sql: 'SELECT views FROM product_views WHERE product_id = ?', args: [id] }),
+    ]);
+
+    const r = productResult.rows[0];
     if (!r) return null;
-    return {
-      id: Number(r.id), name: String(r.name ?? ''), description: String(r.description ?? ''),
-      price: Number(r.price), image: r.image ? String(r.image) : null,
-      category: String(r.category ?? 'games'), featured: Number(r.featured ?? 0),
+
+    const product = {
+      id: Number(col(r, 'id')),
+      name: String(col(r, 'name') ?? ''),
+      description: String(col(r, 'description') ?? ''),
+      price: Number(col(r, 'price')),
+      image: col(r, 'image') ? String(col(r, 'image')) : null,
+      category: String(col(r, 'category') ?? 'games'),
+      featured: Number(col(r, 'featured') ?? 0),
     };
-  } catch { return null; }
-}
 
-async function getDiscount() {
-  try {
-    const { getDb, initDb } = await import('@/lib/db');
-    await initDb();
-    const db = getDb();
-    await db.execute('CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL)');
-    const result = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'discount'", args: [] });
-    if (!result.rows[0]) return null;
-    const d = JSON.parse(String(result.rows[0].value));
-    return d.active ? d : null;
-  } catch { return null; }
-}
+    let discount = null;
+    if (discountResult.rows[0]) {
+      const d = JSON.parse(String(col(discountResult.rows[0], 'value')));
+      if (d.active) discount = d;
+    }
 
-async function getViews(id: string) {
-  try {
-    const { getDb, initDb } = await import('@/lib/db');
-    await initDb();
-    const db = getDb();
-    await db.execute(`CREATE TABLE IF NOT EXISTS product_views (product_id INTEGER PRIMARY KEY, views INTEGER NOT NULL DEFAULT 0)`);
-    const result = await db.execute({ sql: 'SELECT views FROM product_views WHERE product_id = ?', args: [id] });
-    const r = result.rows[0];
-    return r ? Number((r as Record<string, unknown>)['views'] ?? 0) : 0;
-  } catch { return 0; }
+    const vRow = viewsResult.rows[0];
+    const views = vRow ? Number((vRow as Record<string, unknown>)['views'] ?? 0) : 0;
+
+    return { product, discount, views };
+  } catch { return null; }
 }
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const [product, discount, views] = await Promise.all([getProduct(id), getDiscount(), getViews(id)]);
-  if (!product) notFound();
+  const data = await getPageData(id);
+  if (!data) notFound();
 
+  const { product, discount, views } = data;
   const categoryLabel = product.category === 'subscription' ? 'اشتراك PS Plus' : 'لعبة PlayStation';
   const discountedPrice = discount ? Math.round(product.price * (1 - discount.percentage / 100)) : null;
   const waMsg = encodeURIComponent(`مرحباً، أريد الاستفسار عن:\n🎮 ${product.name}\n💰 السعر: ${discountedPrice ?? product.price} ريال`);
@@ -60,7 +60,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     <div className="min-h-screen bg-dark">
       <Navbar />
       <div className="pt-24 pb-20 px-4 max-w-6xl mx-auto">
-        {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-slate-500 mb-8">
           <Link href="/" className="hover:text-accent transition-colors">الرئيسية</Link>
           <span>/</span>
@@ -70,10 +69,16 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* Image */}
           <div className="relative aspect-square bg-gradient-to-br from-primary/20 to-dark-card border border-dark-border rounded-3xl overflow-hidden">
             {product.image ? (
-              <Image src={product.image} alt={product.name} fill className="object-cover" />
+              <Image
+                src={product.image}
+                alt={product.name}
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 1024px) 100vw, 50vw"
+              />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 {product.category === 'subscription' ? (
@@ -100,7 +105,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             </div>
           </div>
 
-          {/* Info */}
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-2 flex-wrap">
               <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${
@@ -124,7 +128,6 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               <p className="text-slate-200 leading-loose">{product.description}</p>
             </div>
 
-            {/* Price */}
             <div className="bg-gradient-to-l from-primary/10 to-dark-card border border-primary/30 rounded-2xl p-5 flex items-center justify-between">
               <div>
                 <p className="text-slate-400 text-sm mb-1">السعر</p>
@@ -152,12 +155,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </div>
             </div>
 
-            {/* Client Actions */}
             <ProductActions product={{ id: product.id, name: product.name, price: discountedPrice ?? product.price }} waMsg={waMsg} />
-
-            <Link href="/products" className="text-center text-slate-500 hover:text-accent text-sm transition-colors">
-              ← العودة للمنتجات
-            </Link>
+            <Link href="/products" className="text-center text-slate-500 hover:text-accent text-sm transition-colors">← العودة للمنتجات</Link>
           </div>
         </div>
         <RelatedProducts currentId={product.id} category={product.category} />

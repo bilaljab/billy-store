@@ -1,7 +1,7 @@
 'use client';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, memo } from 'react';
 
 interface Product {
   id: number;
@@ -30,7 +30,7 @@ async function loadDiscount() {
   return discountPromise;
 }
 
-export default function ProductCard({ product }: { product: Product }) {
+const ProductCard = memo(function ProductCard({ product }: { product: Product }) {
   const [discount, setDiscount] = useState<Discount | null>(null);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* Image */}
         <div className="relative aspect-square sm:aspect-[4/3] bg-gradient-to-br from-primary/20 to-dark overflow-hidden">
           {product.image ? (
-            <Image src={product.image} alt={product.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
+            <Image src={product.image} alt={product.name} fill sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               {product.category === 'subscription' ? (
@@ -117,4 +117,6 @@ export default function ProductCard({ product }: { product: Product }) {
       </div>
     </Link>
   );
-}
+});
+
+export default ProductCard;

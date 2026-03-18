@@ -56,6 +56,11 @@ const nextConfig = {
 
   // Compress responses
   compress: true,
+
+  // Experimental: faster builds and smaller bundles
+  experimental: {
+    optimizePackageImports: ['@libsql/client'],
+  },
 }
 
 module.exports = nextConfig

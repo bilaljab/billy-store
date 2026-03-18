@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useRef, ReactNode, memo } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -8,7 +8,7 @@ interface Props {
   direction?: 'up' | 'down' | 'left' | 'right' | 'scale';
 }
 
-export default function ScrollReveal({ children, className = '', delay = 0, direction = 'up' }: Props) {
+const ScrollReveal = memo(function ScrollReveal({ children, className = '', delay = 0, direction = 'up' }: Props) {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,4 +57,6 @@ export default function ScrollReveal({ children, className = '', delay = 0, dire
       {children}
     </div>
   );
-}
+});
+
+export default ScrollReveal;

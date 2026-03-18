@@ -1,4 +1,7 @@
 import Navbar from '@/components/layout/Navbar';
+
+// ISR: revalidate home page every 60 seconds
+export const revalidate = 60;
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
 import ScrollReveal from '@/components/ui/ScrollReveal';
