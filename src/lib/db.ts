@@ -93,24 +93,4 @@ export async function initDb() {
     await db.execute({ sql: 'INSERT INTO admins (username, password) VALUES (?, ?)', args: ['admin', hash] });
   }
 
-  const c = await db.execute('SELECT COUNT(*) as c FROM products');
-  const count = Number(col(c.rows[0], 'c') ?? 0);
-  if (count === 0) {
-    const ps: [string, string, number, string, number][] = [
-      ['God of War Ragnarok', 'المغامرة الملحمية الأسطورية مع كريتوس وأتريوس في عالم الأساطير النوردية.', 149, 'games', 1],
-      ['Spider-Man 2', 'العودة مع بيتر باركر وميلز موراليس في مغامرة مذهلة عبر نيويورك.', 189, 'games', 1],
-      ['FIFA 25', 'أحدث إصدار من سلسلة كرة القدم الأشهر مع تحسينات ضخمة.', 159, 'games', 1],
-      ['PS Plus Essential - شهر', 'اشتراك PS Plus لمدة شهر. العب أونلاين واحصل على ألعاب مجانية شهرياً.', 29, 'subscription', 1],
-      ['PS Plus Extra - 3 أشهر', 'اشتراك PS Plus Extra لمدة 3 أشهر مع مكتبة ضخمة من الألعاب.', 89, 'subscription', 0],
-      ['PS Plus Premium - سنة', 'الباقة الشاملة لمدة سنة مع مكتبة ألعاب كلاسيكية وتجربة لا تتوقف.', 249, 'subscription', 1],
-      ['Hogwarts Legacy', 'عيش قصتك في عالم هاري بوتر السحري واستكشف هوجوورتس.', 139, 'games', 0],
-      ['Elden Ring', 'لعبة الأكشن RPG الأسطورية. عالم مفتوح شاسع وتحديات لا نهاية لها.', 129, 'games', 0],
-    ];
-    for (const p of ps) {
-      await db.execute({
-        sql: 'INSERT INTO products (name, description, price, image, category, featured) VALUES (?, ?, ?, ?, ?, ?)',
-        args: [p[0], p[1], p[2], null, p[3], p[4]],
-      });
-    }
-  }
 }
