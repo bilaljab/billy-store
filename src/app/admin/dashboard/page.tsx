@@ -117,9 +117,13 @@ export default function AdminDashboard() {
   const handleDeleteSelected = async () => {
     if (selectedIds.size === 0) return;
     setDeletingSelected(true);
-    for (const id of Array.from(selectedIds)) {
-      await fetch(`/api/admin/products/${id}`, { method: 'DELETE', credentials: 'include' });
-    }
+    // Single API call deletes all selected in one DB query
+    await fetch('/api/admin/products/bulk-delete', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ ids: Array.from(selectedIds) }),
+    });
     setSelectedIds(new Set());
     setDeletingSelected(false);
     fetchProducts();
