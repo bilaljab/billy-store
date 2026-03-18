@@ -83,6 +83,54 @@ export default function AdminDashboard() {
     // Views are tracked server-side; no client fetch needed
   }, []);
 
+  const fetchTargetedRules = useCallback(async () => {
+    try {
+      const res = await fetch('/api/admin/discounts', { credentials: 'include' });
+      const data = await res.json();
+      setTargetedRules(data);
+    } catch {}
+  }, []);
+
+  const saveTargetedRule = async () => {
+    if (!targetedForm.label || !targetedForm.percentage) return;
+    setSavingTargeted(true);
+    await fetch('/api/admin/discounts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        ...targetedForm,
+        percentage: parseFloat(targetedForm.percentage),
+        minPrice: targetedForm.minPrice ? parseFloat(targetedForm.minPrice) : null,
+        maxPrice: targetedForm.maxPrice ? parseFloat(targetedForm.maxPrice) : null,
+      }),
+    });
+    setSavingTargeted(false);
+    setTargetedModal(false);
+    setTargetedForm({ type: 'range', label: '', percentage: '15', active: true, productIds: [], minPrice: '', maxPrice: '' });
+    fetchTargetedRules();
+  };
+
+  const deleteTargetedRule = async (id: number) => {
+    await fetch('/api/admin/discounts', {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ id }),
+    });
+    fetchTargetedRules();
+  };
+
+  const toggleTargetedRule = async (rule: any) => {
+    await fetch('/api/admin/discounts', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ ...rule, active: !rule.active }),
+    });
+    fetchTargetedRules();
+  };
+
   const fetchProducts = useCallback(async () => {
     const res = await fetch('/api/admin/products', { credentials: 'include' });
     if (res.status === 401) { router.push('/admin/login'); return; }
@@ -91,7 +139,7 @@ export default function AdminDashboard() {
     setLoading(false);
   }, [router]);
 
-  useEffect(() => { fetchProducts(); fetchDiscount(); fetchAnnouncement(); }, [fetchProducts, fetchDiscount, fetchAnnouncement]);
+  useEffect(() => { fetchProducts(); fetchDiscount(); fetchTargetedRules(); fetchAnnouncement(); }, [fetchProducts, fetchDiscount, fetchTargetedRules, fetchAnnouncement]);
 
   const openAdd = () => { setEditProduct(null); setForm(EMPTY_FORM); setError(''); setModalOpen(true); };
   const openEdit = (p: Product) => {
