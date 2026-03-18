@@ -215,6 +215,7 @@ function parseSheet(xml: string, strings: string[]): ProductRow[] {
   const imageIdx = findIdx(headers, ['image', 'صورة', 'img', 'photo', 'url']);
   const categoryIdx = findIdx(headers, ['category', 'فئة', 'الفئة', 'نوع', 'type']);
   const featuredIdx = findIdx(headers, ['featured', 'مميز', 'مميزة', 'highlight']);
+  const releaseDateIdx = findIdx(headers, ['release_date', 'release date', 'تاريخ الإصدار', 'تاريخ', 'date']);
 
   const result: ProductRow[] = [];
   for (let i = 1; i < rows.length; i++) {
@@ -229,6 +230,7 @@ function parseSheet(xml: string, strings: string[]): ProductRow[] {
       image: imageIdx >= 0 ? cols[imageIdx]?.trim() || '' : '',
       category: categoryIdx >= 0 ? mapCategory(cols[categoryIdx]) : 'games',
       featured: featuredIdx >= 0 ? isTruthy(cols[featuredIdx]) : false,
+      release_date: releaseDateIdx >= 0 ? cols[releaseDateIdx]?.trim() || '' : '',
     });
   }
   return result;
