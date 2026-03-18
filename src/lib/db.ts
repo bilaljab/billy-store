@@ -15,6 +15,7 @@ export function serializeProduct(r: Row) {
     image: col(r, 'image') ? String(col(r, 'image')) : null,
     category: String(col(r, 'category') ?? 'games'),
     featured: Number(col(r, 'featured') ?? 0),
+    release_date: col(r, 'release_date') ? String(col(r, 'release_date')) : null,
   };
 }
 
@@ -57,9 +58,15 @@ export async function initDb() {
     image TEXT,
     category TEXT NOT NULL DEFAULT 'games',
     featured INTEGER NOT NULL DEFAULT 0,
+    release_date TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  // Add release_date column if it doesn't exist (migration for existing DBs)
+  try {
+    await db.execute('ALTER TABLE products ADD COLUMN release_date TEXT');
+  } catch { /* column already exists */ }
 
   await db.execute(`CREATE TABLE IF NOT EXISTS admins (
     id INTEGER PRIMARY KEY AUTOINCREMENT,

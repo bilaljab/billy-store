@@ -15,7 +15,7 @@ export default function AnnouncementBar() {
   if (!announcement || dismissed) return null;
 
   return (
-    <div className="bg-gradient-to-l from-primary to-accent text-white text-sm font-bold py-2 px-4 text-center relative z-[60]">
+    <div id="announcement-bar" className="bg-gradient-to-l from-primary to-accent text-white text-sm font-bold py-2 px-4 text-center relative z-[60]">
       <span>{announcement.text}</span>
       <button
         onClick={() => setDismissed(true)}

@@ -34,14 +34,15 @@ export async function POST(req: NextRequest) {
       const image = isValidImageUrl(String(item.image || ''));
       const category = ['games', 'subscription'].includes(String(item.category)) ? String(item.category) : 'games';
       const featured = item.featured ? 1 : 0;
+      const release_date = item.release_date ? String(item.release_date).slice(0, 10) : null;
       if (!name || isNaN(price) || price <= 0 || price > 99999) {
         errors.push(`تم تخطي صف: بيانات غير صالحة`);
         continue;
       }
       try {
         await db.execute({
-          sql: 'INSERT INTO products (name, description, price, image, category, featured) VALUES (?, ?, ?, ?, ?, ?)',
-          args: [name, description, price, image, category, featured],
+          sql: 'INSERT INTO products (name, description, price, image, category, featured, release_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
+          args: [name, description, price, image, category, featured, release_date],
         });
         imported++;
       } catch { errors.push(`خطأ في إضافة: ${name}`); }

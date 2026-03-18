@@ -18,12 +18,26 @@ const IgIcon = () => (
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [topOffset, setTopOffset] = useState(0);
   const pathname = usePathname();
 
   useEffect(() => {
+    // Detect announcement bar height and offset navbar accordingly
+    const updateOffset = () => {
+      const bar = document.getElementById('announcement-bar');
+      setTopOffset(bar ? bar.offsetHeight : 0);
+    };
+    updateOffset();
+    // Re-check when announcement bar might appear/disappear
+    const observer = new MutationObserver(updateOffset);
+    observer.observe(document.body, { childList: true, subtree: true });
+
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handler);
-    return () => window.removeEventListener('scroll', handler);
+    return () => {
+      window.removeEventListener('scroll', handler);
+      observer.disconnect();
+    };
   }, []);
 
   const links = [
@@ -34,17 +48,17 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${scrolled ? 'bg-dark/95 backdrop-blur-md border-b border-dark-border shadow-lg shadow-primary/10' : 'bg-transparent'}`}>
+    <nav
+      style={{ top: `${topOffset}px` }}
+      className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-dark/95 backdrop-blur-md border-b border-dark-border shadow-lg shadow-primary/10' : 'bg-transparent'}`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-
-          {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <img src="/logo.jpg" alt="Billy Store" className="h-10 w-10 rounded-lg object-cover" />
             <span className="font-black text-xl text-white">Billy <span className="text-accent">Store</span></span>
           </Link>
 
-          {/* Desktop Nav */}
           <div className="hidden md:flex items-center gap-6">
             {links.map(link => (
               <Link key={link.href} href={link.href}
@@ -52,23 +66,16 @@ export default function Navbar() {
                 {link.label}
               </Link>
             ))}
-
-            {/* WhatsApp - icon only */}
             <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
-              className="w-9 h-9 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-green-500/30 flex items-center justify-center flex-shrink-0"
-              title="واتساب">
+              className="w-9 h-9 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all flex items-center justify-center" title="واتساب">
               <WaIcon />
             </a>
-
-            {/* Instagram - icon only */}
             <a href="https://instagram.com/Billy_Store3" target="_blank" rel="noopener noreferrer"
-              className="w-9 h-9 bg-gradient-to-l from-purple-600 to-pink-500 hover:opacity-90 text-white rounded-lg transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/30 flex items-center justify-center flex-shrink-0"
-              title="إنستقرام">
+              className="w-9 h-9 bg-gradient-to-l from-purple-600 to-pink-500 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center" title="إنستقرام">
               <IgIcon />
             </a>
           </div>
 
-          {/* Mobile hamburger */}
           <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white p-2">
             <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
             <div className={`w-6 h-0.5 bg-white my-1 transition-all ${menuOpen ? 'opacity-0' : ''}`}></div>
@@ -77,7 +84,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       {menuOpen && (
         <div className="md:hidden bg-dark-card border-b border-dark-border px-4 pb-4">
           {links.map(link => (
@@ -88,14 +94,12 @@ export default function Navbar() {
           ))}
           <div className="flex gap-2 mt-3">
             <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 bg-green-600 hover:bg-green-500 text-white font-bold py-2.5 px-3 rounded-lg text-sm transition-all">
-              <WaIcon />
-              واتساب
+              className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white font-bold py-2.5 rounded-lg text-sm">
+              <WaIcon /> واتساب
             </a>
             <a href="https://instagram.com/Billy_Store3" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-l from-purple-600 to-pink-500 hover:opacity-90 text-white font-bold py-2.5 px-3 rounded-lg text-sm transition-all">
-              <IgIcon />
-              إنستقرام
+              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-l from-purple-600 to-pink-500 text-white font-bold py-2.5 rounded-lg text-sm">
+              <IgIcon /> إنستقرام
             </a>
           </div>
         </div>

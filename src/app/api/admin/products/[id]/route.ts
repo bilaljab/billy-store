@@ -14,11 +14,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   await initDb();
   const body = await req.json();
-  const { name, description, price, image, category, featured } = body;
+  const { name, description, price, image, category, featured, release_date } = body;
+  const safeReleaseDate = release_date ? String(release_date).slice(0, 10) : null;
   const db = getDb();
   await db.execute({
-    sql: 'UPDATE products SET name=?, description=?, price=?, image=?, category=?, featured=?, updated_at=CURRENT_TIMESTAMP WHERE id=?',
-    args: [name, description, price, isValidImageUrl(image), category, featured ? 1 : 0, id],
+    sql: 'UPDATE products SET name=?, description=?, price=?, image=?, category=?, featured=?, release_date=?, updated_at=CURRENT_TIMESTAMP WHERE id=?',
+    args: [name, description, price, isValidImageUrl(image), category, featured ? 1 : 0, safeReleaseDate, id],
   });
   const result = await db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] });
   return NextResponse.json(serializeProduct(result.rows[0]));

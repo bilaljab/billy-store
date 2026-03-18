@@ -13,7 +13,7 @@ interface Product {
   featured: number;
 }
 
-const EMPTY_FORM = { name: '', description: '', price: '', image: '', category: 'games', featured: false };
+const EMPTY_FORM = { name: '', description: '', price: '', image: '', category: 'games', featured: false, release_date: '' };
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
   const openAdd = () => { setEditProduct(null); setForm(EMPTY_FORM); setError(''); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditProduct(p);
-    setForm({ name: p.name, description: p.description || '', price: String(p.price), image: p.image || '', category: p.category, featured: p.featured === 1 });
+    setForm({ name: p.name, description: p.description || '', price: String(p.price), image: p.image || '', category: p.category, featured: p.featured === 1, release_date: (p as any).release_date || '' });
     setError('');
     setModalOpen(true);
   };
@@ -645,6 +645,13 @@ export default function AdminDashboard() {
                   <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${form.featured ? 'right-1' : 'left-1'}`}></div>
                 </button>
                 <span className="text-slate-300 text-sm font-semibold">منتج مميز (يظهر في الصفحة الرئيسية)</span>
+              </div>
+
+              <div>
+                <label className="block text-slate-400 text-sm font-semibold mb-2">تاريخ الإصدار (اختياري)</label>
+                <input type="date" value={(form as any).release_date || ''} onChange={e => setForm({...form, release_date: e.target.value} as any)}
+                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors text-sm" />
+                <p className="text-slate-600 text-xs mt-1">يُستخدم لترتيب المنتجات حسب الأحدث</p>
               </div>
             </div>
 

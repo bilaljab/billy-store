@@ -13,6 +13,7 @@ interface Product {
   image: string | null;
   category: string;
   featured: number;
+  release_date?: string | null;
 }
 
 export default function ProductsPage() {
@@ -21,7 +22,7 @@ export default function ProductsPage() {
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<'default' | 'asc' | 'desc'>('default');
+  const [sort, setSort] = useState<'default' | 'asc' | 'desc' | 'newest'>('default');
 
   useEffect(() => {
     fetch('/api/discount').then(r => r.json()).then(d => setDiscount(d)).catch(() => {});
@@ -38,6 +39,11 @@ export default function ProductsPage() {
   const sorted = [...products].sort((a, b) => {
     if (sort === 'asc') return a.price - b.price;
     if (sort === 'desc') return b.price - a.price;
+    if (sort === 'newest') {
+      const dateA = a.release_date ? new Date(a.release_date).getTime() : 0;
+      const dateB = b.release_date ? new Date(b.release_date).getTime() : 0;
+      return dateB - dateA;
+    }
     return 0;
   });
   const filtered = sorted.filter(p =>
@@ -101,7 +107,7 @@ export default function ProductsPage() {
 
           {/* Sort */}
           <div className="flex gap-1 bg-dark-card border border-dark-border rounded-xl p-1.5">
-            {[['default','الافتراضي'],['asc','الأرخص'],['desc','الأغلى']].map(([val,label]) => (
+            {[['default','الافتراضي'],['asc','الأرخص'],['desc','الأغلى'],['newest','الأحدث']].map(([val,label]) => (
               <button key={val} onClick={() => setSort(val as any)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${sort === val ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'}`}>
                 {label}

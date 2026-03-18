@@ -11,6 +11,7 @@ interface Product {
   image: string | null;
   category: string;
   featured: number;
+  release_date?: string | null;
 }
 
 interface Discount {
@@ -19,7 +20,6 @@ interface Discount {
   active: boolean;
 }
 
-// Global discount cache
 let discountCache: Discount | null | undefined = undefined;
 let discountPromise: Promise<void> | null = null;
 
@@ -48,7 +48,8 @@ export default function ProductCard({ product }: { product: Product }) {
     : null;
 
   return (
-    <Link href={`/products/${product.id}`}>
+    // Full card is the link - no nested interactive elements
+    <Link href={`/products/${product.id}`} className="block h-full">
       <div className="group bg-dark-card border border-dark-border rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer h-full flex flex-col">
         {/* Image */}
         <div className="relative aspect-square sm:aspect-[4/3] bg-gradient-to-br from-primary/20 to-dark overflow-hidden">
@@ -67,8 +68,6 @@ export default function ProductCard({ product }: { product: Product }) {
               )}
             </div>
           )}
-
-          {/* Badges */}
           <div className="absolute top-1.5 right-1.5 sm:top-3 sm:right-3 flex flex-col gap-1">
             {hasDiscount && (
               <span className="bg-red-500 text-white text-xs font-black px-1.5 py-0.5 rounded-full">
@@ -79,7 +78,6 @@ export default function ProductCard({ product }: { product: Product }) {
               <span className="bg-amber-500 text-dark text-xs font-black px-1.5 py-0.5 rounded-full">⭐</span>
             )}
           </div>
-
           <div className="absolute inset-0 bg-gradient-to-t from-dark-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
         </div>
 
