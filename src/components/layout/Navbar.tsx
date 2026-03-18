@@ -16,26 +16,40 @@ const IgIcon = () => (
 );
 
 export default function Navbar() {
+  const [visible, setVisible] = useState(true);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
   const pathname = usePathname();
 
   useEffect(() => {
-    // Detect announcement bar height and offset navbar accordingly
+    let lastY = window.scrollY;
+
     const updateOffset = () => {
       const bar = document.getElementById('announcement-bar');
       setTopOffset(bar ? bar.offsetHeight : 0);
     };
     updateOffset();
-    // Re-check when announcement bar might appear/disappear
+
     const observer = new MutationObserver(updateOffset);
     observer.observe(document.body, { childList: true, subtree: true });
 
-    const handler = () => setScrolled(window.scrollY > 20);
-    window.addEventListener('scroll', handler);
+    const handleScroll = () => {
+      const currentY = window.scrollY;
+      setScrolled(currentY > 20);
+      // Hide on scroll down, show on scroll up
+      if (currentY > lastY && currentY > 80) {
+        setVisible(false);
+        setMenuOpen(false);
+      } else {
+        setVisible(true);
+      }
+      lastY = currentY;
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
-      window.removeEventListener('scroll', handler);
+      window.removeEventListener('scroll', handleScroll);
       observer.disconnect();
     };
   }, []);
@@ -50,11 +64,11 @@ export default function Navbar() {
   return (
     <nav
       style={{ top: `${topOffset}px` }}
-      className={`fixed w-full z-50 transition-all duration-500 ${scrolled ? 'bg-dark/95 backdrop-blur-md border-b border-dark-border shadow-lg shadow-primary/10' : 'bg-transparent'}`}
+      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-dark/95 backdrop-blur-md border-b border-dark-border shadow-lg shadow-primary/10' : 'bg-transparent'} ${visible ? 'translate-y-0' : '-translate-y-full'}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2 group">
+          <Link href="/" className="flex items-center gap-2">
             <img src="/logo.jpg" alt="Billy Store" className="h-10 w-10 rounded-lg object-cover" />
             <span className="font-black text-xl text-white">Billy <span className="text-accent">Store</span></span>
           </Link>
