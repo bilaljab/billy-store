@@ -392,6 +392,64 @@ export default function AdminDashboard() {
           </div>
         </div>
 
+        {/* Targeted Discounts */}
+        <div className="mb-6 bg-dark-card border border-dark-border rounded-2xl p-5">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
+                <span className="text-xl">🎯</span>
+              </div>
+              <div>
+                <h3 className="font-bold text-white text-sm">خصومات مستهدفة</h3>
+                <p className="text-slate-500 text-xs mt-0.5">خصم على منتجات محددة أو نطاق سعري معين</p>
+              </div>
+            </div>
+            <button onClick={() => setTargetedModal(true)}
+              className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 py-1.5 rounded-lg transition-all">
+              + إضافة قاعدة
+            </button>
+          </div>
+          {targetedRules.length === 0 ? (
+            <p className="text-slate-600 text-xs text-center py-4">لا توجد قواعد خصم مستهدفة</p>
+          ) : (
+            <div className="space-y-2">
+              {targetedRules.map((rule: any) => (
+                <div key={rule.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${rule.active ? 'bg-primary/5 border-primary/20' : 'bg-dark border-dark-border opacity-60'}`}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className={`text-xs font-black px-2 py-0.5 rounded-full ${rule.type === 'product' ? 'bg-accent/20 text-accent' : 'bg-purple-500/20 text-purple-400'}`}>
+                        {rule.type === 'product' ? '🎮 منتجات محددة' : '💰 نطاق سعري'}
+                      </span>
+                      <span className="text-red-400 font-black text-sm">-{rule.percentage}%</span>
+                      <span className="text-slate-400 text-xs truncate">{rule.label}</span>
+                    </div>
+                    <p className="text-slate-600 text-xs mt-1">
+                      {rule.type === 'range' && (
+                        <>
+                          {rule.minPrice !== null && rule.maxPrice !== null ? `${rule.minPrice} - ${rule.maxPrice} ر.س` :
+                           rule.minPrice !== null ? `فوق ${rule.minPrice} ر.س` :
+                           rule.maxPrice !== null ? `تحت ${rule.maxPrice} ر.س` : ''}
+                        </>
+                      )}
+                      {rule.type === 'product' && `${rule.productIds.length} منتج`}
+                    </p>
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <button onClick={() => toggleTargetedRule(rule)}
+                      className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-slate-700/50 border-slate-600 text-slate-400' : 'bg-green-600/20 border-green-600/40 text-green-400'}`}>
+                      {rule.active ? '⏸' : '▶'}
+                    </button>
+                    <button onClick={() => deleteTargetedRule(rule.id)}
+                      className="text-xs px-2 py-1 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
+                      ✕
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Announcement Bar */}
         <div className="mb-6 bg-dark-card border border-dark-border rounded-2xl p-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
