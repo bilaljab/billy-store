@@ -180,6 +180,14 @@ export default function AdminDashboard() {
     setSaving(false);
   };
 
+  const handleExport = () => {
+    // Direct download via anchor - browser handles the file
+    const a = document.createElement('a');
+    a.href = '/api/admin/export';
+    a.download = `billy-store-products-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+  };
+
   const handleDeleteSelected = async () => {
     if (selectedIds.size === 0) return;
     setDeletingSelected(true);
