@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     percentage: Math.min(90, Math.max(1, Number(body.percentage))),
     active: Boolean(body.active),
     // For type='product'
-    productIds: Array.isArray(body.productIds) ? body.productIds.map(Number).filter(n => n > 0) : [],
+    productIds: Array.isArray(body.productIds) ? body.productIds.map(Number).filter((n: number) => n > 0) : [],
     // For type='range'
     minPrice: body.minPrice !== undefined ? Number(body.minPrice) : null,
     maxPrice: body.maxPrice !== undefined ? Number(body.maxPrice) : null,
