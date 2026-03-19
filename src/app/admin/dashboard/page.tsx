@@ -532,6 +532,13 @@ export default function AdminDashboard() {
                 </svg>
                 قالب CSV
               </a>
+              <button onClick={handleExport}
+                className="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-400 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                تصدير CSV
+              </button>
               <label className="bg-green-600/20 hover:bg-green-600/30 border border-green-600/40 text-green-400 font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 text-sm cursor-pointer">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
