@@ -153,12 +153,18 @@ export default function AdminDashboard() {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
-    const fd = new FormData();
-    fd.append('image', file);
-    const res = await fetch('/api/upload', { method: 'POST', credentials: 'include', body: fd });
-    const data = await res.json();
-    if (data.url) setForm(f => ({ ...f, image: data.url }));
-    setUploading(false);
+    try {
+      const fd = new FormData();
+      fd.append('image', file);
+      const res = await fetch('/api/upload', { method: 'POST', credentials: 'include', body: fd });
+      const data = await res.json();
+      if (data.url) setForm(f => ({ ...f, image: data.url }));
+      else setError(data.error || 'فشل رفع الصورة');
+    } catch {
+      setError('حدث خطأ أثناء رفع الصورة');
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleSave = async () => {

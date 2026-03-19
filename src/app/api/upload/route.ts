@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { isAuthenticated } from '@/lib/auth';
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
-const ALLOWED_EXTENSIONS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
 export async function POST(req: NextRequest) {
@@ -20,48 +19,31 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid file type.' }, { status: 400 });
   }
 
-  const originalName = file.name.split('/').pop() || 'image';
-  const ext = originalName.split('.').pop()?.toLowerCase() || '';
-  if (!ALLOWED_EXTENSIONS.includes(ext)) {
-    return NextResponse.json({ error: 'Invalid file extension.' }, { status: 400 });
+  const cloudName = process.env.CLOUDINARY_CLOUD_NAME;
+  const uploadPreset = process.env.CLOUDINARY_UPLOAD_PRESET;
+
+  if (!cloudName || !uploadPreset) {
+    return NextResponse.json({ error: 'Cloudinary not configured' }, { status: 500 });
   }
 
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
+  // Upload to Cloudinary using unsigned preset
+  const uploadData = new FormData();
+  uploadData.append('file', file);
+  uploadData.append('upload_preset', uploadPreset);
+  uploadData.append('folder', 'billy-store');
 
-  if (!isValidImageBuffer(buffer, ext)) {
-    return NextResponse.json({ error: 'File content does not match image type.' }, { status: 400 });
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+    method: 'POST',
+    body: uploadData,
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    return NextResponse.json({ error: err.error?.message || 'Upload failed' }, { status: 500 });
   }
 
-  // Use dynamic require to avoid bundling fs/path in edge runtime
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const path = require('path') as typeof import('path');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const fs = require('fs') as typeof import('fs');
-
-  const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-  if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-  const safeFilename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
-  const filepath = path.join(uploadDir, safeFilename);
-
-  if (!filepath.startsWith(uploadDir)) {
-    return NextResponse.json({ error: 'Invalid path.' }, { status: 400 });
-  }
-
-  fs.writeFileSync(filepath, buffer);
-  return NextResponse.json({ url: `/uploads/${safeFilename}` });
-}
-
-function isValidImageBuffer(buffer: Buffer, ext: string): boolean {
-  if (buffer.length < 4) return false;
-  const jpg = buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF;
-  const png = buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47;
-  const gif = buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46;
-  const webp = buffer.length >= 12 && buffer.slice(8, 12).toString('ascii') === 'WEBP';
-  if (['jpg', 'jpeg'].includes(ext)) return jpg;
-  if (ext === 'png') return png;
-  if (ext === 'gif') return gif;
-  if (ext === 'webp') return webp;
-  return false;
+  const data = await res.json();
+  // Return optimized URL with auto format and quality
+  const optimizedUrl = data.secure_url.replace('/upload/', '/upload/f_auto,q_auto/');
+  return NextResponse.json({ url: optimizedUrl });
 }

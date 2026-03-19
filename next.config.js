@@ -3,13 +3,10 @@ const nextConfig = {
   productionBrowserSourceMaps: false,
 
   images: {
-    // Enable Next.js image optimization instead of unoptimized
-    // This auto-converts to WebP and resizes for faster loading
     unoptimized: false,
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
     ],
-    // Cache optimized images for 1 year
     minimumCacheTTL: 31536000,
     formats: ['image/webp', 'image/avif'],
   },
