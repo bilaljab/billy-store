@@ -14,19 +14,46 @@ interface Product {
   category: string;
   featured: number;
   release_date?: string | null;
+  discountedPrice?: number | null;
 }
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
-  const [discount, setDiscount] = useState<{ percentage: number; label: string } | null>(null);
+  const [discountsData, setDiscountsData] = useState<{
+    global: { percentage: number; label: string; active: boolean } | null;
+    targeted: { id: number; type: string; percentage: number; label: string; active: boolean; productIds: number[]; minPrice: number | null; maxPrice: number | null }[];
+  } | null>(null);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState('all');
   const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<'default' | 'asc' | 'desc'>('default');
+  const [sort, setSort] = useState<'default' | 'asc' | 'desc' | 'discount'>('default');
 
   useEffect(() => {
-    fetch('/api/discount').then(r => r.json()).then(d => setDiscount(d)).catch(() => {});
+    fetch('/api/discounts').then(r => r.json()).then(d => setDiscountsData(d)).catch(() => {});
   }, []);
+
+  // Calculate discount for a specific product
+  const getDiscount = (p: Product) => {
+    if (!discountsData) return null;
+    let best: { percentage: number; label: string } | null = null;
+    for (const rule of discountsData.targeted || []) {
+      if (!rule.active) continue;
+      let applies = false;
+      if (rule.type === 'product' && rule.productIds.includes(p.id)) applies = true;
+      if (rule.type === 'range') {
+        const aboveMin = rule.minPrice === null || p.price >= rule.minPrice;
+        const belowMax = rule.maxPrice === null || p.price <= rule.maxPrice;
+        if (aboveMin && belowMax) applies = true;
+      }
+      if (applies && (!best || rule.percentage > best.percentage)) {
+        best = { percentage: rule.percentage, label: rule.label };
+      }
+    }
+    if (!best && discountsData.global?.active) {
+      best = { percentage: discountsData.global.percentage, label: discountsData.global.label };
+    }
+    return best;
+  };
 
   useEffect(() => {
     const url = category === 'all' ? '/api/products' : `/api/products?category=${category}`;
@@ -102,7 +129,7 @@ return 0;
 
           {/* Sort */}
           <div className="flex gap-1 bg-dark-card border border-dark-border rounded-xl p-1.5">
-            {[['default','الافتراضي'],['asc','الأرخص'],['desc','الأغلى']].map(([val,label]) => (
+            {[['default','الافتراضي'],['asc','الأرخص'],['desc','الأغلى'],['discount','أكبر خصم 🏷️']].map(([val,label]) => (
               <button key={val} onClick={() => setSort(val as any)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${sort === val ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'}`}>
                 {label}

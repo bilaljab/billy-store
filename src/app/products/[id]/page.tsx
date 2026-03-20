@@ -31,9 +31,10 @@ async function getPageData(id: string) {
     const db = getDb();
 
     // Run all 3 queries in parallel with single DB connection
-    const [productResult, discountResult, viewsResult] = await Promise.all([
+    const [productResult, globalDiscountResult, targetedDiscountResult, viewsResult] = await Promise.all([
       db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] }),
       db.execute({ sql: "SELECT value FROM settings WHERE key = 'discount'", args: [] }),
+      db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] }),
       db.execute({ sql: 'SELECT views FROM product_views WHERE product_id = ?', args: [id] }),
     ]);
 
@@ -50,10 +51,31 @@ async function getPageData(id: string) {
       featured: Number(col(r, 'featured') ?? 0),
     };
 
-    let discount = null;
-    if (discountResult.rows[0]) {
-      const d = JSON.parse(String(col(discountResult.rows[0], 'value')));
-      if (d.active) discount = d;
+    // Calculate best applicable discount (targeted takes priority over global)
+    let discount: { percentage: number; label: string } | null = null;
+
+    // Check targeted discounts first
+    if (targetedDiscountResult.rows[0]) {
+      const rules = JSON.parse(String(col(targetedDiscountResult.rows[0], 'value')));
+      for (const rule of rules) {
+        if (!rule.active) continue;
+        let applies = false;
+        if (rule.type === 'product' && rule.productIds.includes(product.id)) applies = true;
+        if (rule.type === 'range') {
+          const aboveMin = rule.minPrice === null || product.price >= rule.minPrice;
+          const belowMax = rule.maxPrice === null || product.price <= rule.maxPrice;
+          if (aboveMin && belowMax) applies = true;
+        }
+        if (applies && (!discount || rule.percentage > discount.percentage)) {
+          discount = { percentage: rule.percentage, label: rule.label };
+        }
+      }
+    }
+
+    // Fall back to global discount
+    if (!discount && globalDiscountResult.rows[0]) {
+      const d = JSON.parse(String(col(globalDiscountResult.rows[0], 'value')));
+      if (d.active) discount = { percentage: d.percentage, label: d.label };
     }
 
     const vRow = viewsResult.rows[0];
