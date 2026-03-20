@@ -44,6 +44,10 @@ export default function AdminDashboard() {
     maxPrice: '',
   });
   const [savingTargeted, setSavingTargeted] = useState(false);
+  const [priceModal, setPriceModal] = useState(false);
+  const [priceForm, setPriceForm] = useState({ mode: 'percentage', value: '', direction: 'increase', category: 'all' });
+  const [savingPrice, setSavingPrice] = useState(false);
+  const [priceResult, setPriceResult] = useState<string | null>(null);
   const [announcement, setAnnouncement] = useState<{ text: string; active: boolean } | null>(null);
   const [annForm, setAnnForm] = useState({ text: '', active: true });
   const [annModal, setAnnModal] = useState(false);
@@ -186,6 +190,30 @@ export default function AdminDashboard() {
     a.href = '/api/admin/export';
     a.download = `billy-store-products-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
+  };
+
+  const handleBulkPrice = async () => {
+    if (!priceForm.value) return;
+    setSavingPrice(true);
+    setPriceResult(null);
+    try {
+      const res = await fetch('/api/admin/products/bulk-price', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ ...priceForm, value: parseFloat(priceForm.value) }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setPriceResult(`✅ تم تعديل سعر ${data.updated} منتج`);
+        fetchProducts();
+      } else {
+        setPriceResult(`❌ ${data.error}`);
+      }
+    } catch {
+      setPriceResult('❌ حدث خطأ');
+    }
+    setSavingPrice(false);
   };
 
   const handleDeleteSelected = async () => {
@@ -539,6 +567,13 @@ export default function AdminDashboard() {
                 </svg>
                 تصدير CSV
               </button>
+              <button onClick={() => { setPriceModal(true); setPriceResult(null); }}
+                className="bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/40 text-amber-400 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                </svg>
+                تعديل الأسعار
+              </button>
               <label className="bg-green-600/20 hover:bg-green-600/30 border border-green-600/40 text-green-400 font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 text-sm cursor-pointer">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -710,6 +745,114 @@ export default function AdminDashboard() {
               <button onClick={() => setAnnModal(false)}
                 className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
                 إلغاء
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Price Modal */}
+      {priceModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setPriceModal(false)}></div>
+          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-md">
+            <h3 className="text-xl font-black text-white mb-1">💰 تعديل الأسعار بالجملة</h3>
+            <p className="text-slate-400 text-sm mb-6">هذا الإجراء يعدّل الأسعار الفعلية في قاعدة البيانات بشكل دائم</p>
+
+            <div className="space-y-4">
+              {/* Direction */}
+              <div>
+                <label className="block text-slate-400 text-sm font-semibold mb-2">الاتجاه</label>
+                <div className="flex gap-2">
+                  <button onClick={() => setPriceForm({...priceForm, direction: 'increase'})}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.direction === 'increase' ? 'bg-green-500/20 border-green-500/50 text-green-400' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    📈 رفع السعر
+                  </button>
+                  <button onClick={() => setPriceForm({...priceForm, direction: 'decrease'})}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.direction === 'decrease' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    📉 تخفيض السعر
+                  </button>
+                </div>
+              </div>
+
+              {/* Mode */}
+              <div>
+                <label className="block text-slate-400 text-sm font-semibold mb-2">نوع التعديل</label>
+                <div className="flex gap-2">
+                  <button onClick={() => setPriceForm({...priceForm, mode: 'percentage'})}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'percentage' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    % نسبة مئوية
+                  </button>
+                  <button onClick={() => setPriceForm({...priceForm, mode: 'fixed'})}
+                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'fixed' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    ر.س مبلغ ثابت
+                  </button>
+                </div>
+              </div>
+
+              {/* Value */}
+              <div>
+                <label className="block text-slate-400 text-sm font-semibold mb-2">
+                  {priceForm.mode === 'percentage' ? 'النسبة (%)' : 'المبلغ (ريال)'}
+                </label>
+                <div className="relative">
+                  <input type="number" min="1" value={priceForm.value}
+                    onChange={e => setPriceForm({...priceForm, value: e.target.value})}
+                    placeholder={priceForm.mode === 'percentage' ? 'مثال: 20' : 'مثال: 30'}
+                    className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-amber-500 transition-colors" />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-400 text-lg font-black">
+                    {priceForm.mode === 'percentage' ? '%' : 'ر.س'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Category */}
+              <div>
+                <label className="block text-slate-400 text-sm font-semibold mb-2">تطبيق على</label>
+                <div className="flex gap-2">
+                  {[['all','كل المنتجات'],['games','الألعاب فقط'],['subscription','الاشتراكات فقط']].map(([val, label]) => (
+                    <button key={val} onClick={() => setPriceForm({...priceForm, category: val})}
+                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${priceForm.category === val ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400'}`}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Preview */}
+              {priceForm.value && (
+                <div className={`rounded-xl p-3 text-sm border ${priceForm.direction === 'increase' ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30'}`}>
+                  <p className={`font-bold mb-1 ${priceForm.direction === 'increase' ? 'text-green-400' : 'text-red-400'}`}>معاينة:</p>
+                  <p className="text-slate-300">
+                    سعر 100 ر.س →{' '}
+                    <span className={`font-black ${priceForm.direction === 'increase' ? 'text-green-400' : 'text-red-400'}`}>
+                      {priceForm.mode === 'percentage'
+                        ? Math.max(1, Math.round(priceForm.direction === 'increase'
+                            ? 100 * (1 + parseFloat(priceForm.value || '0') / 100)
+                            : 100 * (1 - parseFloat(priceForm.value || '0') / 100)))
+                        : Math.max(1, Math.round(priceForm.direction === 'increase'
+                            ? 100 + parseFloat(priceForm.value || '0')
+                            : 100 - parseFloat(priceForm.value || '0')))} ر.س
+                    </span>
+                  </p>
+                </div>
+              )}
+
+              {priceResult && (
+                <div className={`rounded-xl p-3 text-sm font-bold ${priceResult.startsWith('✅') ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                  {priceResult}
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3 mt-6">
+              <button onClick={handleBulkPrice} disabled={savingPrice || !priceForm.value}
+                className={`flex-1 disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all ${priceForm.direction === 'increase' ? 'bg-green-600 hover:bg-green-500' : 'bg-red-600 hover:bg-red-500'}`}>
+                {savingPrice ? 'جاري التعديل...' : priceForm.direction === 'increase' ? '📈 رفع الأسعار' : '📉 تخفيض الأسعار'}
+              </button>
+              <button onClick={() => setPriceModal(false)}
+                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl">
+                إغلاق
               </button>
             </div>
           </div>
