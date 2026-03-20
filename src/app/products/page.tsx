@@ -66,7 +66,15 @@ export default function ProductsPage() {
   const sorted = [...products].sort((a, b) => {
     if (sort === 'asc') return a.price - b.price;
     if (sort === 'desc') return b.price - a.price;
-return 0;
+    if (sort === 'discount') {
+      const dA = getDiscount(a);
+      const dB = getDiscount(b);
+      // Products with discount first, sorted by discount percentage desc
+      if (dA && !dB) return -1;
+      if (!dA && dB) return 1;
+      if (dA && dB) return dB.percentage - dA.percentage;
+    }
+    return 0;
   });
   const filtered = sorted.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
