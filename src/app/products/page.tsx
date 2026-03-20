@@ -100,12 +100,12 @@ return 0;
 
       <div className="max-w-7xl mx-auto px-4 pb-20">
         {/* Discount Banner */}
-        {discount && (
+        {discountsData?.global?.active && (
           <div className="mb-6 bg-gradient-to-l from-red-500/20 to-amber-500/10 border border-red-500/30 rounded-2xl px-5 py-4 flex items-center gap-3">
             <span className="text-3xl">🔥</span>
             <div>
-              <p className="text-white font-black text-lg">{discount.label}</p>
-              <p className="text-red-400 text-sm">خصم <span className="font-black text-xl">{discount.percentage}%</span> على جميع المنتجات — عرض لفترة محدودة!</p>
+              <p className="text-white font-black text-lg">{discountsData.global.label}</p>
+              <p className="text-red-400 text-sm">خصم <span className="font-black text-xl">{discountsData.global.percentage}%</span> على جميع المنتجات — عرض لفترة محدودة!</p>
             </div>
           </div>
         )}
