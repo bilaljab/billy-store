@@ -87,6 +87,11 @@ export async function initDb() {
     views INTEGER NOT NULL DEFAULT 0
   )`);
 
+  await db.execute(`CREATE TABLE IF NOT EXISTS site_visits (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    visited_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
   const a = await db.execute({ sql: 'SELECT id FROM admins WHERE username = ?', args: ['admin'] });
   if (a.rows.length === 0) {
     const adminPassword = process.env.ADMIN_PASSWORD;

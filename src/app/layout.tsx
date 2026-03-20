@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import AnnouncementBar from '@/components/ui/AnnouncementBar';
+import VisitTracker from '@/components/ui/VisitTracker';
 import WhatsAppFloat from '@/components/ui/WhatsAppFloat';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 
@@ -24,6 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="min-h-screen bg-dark text-slate-200 font-arabic">
         <AnnouncementBar />
+        <VisitTracker />
         {children}
         <WhatsAppFloat />
         <ScrollToTop />

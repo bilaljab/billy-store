@@ -48,6 +48,9 @@ export default function AdminDashboard() {
   const [priceForm, setPriceForm] = useState({ mode: 'percentage', value: '', direction: 'increase', category: 'all' });
   const [savingPrice, setSavingPrice] = useState(false);
   const [priceResult, setPriceResult] = useState<string | null>(null);
+  const [stats, setStats] = useState<{ totalVisits: number; todayVisits: number; productViews: { id: number; name: string; category: string; price: number; image: string | null; views: number }[] } | null>(null);
+  const [statsSort, setStatsSort] = useState<'views' | 'price'>('views');
+  const [showStats, setShowStats] = useState(false);
   const [announcement, setAnnouncement] = useState<{ text: string; active: boolean } | null>(null);
   const [annForm, setAnnForm] = useState({ text: '', active: true });
   const [annModal, setAnnModal] = useState(false);
@@ -190,6 +193,15 @@ export default function AdminDashboard() {
     a.href = '/api/admin/export';
     a.download = `billy-store-products-${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
+  };
+
+  const fetchStats = async () => {
+    try {
+      const res = await fetch('/api/admin/stats', { credentials: 'include' });
+      const data = await res.json();
+      setStats(data);
+      setShowStats(true);
+    } catch {}
   };
 
   const handleBulkPrice = async () => {
@@ -567,6 +579,13 @@ export default function AdminDashboard() {
                 </svg>
                 تصدير CSV
               </button>
+              <button onClick={fetchStats}
+                className="bg-purple-600/20 hover:bg-purple-600/30 border border-purple-600/40 text-purple-400 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+                الإحصائيات
+              </button>
               <button onClick={() => { setPriceModal(true); setPriceResult(null); }}
                 className="bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/40 text-amber-400 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -746,6 +765,90 @@ export default function AdminDashboard() {
                 className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
                 إلغاء
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Stats Modal */}
+      {showStats && stats && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowStats(false)}></div>
+          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-6 w-full max-w-2xl max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-xl font-black text-white">📊 إحصائيات الموقع</h3>
+              <button onClick={() => setShowStats(false)} className="text-slate-500 hover:text-white text-2xl leading-none">×</button>
+            </div>
+
+            {/* Visit counters */}
+            <div className="grid grid-cols-2 gap-3 mb-5">
+              <div className="bg-dark border border-dark-border rounded-2xl p-4 text-center">
+                <p className="text-3xl font-black text-accent">{stats.totalVisits.toLocaleString()}</p>
+                <p className="text-slate-400 text-xs mt-1">إجمالي الزيارات</p>
+              </div>
+              <div className="bg-dark border border-dark-border rounded-2xl p-4 text-center">
+                <p className="text-3xl font-black text-green-400">{stats.todayVisits.toLocaleString()}</p>
+                <p className="text-slate-400 text-xs mt-1">زيارات اليوم</p>
+              </div>
+            </div>
+
+            {/* Sort tabs */}
+            <div className="flex gap-2 mb-3">
+              <button onClick={() => setStatsSort('views')}
+                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all ${statsSort === 'views' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                ترتيب حسب المشاهدات
+              </button>
+              <button onClick={() => setStatsSort('price')}
+                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all ${statsSort === 'price' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                ترتيب حسب السعر
+              </button>
+            </div>
+
+            {/* Products table */}
+            <div className="overflow-y-auto flex-1">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-dark-card">
+                  <tr className="border-b border-dark-border">
+                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">#</th>
+                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">المنتج</th>
+                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">السعر</th>
+                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">المشاهدات</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[...stats.productViews]
+                    .sort((a, b) => statsSort === 'views' ? b.views - a.views : b.price - a.price)
+                    .map((p, i) => (
+                    <tr key={p.id} className="border-b border-dark-border/40 hover:bg-dark/40 transition-colors">
+                      <td className="py-2.5 px-3 text-slate-600 text-xs">{i + 1}</td>
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          {p.image ? (
+                            <img src={p.image} alt={p.name} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+                          ) : (
+                            <div className="w-8 h-8 rounded-lg bg-dark-border flex items-center justify-center flex-shrink-0 text-sm">
+                              {p.category === 'subscription' ? '⭐' : '🎮'}
+                            </div>
+                          )}
+                          <span className="text-white text-xs font-semibold line-clamp-1">{p.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-2.5 px-3 text-accent font-bold text-xs">{p.price} ر.س</td>
+                      <td className="py-2.5 px-3">
+                        <div className="flex items-center gap-2">
+                          <div className="flex-1 bg-dark-border rounded-full h-1.5 max-w-16">
+                            <div className="bg-primary rounded-full h-1.5 transition-all"
+                              style={{ width: `${stats.productViews[0]?.views > 0 ? (p.views / stats.productViews[0].views) * 100 : 0}%` }}></div>
+                          </div>
+                          <span className={`font-black text-xs ${p.views > 0 ? 'text-primary-light' : 'text-slate-600'}`}>
+                            {p.views > 0 ? p.views.toLocaleString() : '—'}
+                          </span>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
