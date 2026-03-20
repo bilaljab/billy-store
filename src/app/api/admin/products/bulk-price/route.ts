@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
 
     await db.execute({
       sql: 'UPDATE products SET price = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-      args: [newPrice, r.id],
+      args: [newPrice, Number(r.id)],
     });
     updated++;
   }
