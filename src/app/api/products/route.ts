@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
 
   if (category && category !== 'all') { sql += ' AND category = ?'; args.push(category); }
   if (featured === '1') { sql += ' AND featured = 1'; }
-  sql += ' ORDER BY created_at DESC';
+  sql += ' ORDER BY RANDOM()';
 
   const result = await db.execute({ sql, args });
   const res = NextResponse.json(result.rows.map(serializeProduct));
