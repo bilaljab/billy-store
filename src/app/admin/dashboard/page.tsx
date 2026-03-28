@@ -44,6 +44,7 @@ export default function AdminDashboard() {
     maxPrice: '',
   });
   const [savingTargeted, setSavingTargeted] = useState(false);
+  const [editingRule, setEditingRule] = useState<any | null>(null);
   const [priceModal, setPriceModal] = useState(false);
   const [priceForm, setPriceForm] = useState({ mode: 'percentage', value: '', direction: 'increase', category: 'all' });
   const [savingPrice, setSavingPrice] = useState(false);
@@ -101,19 +102,31 @@ export default function AdminDashboard() {
   const saveTargetedRule = async () => {
     if (!targetedForm.label || !targetedForm.percentage) return;
     setSavingTargeted(true);
-    await fetch('/api/admin/discounts', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        ...targetedForm,
-        percentage: parseFloat(targetedForm.percentage),
-        minPrice: targetedForm.minPrice ? parseFloat(targetedForm.minPrice) : null,
-        maxPrice: targetedForm.maxPrice ? parseFloat(targetedForm.maxPrice) : null,
-      }),
-    });
+    const body = {
+      ...targetedForm,
+      percentage: parseFloat(targetedForm.percentage),
+      minPrice: targetedForm.minPrice ? parseFloat(targetedForm.minPrice) : null,
+      maxPrice: targetedForm.maxPrice ? parseFloat(targetedForm.maxPrice) : null,
+    };
+    if (editingRule) {
+      // Update existing rule
+      await fetch('/api/admin/discounts', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ ...body, id: editingRule.id }),
+      });
+    } else {
+      await fetch('/api/admin/discounts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(body),
+      });
+    }
     setSavingTargeted(false);
     setTargetedModal(false);
+    setEditingRule(null);
     setTargetedForm({ type: 'range', label: '', percentage: '15', active: true, productIds: [], minPrice: '', maxPrice: '' });
     fetchTargetedRules();
   };
@@ -965,9 +978,9 @@ export default function AdminDashboard() {
       {/* Targeted Discount Modal */}
       {targetedModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setTargetedModal(false)}></div>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => { setTargetedModal(false); setEditingRule(null); setTargetedForm({ type: 'range', label: '', percentage: '15', active: true, productIds: [], minPrice: '', maxPrice: '' }); }}></div>
           <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-black text-white mb-2">🎯 خصم مستهدف</h3>
+            <h3 className="text-xl font-black text-white mb-2">{editingRule ? "✏️ تعديل الخصم المستهدف" : "🎯 خصم مستهدف جديد"}</h3>
             <p className="text-slate-400 text-sm mb-6">خصم على منتجات محددة أو نطاق سعري معين</p>
 
             {/* Type selector */}
@@ -1079,7 +1092,7 @@ export default function AdminDashboard() {
             <div className="flex gap-3 mt-6">
               <button onClick={saveTargetedRule} disabled={savingTargeted}
                 className="flex-1 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all">
-                {savingTargeted ? 'جاري الحفظ...' : '💾 حفظ القاعدة'}
+                {savingTargeted ? 'جاري الحفظ...' : editingRule ? '💾 حفظ التعديل' : '💾 إضافة القاعدة'}
               </button>
               <button onClick={() => setTargetedModal(false)}
                 className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl">

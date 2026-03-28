@@ -150,6 +150,18 @@ export default function AboutPage() {
                   <p className="text-pink-400 text-xs mt-1">تابعنا الآن ✓</p>
                 </div>
               </a>
+
+              <a href="https://t.me/BillyStore1" target="_blank" rel="noopener noreferrer"
+                className="flex items-center gap-4 bg-blue-600/10 border border-blue-600/30 hover:border-blue-500/60 hover:bg-blue-600/20 rounded-2xl p-6 transition-all group">
+                <div className="w-14 h-14 rounded-xl bg-blue-600/20 flex items-center justify-center group-hover:bg-blue-600/40 transition-all flex-shrink-0">
+                  <svg className="w-7 h-7 text-blue-400" fill="currentColor" viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+                </div>
+                <div>
+                  <p className="text-slate-400 text-xs mb-1">تيليجرام</p>
+                  <p className="text-white font-bold text-lg" dir="ltr">@BillyStore1</p>
+                  <p className="text-blue-400 text-xs mt-1">تواصل معنا ✓</p>
+                </div>
+              </a>
             </div>
           </div>
         </ScrollReveal>
