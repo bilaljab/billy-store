@@ -502,6 +502,22 @@ export default function AdminDashboard() {
                     </p>
                   </div>
                   <div className="flex gap-1 flex-shrink-0">
+                    <button onClick={() => {
+                        setEditingRule(rule);
+                        setTargetedForm({
+                          type: rule.type,
+                          label: rule.label,
+                          percentage: String(rule.percentage),
+                          active: rule.active,
+                          productIds: rule.productIds || [],
+                          minPrice: rule.minPrice !== null && rule.minPrice !== undefined ? String(rule.minPrice) : '',
+                          maxPrice: rule.maxPrice !== null && rule.maxPrice !== undefined ? String(rule.maxPrice) : '',
+                        });
+                        setTargetedModal(true);
+                      }}
+                      className="text-xs px-2 py-1 rounded-lg border border-primary/30 text-primary-light hover:bg-primary/20 transition-all">
+                      ✏️
+                    </button>
                     <button onClick={() => toggleTargetedRule(rule)}
                       className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-slate-700/50 border-slate-600 text-slate-400' : 'bg-green-600/20 border-green-600/40 text-green-400'}`}>
                       {rule.active ? '⏸' : '▶'}
