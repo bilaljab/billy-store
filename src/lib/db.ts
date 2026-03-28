@@ -95,7 +95,7 @@ export async function initDb() {
 
   // Add ip column if upgrading from old schema
   try {
-    await db.execute('ALTER TABLE site_visits ADD COLUMN ip TEXT NOT NULL DEFAULT 'unknown'');
+    await db.execute("ALTER TABLE site_visits ADD COLUMN ip TEXT NOT NULL DEFAULT 'unknown'");
   } catch { /* column already exists */ }
 
   const a = await db.execute({ sql: 'SELECT id FROM admins WHERE username = ?', args: ['admin'] });
