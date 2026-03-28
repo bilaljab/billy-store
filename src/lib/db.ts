@@ -89,8 +89,14 @@ export async function initDb() {
 
   await db.execute(`CREATE TABLE IF NOT EXISTS site_visits (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    ip TEXT NOT NULL DEFAULT 'unknown',
     visited_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  // Add ip column if upgrading from old schema
+  try {
+    await db.execute('ALTER TABLE site_visits ADD COLUMN ip TEXT NOT NULL DEFAULT 'unknown'');
+  } catch { /* column already exists */ }
 
   const a = await db.execute({ sql: 'SELECT id FROM admins WHERE username = ?', args: ['admin'] });
   if (a.rows.length === 0) {
