@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
 
         <div className="bg-dark-card border border-dark-border rounded-3xl p-8">
           {error && (
-            <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-6 text-sm text-center">
+            <div role="alert" className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-6 text-sm text-center">
               {error}
             </div>
           )}
