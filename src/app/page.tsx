@@ -28,7 +28,7 @@ async function getFeaturedProducts() {
 }
 
 export default async function HomePage() {
-  const featured = await getFeaturedProducts() as any[];
+  const featured = await getFeaturedProducts();
 
   return (
     <div className="min-h-screen bg-dark">
@@ -159,7 +159,7 @@ export default async function HomePage() {
 
           {featured.length > 0 ? (
             <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-              {featured.map((product: any, i: number) => (
+              {featured.map((product, i) => (
                 <ScrollReveal key={product.id} direction="up" delay={i * 80}>
                   <ProductCard product={product} />
                 </ScrollReveal>

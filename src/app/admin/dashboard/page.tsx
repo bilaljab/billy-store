@@ -11,6 +11,7 @@ interface Product {
   image: string | null;
   category: string;
   featured: number;
+  release_date?: string | null;
 }
 
 interface TargetedRule {
@@ -169,7 +170,7 @@ export default function AdminDashboard() {
   const openAdd = () => { setEditProduct(null); setForm(EMPTY_FORM); setError(''); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditProduct(p);
-    setForm({ name: p.name, description: p.description || '', price: String(p.price), image: p.image || '', category: p.category, featured: p.featured === 1, release_date: (p as any).release_date || '' });
+    setForm({ name: p.name, description: p.description || '', price: String(p.price), image: p.image || '', category: p.category, featured: p.featured === 1, release_date: p.release_date || '' });
     setError('');
     setModalOpen(true);
   };
@@ -1258,7 +1259,7 @@ export default function AdminDashboard() {
 
               <div>
                 <label className="block text-slate-400 text-sm font-semibold mb-2">تاريخ الإصدار (اختياري)</label>
-                <input type="date" value={(form as any).release_date || ''} onChange={e => setForm({...form, release_date: e.target.value} as any)}
+                <input type="date" value={form.release_date || ''} onChange={e => setForm({...form, release_date: e.target.value})}
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors text-sm" />
                 <p className="text-slate-600 text-xs mt-1">يُستخدم لترتيب المنتجات حسب الأحدث</p>
               </div>

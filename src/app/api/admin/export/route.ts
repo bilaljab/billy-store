@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
     p.price,
     p.category,
     p.featured ? 'true' : 'false',
-    (p as any).release_date || '',
+    p.release_date || '',
     p.image || '',
   ].map(escape).join(','));
 
