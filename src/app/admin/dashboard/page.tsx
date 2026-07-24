@@ -683,7 +683,7 @@ export default function AdminDashboard() {
                       <input type="checkbox"
                         checked={selectedIds.size === products.length && products.length > 0}
                         onChange={toggleSelectAll}
-                        className="w-4 h-4 accent-primary cursor-pointer" />
+                        className="w-5 h-5 accent-primary cursor-pointer" />
                     </th>
                     <th className="text-right text-muted text-sm font-semibold px-6 py-3">المنتج</th>
                     <th className="hidden sm:table-cell text-right text-muted text-sm font-semibold px-4 py-3">الفئة</th>
@@ -699,7 +699,7 @@ export default function AdminDashboard() {
                         <input type="checkbox"
                           checked={selectedIds.has(product.id)}
                           onChange={() => toggleSelect(product.id)}
-                          className="w-4 h-4 accent-primary cursor-pointer" />
+                          className="w-5 h-5 accent-primary cursor-pointer" />
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
