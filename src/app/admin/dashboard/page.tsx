@@ -740,23 +740,10 @@ export default function AdminDashboard() {
                             className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
                             تعديل
                           </button>
-                          {deleteConfirm === product.id ? (
-                            <div className="flex gap-1">
-                              <button onClick={() => handleDelete(product.id)}
-                                className="bg-red-500 text-white text-xs font-bold px-3 min-h-11 rounded-lg">
-                                تأكيد
-                              </button>
-                              <button onClick={() => setDeleteConfirm(null)}
-                                className="bg-dark border border-dark-border text-slate-400 text-xs px-2 min-h-11 rounded-lg">
-                                إلغاء
-                              </button>
-                            </div>
-                          ) : (
-                            <button onClick={() => setDeleteConfirm(product.id)}
-                              className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
-                              حذف
-                            </button>
-                          )}
+                          <button onClick={() => setDeleteConfirm(product.id)}
+                            className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
+                            حذف
+                          </button>
                         </div>
                       </td>
                     </tr>
@@ -767,6 +754,29 @@ export default function AdminDashboard() {
           )}
         </div>
       </div>
+
+      {/* Delete Confirm Modal */}
+      {deleteConfirm !== null && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}></div>
+          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-sm">
+            <h3 className="text-xl font-black text-white mb-2">حذف المنتج</h3>
+            <p className="text-slate-400 text-sm mb-6">
+              هل تريد حذف &quot;{products.find(p => p.id === deleteConfirm)?.name}&quot;؟ هذا الإجراء لا يمكن التراجع عنه.
+            </p>
+            <div className="flex gap-3">
+              <button onClick={() => handleDelete(deleteConfirm)}
+                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-black py-3 rounded-xl transition-all">
+                تأكيد الحذف
+              </button>
+              <button onClick={() => setDeleteConfirm(null)}
+                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
+                إلغاء
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Announcement Modal */}
       {annModal && (
