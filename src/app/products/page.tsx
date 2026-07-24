@@ -170,7 +170,7 @@ export default function ProductsPage() {
 
         {/* Grid */}
         {loading ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {[...Array(8)].map((_, i) => (
               <div key={i} className="bg-dark-card border border-dark-border rounded-2xl overflow-hidden animate-pulse">
                 <div className="aspect-[4/3] bg-dark-border"></div>
@@ -190,7 +190,7 @@ export default function ProductsPage() {
             <p className="text-muted">جرب البحث بكلمة مختلفة أو تصفح فئة أخرى</p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
             {filtered.map((product, i) => (
               <ScrollReveal key={product.id} direction="up" delay={i % 4 * 80}>
                 <ProductCard product={product} />
