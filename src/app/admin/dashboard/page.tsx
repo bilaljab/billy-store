@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Pencil, Save, Target, Tag, Trash2, Megaphone, TrendingUp, TrendingDown, AlertTriangle, BarChart3, Package, CheckCircle2, XCircle, X } from 'lucide-react';
+import { Pencil, Save, Target, Tag, Trash2, Megaphone, TrendingUp, TrendingDown, AlertTriangle, BarChart3, Package, CheckCircle2, XCircle, X, Trophy, HandCoins, Pause, Play, Gamepad2, Star } from 'lucide-react';
 
 interface Product {
   id: number;
@@ -413,9 +413,9 @@ export default function AdminDashboard() {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
             { label: 'إجمالي المنتجات', value: products.length, icon: <Package size={30} className="text-primary" />, color: 'primary' },
-            { label: 'ألعاب', value: products.filter(p => p.category === 'games').length, icon: '🎮', color: 'blue' },
-            { label: 'اشتراكات', value: products.filter(p => p.category === 'subscription').length, icon: '⭐', color: 'accent' },
-            { label: 'منتجات مميزة', value: products.filter(p => p.featured).length, icon: '🏆', color: 'amber' },
+            { label: 'ألعاب', value: products.filter(p => p.category === 'games').length, icon: <Gamepad2 size={30} className="text-blue-400" />, color: 'blue' },
+            { label: 'اشتراكات', value: products.filter(p => p.category === 'subscription').length, icon: <Star size={30} className="text-accent" />, color: 'accent' },
+            { label: 'منتجات مميزة', value: products.filter(p => p.featured).length, icon: <Trophy size={30} className="text-amber-400" />, color: 'amber' },
           ].map(s => (
             <div key={s.label} className="bg-dark-card border border-dark-border rounded-2xl p-5">
               <div className="text-3xl mb-2">{s.icon}</div>
@@ -439,7 +439,7 @@ export default function AdminDashboard() {
                     <CheckCircle2 size={16} className="text-current flex-shrink-0" /> خصم <span className="font-black">{discount.percentage}%</span> مفعّل — &quot;{discount.label}&quot;
                   </p>
                 ) : discount && !discount.active ? (
-                  <p className="text-muted text-xs mt-0.5">⏸ خصم {discount.percentage}% موقوف مؤقتاً</p>
+                  <p className="text-muted text-xs mt-0.5 flex items-center gap-1"><Pause size={16} className="text-current flex-shrink-0" /> خصم {discount.percentage}% موقوف مؤقتاً</p>
                 ) : (
                   <p className="text-muted text-xs mt-0.5">لا يوجد خصم مفعّل حالياً</p>
                 )}
@@ -448,8 +448,8 @@ export default function AdminDashboard() {
             <div className="flex gap-2 flex-wrap">
               {discount && (
                 <button onClick={() => toggleDiscount(!discount.active)}
-                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${discount.active ? 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700' : 'bg-green-600/20 border-green-600/40 text-green-400 hover:bg-green-600/30'}`}>
-                  {discount.active ? '⏸ إيقاف مؤقت' : '▶ تفعيل'}
+                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all inline-flex items-center justify-center gap-1 ${discount.active ? 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700' : 'bg-green-600/20 border-green-600/40 text-green-400 hover:bg-green-600/30'}`}>
+                  {discount.active ? <><Pause size={16} className="text-current" /> إيقاف مؤقت</> : <><Play size={16} className="text-current" /> تفعيل</>}
                 </button>
               )}
               <button onClick={() => setDiscountModal(true)}
@@ -491,8 +491,8 @@ export default function AdminDashboard() {
                 <div key={rule.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${rule.active ? 'bg-primary/5 border-primary/20' : 'bg-dark border-dark-border opacity-60'}`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-xs font-black px-2 py-0.5 rounded-full ${rule.type === 'product' ? 'bg-accent/20 text-accent' : 'bg-purple-500/20 text-purple-400'}`}>
-                        {rule.type === 'product' ? '🎮 منتجات محددة' : '💰 نطاق سعري'}
+                      <span className={`text-xs font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${rule.type === 'product' ? 'bg-accent/20 text-accent' : 'bg-purple-500/20 text-purple-400'}`}>
+                        {rule.type === 'product' ? '🎮 منتجات محددة' : <><HandCoins size={12} className="text-current" /> نطاق سعري</>}
                       </span>
                       <span className="text-red-400 font-black text-sm">-{rule.percentage}%</span>
                       <span className="text-slate-400 text-xs truncate">{rule.label}</span>
@@ -527,7 +527,7 @@ export default function AdminDashboard() {
                     </button>
                     <button onClick={() => toggleTargetedRule(rule)}
                       className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-slate-700/50 border-slate-600 text-slate-400' : 'bg-green-600/20 border-green-600/40 text-green-400'}`}>
-                      {rule.active ? '⏸' : '▶'}
+                      {rule.active ? <Pause size={16} className="text-current" /> : <Play size={16} className="text-current" />}
                     </button>
                     <button onClick={() => deleteTargetedRule(rule.id)}
                       className="text-xs px-2 py-1 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
@@ -554,7 +554,7 @@ export default function AdminDashboard() {
                     <CheckCircle2 size={16} className="text-current flex-shrink-0" /> &quot;{announcement.text}&quot;
                   </p>
                 ) : announcement && !announcement.active ? (
-                  <p className="text-muted text-xs mt-0.5">⏸ موقوف — &quot;{announcement.text}&quot;</p>
+                  <p className="text-muted text-xs mt-0.5 flex items-center gap-1"><Pause size={16} className="text-current flex-shrink-0" /> موقوف — &quot;{announcement.text}&quot;</p>
                 ) : (
                   <p className="text-muted text-xs mt-0.5">لا يوجد إعلان مفعّل</p>
                 )}
@@ -563,8 +563,8 @@ export default function AdminDashboard() {
             <div className="flex gap-2 flex-wrap">
               {announcement && (
                 <button onClick={() => toggleAnnouncement(!announcement.active)}
-                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${announcement.active ? 'bg-slate-700/50 border-slate-600 text-slate-300' : 'bg-primary/20 border-primary/40 text-primary-light'}`}>
-                  {announcement.active ? '⏸ إيقاف' : '▶ تفعيل'}
+                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all inline-flex items-center justify-center gap-1 ${announcement.active ? 'bg-slate-700/50 border-slate-600 text-slate-300' : 'bg-primary/20 border-primary/40 text-primary-light'}`}>
+                  {announcement.active ? <><Pause size={16} className="text-current" /> إيقاف</> : <><Play size={16} className="text-current" /> تفعيل</>}
                 </button>
               )}
               <button onClick={() => setAnnModal(true)}
@@ -801,7 +801,7 @@ export default function AdminDashboard() {
                   </span>
                 </button>
                 <span className="text-slate-300 text-sm font-semibold flex items-center gap-1">
-                  {annForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل — يظهر للزوار</> : '⏸ موقوف'}
+                  {annForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل — يظهر للزوار</> : <><Pause size={16} className="text-current" /> موقوف</>}
                 </span>
               </div>
               {annForm.text && (
@@ -913,7 +913,7 @@ export default function AdminDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setPriceModal(false)}></div>
           <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-md">
-            <h3 className="text-xl font-black text-white mb-1">💰 تعديل الأسعار بالجملة</h3>
+            <h3 className="text-xl font-black text-white mb-1 flex items-center gap-2"><HandCoins size={20} className="text-current" /> تعديل الأسعار بالجملة</h3>
             <p className="text-slate-400 text-sm mb-6">هذا الإجراء يعدّل الأسعار الفعلية في قاعدة البيانات بشكل دائم</p>
 
             <div className="space-y-4">
@@ -1032,8 +1032,8 @@ export default function AdminDashboard() {
             {/* Type selector */}
             <div className="flex gap-2 mb-5">
               <button onClick={() => setTargetedForm({...targetedForm, type: 'range', productIds: []})}
-                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'range' ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
-                💰 نطاق سعري
+                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all inline-flex items-center justify-center gap-1 ${targetedForm.type === 'range' ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
+                <HandCoins size={16} className="text-current" /> نطاق سعري
               </button>
               <button onClick={() => setTargetedForm({...targetedForm, type: 'product', minPrice: '', maxPrice: ''})}
                 className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'product' ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
@@ -1133,7 +1133,7 @@ export default function AdminDashboard() {
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${targetedForm.active ? 'right-1' : 'left-1'}`}></span>
                   </span>
                 </button>
-                <span className="text-slate-300 text-sm flex items-center gap-1">{targetedForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل</> : '⏸ موقوف'}</span>
+                <span className="text-slate-300 text-sm flex items-center gap-1">{targetedForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل</> : <><Pause size={16} className="text-current" /> موقوف</>}</span>
               </div>
             </div>
 
@@ -1184,7 +1184,7 @@ export default function AdminDashboard() {
                   </span>
                 </button>
                 <span className="text-slate-300 text-sm font-semibold flex items-center gap-1">
-                  {discountForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل — سيظهر للزوار فوراً</> : '⏸ موقوف — لن يظهر للزوار'}
+                  {discountForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل — سيظهر للزوار فوراً</> : <><Pause size={16} className="text-current" /> موقوف — لن يظهر للزوار</>}
                 </span>
               </div>
               {discountForm.percentage && (

@@ -128,7 +128,7 @@ export default async function HomePage() {
             {[
               {icon:<Trophy size={30} className="text-amber-400" />,title:'موثوقية عالية',desc:'أكثر من 7 سنوات في السوق'},
               {icon:<Zap size={30} className="text-accent" />,title:'تسليم فوري',desc:'رقمي وسريع 24/7'},
-              {icon:'💰',title:'أسعار منافسة',desc:'أرخص من المتجر الرسمي'},
+              {icon:<HandCoins size={30} className="text-accent" />,title:'أسعار منافسة',desc:'أرخص من المتجر الرسمي'},
               {icon:'🎮',title:'مكتبة ضخمة',desc:'PS4 و PS5 وكل جديد'},
             ].map((item,i) => (
               <ScrollReveal key={item.title} direction="up" delay={i*100}>

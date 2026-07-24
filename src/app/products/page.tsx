@@ -4,7 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
-import { Gamepad2, Star, Flame } from 'lucide-react';
+import { Gamepad2, Star, Flame, Target } from 'lucide-react';
 
 interface Product {
   id: number;
@@ -83,7 +83,7 @@ export default function ProductsPage() {
   );
 
   const categories = [
-    { value: 'all', label: 'الكل', icon: '🎯' },
+    { value: 'all', label: 'الكل', icon: <Target size={16} className="text-current" /> },
     { value: 'games', label: 'الألعاب', icon: <Gamepad2 size={16} className="text-current" /> },
     { value: 'subscription', label: 'الاشتراكات', icon: <Star size={16} className="text-current" /> },
   ];
