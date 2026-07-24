@@ -157,7 +157,7 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
                 </div>
               )}
             </div>
-            <span className="text-xs text-primary-light bg-primary/10 px-2 py-1 rounded-lg border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all duration-300 hidden sm:block whitespace-nowrap">
+            <span className="text-xs text-primary-light bg-primary/10 px-2 py-1 rounded-lg border border-primary/20 group-hover:bg-primary group-hover:text-white transition-all duration-300 whitespace-nowrap flex-shrink-0">
               تفاصيل ←
             </span>
           </div>
