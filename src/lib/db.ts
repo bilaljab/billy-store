@@ -21,8 +21,6 @@ export function serializeProduct(r: Row) {
 
 let _client: Client | null = null;
 let _initialized = false;
-// Keep connection warm between serverless invocations
-let _lastUsed = 0;
 
 export function getDb(): Client {
   if (!_client) {

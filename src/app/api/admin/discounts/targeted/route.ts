@@ -5,7 +5,7 @@ import { isAuthenticated } from '@/lib/auth';
 // Targeted discounts: per-product or price-range based
 // Stored as JSON array in settings table under key 'targeted_discounts'
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   await initDb();
   const db = getDb();
   const result = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });

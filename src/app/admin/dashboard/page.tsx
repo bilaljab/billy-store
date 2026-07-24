@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
@@ -25,7 +25,6 @@ export default function AdminDashboard() {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
   const [deleteConfirm, setDeleteConfirm] = useState<number | null>(null);
-  const [importModal, setImportModal] = useState(false);
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ imported: number; errors: string[] } | null>(null);
   const [discount, setDiscount] = useState<{ percentage: number; label: string; active: boolean } | null>(null);
@@ -56,7 +55,6 @@ export default function AdminDashboard() {
   const [annForm, setAnnForm] = useState({ text: '', active: true });
   const [annModal, setAnnModal] = useState(false);
   const [savingAnn, setSavingAnn] = useState(false);
-  const [views, setViews] = useState<Record<number, number>>({});
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [deletingSelected, setDeletingSelected] = useState(false);
   const router = useRouter();
@@ -85,10 +83,6 @@ export default function AdminDashboard() {
       setAnnouncement(data);
       if (data) setAnnForm({ text: data.text, active: data.active });
     }
-  }, []);
-
-  const fetchViews = useCallback(async () => {
-    // Views are tracked server-side; no client fetch needed
   }, []);
 
   const fetchTargetedRules = useCallback(async () => {
@@ -364,7 +358,7 @@ export default function AdminDashboard() {
       const data = await res.json();
       setImportResult({ imported: data.imported || 0, errors: data.errors || [] });
       if (data.imported > 0) fetchProducts();
-    } catch (err) {
+    } catch {
       setImportResult({ imported: 0, errors: ['حدث خطأ أثناء قراءة الملف'] });
     }
     setImporting(false);
@@ -429,7 +423,7 @@ export default function AdminDashboard() {
                 <h3 className="font-bold text-white text-sm">الخصم العالمي على المنتجات</h3>
                 {discount && discount.active ? (
                   <p className="text-amber-400 text-xs mt-0.5">
-                    ✅ خصم <span className="font-black">{discount.percentage}%</span> مفعّل — "{discount.label}"
+                    ✅ خصم <span className="font-black">{discount.percentage}%</span> مفعّل — &quot;{discount.label}&quot;
                   </p>
                 ) : discount && !discount.active ? (
                   <p className="text-slate-500 text-xs mt-0.5">⏸ خصم {discount.percentage}% موقوف مؤقتاً</p>
@@ -543,9 +537,9 @@ export default function AdminDashboard() {
               <div>
                 <h3 className="font-bold text-white text-sm">الشريط الإعلاني</h3>
                 {announcement && announcement.active ? (
-                  <p className="text-primary-light text-xs mt-0.5 line-clamp-1">✅ "{announcement.text}"</p>
+                  <p className="text-primary-light text-xs mt-0.5 line-clamp-1">✅ &quot;{announcement.text}&quot;</p>
                 ) : announcement && !announcement.active ? (
-                  <p className="text-slate-500 text-xs mt-0.5">⏸ موقوف — "{announcement.text}"</p>
+                  <p className="text-slate-500 text-xs mt-0.5">⏸ موقوف — &quot;{announcement.text}&quot;</p>
                 ) : (
                   <p className="text-slate-500 text-xs mt-0.5">لا يوجد إعلان مفعّل</p>
                 )}

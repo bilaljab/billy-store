@@ -183,8 +183,6 @@ function parseSheet(xml: string, strings: string[]): ProductRow[] {
   const rowRegex = /<row[^>]*>([\s\S]*?)<\/row>/g;
   let rowMatch;
   while ((rowMatch = rowRegex.exec(xml)) !== null) {
-    const cellRegex = /<c[^>]*(?:t="s"[^>]*)?>[\s\S]*?<v>([^<]*)<\/v>/g;
-    const typeRegex = /<c[^>]*t="([^"]*)"[^>]*>/g;
     const cells: string[] = [];
     const rowXml = rowMatch[1];
 
