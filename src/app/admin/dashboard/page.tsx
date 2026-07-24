@@ -686,9 +686,9 @@ export default function AdminDashboard() {
                         className="w-4 h-4 accent-primary cursor-pointer" />
                     </th>
                     <th className="text-right text-muted text-sm font-semibold px-6 py-3">المنتج</th>
-                    <th className="text-right text-muted text-sm font-semibold px-4 py-3">الفئة</th>
+                    <th className="hidden sm:table-cell text-right text-muted text-sm font-semibold px-4 py-3">الفئة</th>
                     <th className="text-right text-muted text-sm font-semibold px-4 py-3">السعر</th>
-                    <th className="text-right text-muted text-sm font-semibold px-4 py-3">مميز</th>
+                    <th className="hidden sm:table-cell text-right text-muted text-sm font-semibold px-4 py-3">مميز</th>
                     <th className="text-right text-muted text-sm font-semibold px-6 py-3">إجراءات</th>
                   </tr>
                 </thead>
@@ -718,7 +718,7 @@ export default function AdminDashboard() {
                           </div>
                         </div>
                       </td>
-                      <td className="px-4 py-4">
+                      <td className="hidden sm:table-cell px-4 py-4">
                         <span className={`text-xs font-bold px-2 py-1 rounded-full ${product.category === 'subscription' ? 'bg-accent/10 text-accent border border-accent/20' : 'bg-primary/10 text-primary-light border border-primary/20'}`}>
                           {product.category === 'subscription' ? 'اشتراك' : 'لعبة'}
                         </span>
@@ -727,7 +727,7 @@ export default function AdminDashboard() {
                         <span className="text-accent font-black">{product.price}</span>
                         <span className="text-muted text-xs mr-1">ر.س</span>
                       </td>
-                      <td className="px-4 py-4">
+                      <td className="hidden sm:table-cell px-4 py-4">
                         {product.featured ? (
                           <span className="text-amber-400 text-sm">⭐ نعم</span>
                         ) : (
