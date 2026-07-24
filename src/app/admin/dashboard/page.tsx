@@ -401,7 +401,7 @@ export default function AdminDashboard() {
           <a href="/" target="_blank" className="text-slate-400 hover:text-accent text-sm transition-colors">
             عرض الموقع ↗
           </a>
-          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-semibold px-4 py-2 rounded-lg transition-all">
+          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
             تسجيل خروج
           </button>
         </div>
@@ -447,17 +447,17 @@ export default function AdminDashboard() {
             <div className="flex gap-2 flex-wrap">
               {discount && (
                 <button onClick={() => toggleDiscount(!discount.active)}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all ${discount.active ? 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700' : 'bg-green-600/20 border-green-600/40 text-green-400 hover:bg-green-600/30'}`}>
+                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${discount.active ? 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700' : 'bg-green-600/20 border-green-600/40 text-green-400 hover:bg-green-600/30'}`}>
                   {discount.active ? '⏸ إيقاف مؤقت' : '▶ تفعيل'}
                 </button>
               )}
               <button onClick={() => setDiscountModal(true)}
-                className="text-xs font-bold px-4 py-1.5 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 transition-all">
+                className="text-xs font-bold px-4 min-h-11 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 transition-all">
                 {discount ? '✏️ تعديل الخصم' : '+ إضافة خصم'}
               </button>
               {discount && (
                 <button onClick={removeDiscount}
-                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
+                  className="text-xs font-bold px-3 min-h-11 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
                   🗑 حذف
                 </button>
               )}
@@ -478,7 +478,7 @@ export default function AdminDashboard() {
               </div>
             </div>
             <button onClick={() => setTargetedModal(true)}
-              className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 py-1.5 rounded-lg transition-all">
+              className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
               + إضافة قاعدة
             </button>
           </div>
@@ -560,17 +560,17 @@ export default function AdminDashboard() {
             <div className="flex gap-2 flex-wrap">
               {announcement && (
                 <button onClick={() => toggleAnnouncement(!announcement.active)}
-                  className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all ${announcement.active ? 'bg-slate-700/50 border-slate-600 text-slate-300' : 'bg-primary/20 border-primary/40 text-primary-light'}`}>
+                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${announcement.active ? 'bg-slate-700/50 border-slate-600 text-slate-300' : 'bg-primary/20 border-primary/40 text-primary-light'}`}>
                   {announcement.active ? '⏸ إيقاف' : '▶ تفعيل'}
                 </button>
               )}
               <button onClick={() => setAnnModal(true)}
-                className="text-xs font-bold px-4 py-1.5 rounded-lg bg-primary/20 border border-primary/40 text-primary-light hover:bg-primary/30 transition-all">
+                className="text-xs font-bold px-4 min-h-11 rounded-lg bg-primary/20 border border-primary/40 text-primary-light hover:bg-primary/30 transition-all">
                 {announcement ? '✏️ تعديل' : '+ إضافة إعلان'}
               </button>
               {announcement && (
                 <button onClick={removeAnnouncement}
-                  className="text-xs font-bold px-3 py-1.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
+                  className="text-xs font-bold px-3 min-h-11 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
                   🗑 حذف
                 </button>
               )}
@@ -590,7 +590,7 @@ export default function AdminDashboard() {
                   <p key={i} className="text-red-400 text-sm mt-1">⚠️ {e}</p>
                 ))}
               </div>
-              <button onClick={() => setImportResult(null)} className="text-muted hover:text-white text-xl">×</button>
+              <button onClick={() => setImportResult(null)} className="text-muted hover:text-white text-xl min-w-11 min-h-11 inline-flex items-center justify-center">×</button>
             </div>
           </div>
         )}
@@ -608,21 +608,21 @@ export default function AdminDashboard() {
                 قالب CSV
               </a>
               <button onClick={handleExport}
-                className="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-400 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-400 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
                 تصدير CSV
               </button>
               <button onClick={fetchStats}
-                className="bg-purple-600/20 hover:bg-purple-600/30 border border-purple-600/40 text-purple-400 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-purple-600/20 hover:bg-purple-600/30 border border-purple-600/40 text-purple-400 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
                 الإحصائيات
               </button>
               <button onClick={() => { setPriceModal(true); setPriceResult(null); }}
-                className="bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/40 text-amber-400 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/40 text-amber-400 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
@@ -635,7 +635,7 @@ export default function AdminDashboard() {
                 {importing ? 'جاري الاستيراد...' : 'استيراد Excel / CSV'}
                 <input type="file" accept=".xlsx,.xls,.csv" onChange={handleExcelImport} className="hidden" disabled={importing} />
               </label>
-              <button onClick={openAdd} className="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-5 rounded-xl transition-all flex items-center gap-2 text-sm">
+              <button onClick={openAdd} className="bg-primary hover:bg-primary-dark text-white font-bold min-h-11 px-5 rounded-xl transition-all flex items-center gap-2 text-sm">
                 <span className="text-lg leading-none">+</span>
                 إضافة منتج
               </button>
@@ -648,11 +648,11 @@ export default function AdminDashboard() {
               <span className="text-red-400 text-sm font-bold">تم تحديد {selectedIds.size} منتج</span>
               <div className="flex gap-2 mr-auto">
                 <button onClick={() => setSelectedIds(new Set())}
-                  className="text-slate-400 hover:text-white text-xs px-3 py-1.5 rounded-lg border border-dark-border transition-all">
+                  className="text-slate-400 hover:text-white text-xs px-3 min-h-11 rounded-lg border border-dark-border transition-all">
                   إلغاء التحديد
                 </button>
                 <button onClick={handleDeleteSelected} disabled={deletingSelected}
-                  className="bg-red-500 hover:bg-red-600 text-white text-xs font-black px-4 py-1.5 rounded-lg transition-all disabled:opacity-50">
+                  className="bg-red-500 hover:bg-red-600 text-white text-xs font-black px-4 min-h-11 rounded-lg transition-all disabled:opacity-50">
                   {deletingSelected ? 'جاري الحذف...' : `🗑 حذف المحدد (${selectedIds.size})`}
                 </button>
               </div>
@@ -730,23 +730,23 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <button onClick={() => openEdit(product)}
-                            className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 py-1.5 rounded-lg transition-all">
+                            className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
                             تعديل
                           </button>
                           {deleteConfirm === product.id ? (
                             <div className="flex gap-1">
                               <button onClick={() => handleDelete(product.id)}
-                                className="bg-red-500 text-white text-xs font-bold px-3 py-1.5 rounded-lg">
+                                className="bg-red-500 text-white text-xs font-bold px-3 min-h-11 rounded-lg">
                                 تأكيد
                               </button>
                               <button onClick={() => setDeleteConfirm(null)}
-                                className="bg-dark border border-dark-border text-slate-400 text-xs px-2 py-1.5 rounded-lg">
+                                className="bg-dark border border-dark-border text-slate-400 text-xs px-2 min-h-11 rounded-lg">
                                 إلغاء
                               </button>
                             </div>
                           ) : (
                             <button onClick={() => setDeleteConfirm(product.id)}
-                              className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold px-3 py-1.5 rounded-lg transition-all">
+                              className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
                               حذف
                             </button>
                           )}
@@ -812,7 +812,7 @@ export default function AdminDashboard() {
           <div className="relative bg-dark-card border border-dark-border rounded-3xl p-6 w-full max-w-2xl max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-xl font-black text-white">📊 إحصائيات الموقع</h3>
-              <button onClick={() => setShowStats(false)} className="text-muted hover:text-white text-2xl leading-none">×</button>
+              <button onClick={() => setShowStats(false)} className="text-muted hover:text-white text-2xl leading-none min-w-11 min-h-11 inline-flex items-center justify-center">×</button>
             </div>
 
             {/* Visit counters */}
@@ -830,11 +830,11 @@ export default function AdminDashboard() {
             {/* Sort tabs */}
             <div className="flex gap-2 mb-3">
               <button onClick={() => setStatsSort('views')}
-                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all ${statsSort === 'views' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'views' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
                 ترتيب حسب المشاهدات
               </button>
               <button onClick={() => setStatsSort('price')}
-                className={`text-xs font-bold px-3 py-1.5 rounded-lg border transition-all ${statsSort === 'price' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'price' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
                 ترتيب حسب السعر
               </button>
             </div>
@@ -903,11 +903,11 @@ export default function AdminDashboard() {
                 <label className="block text-slate-400 text-sm font-semibold mb-2">الاتجاه</label>
                 <div className="flex gap-2">
                   <button onClick={() => setPriceForm({...priceForm, direction: 'increase'})}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.direction === 'increase' ? 'bg-green-500/20 border-green-500/50 text-green-400' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.direction === 'increase' ? 'bg-green-500/20 border-green-500/50 text-green-400' : 'bg-dark border-dark-border text-slate-400'}`}>
                     📈 رفع السعر
                   </button>
                   <button onClick={() => setPriceForm({...priceForm, direction: 'decrease'})}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.direction === 'decrease' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.direction === 'decrease' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-dark border-dark-border text-slate-400'}`}>
                     📉 تخفيض السعر
                   </button>
                 </div>
@@ -918,11 +918,11 @@ export default function AdminDashboard() {
                 <label className="block text-slate-400 text-sm font-semibold mb-2">نوع التعديل</label>
                 <div className="flex gap-2">
                   <button onClick={() => setPriceForm({...priceForm, mode: 'percentage'})}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'percentage' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'percentage' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
                     % نسبة مئوية
                   </button>
                   <button onClick={() => setPriceForm({...priceForm, mode: 'fixed'})}
-                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'fixed' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'fixed' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
                     ر.س مبلغ ثابت
                   </button>
                 </div>
@@ -950,7 +950,7 @@ export default function AdminDashboard() {
                 <div className="flex gap-2">
                   {[['all','كل المنتجات'],['games','الألعاب فقط'],['subscription','الاشتراكات فقط']].map(([val, label]) => (
                     <button key={val} onClick={() => setPriceForm({...priceForm, category: val})}
-                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${priceForm.category === val ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400'}`}>
+                      className={`flex-1 min-h-11 rounded-xl text-xs font-bold border transition-all ${priceForm.category === val ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400'}`}>
                       {label}
                     </button>
                   ))}
@@ -1008,11 +1008,11 @@ export default function AdminDashboard() {
             {/* Type selector */}
             <div className="flex gap-2 mb-5">
               <button onClick={() => setTargetedForm({...targetedForm, type: 'range', productIds: []})}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'range' ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
+                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'range' ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
                 💰 نطاق سعري
               </button>
               <button onClick={() => setTargetedForm({...targetedForm, type: 'product', minPrice: '', maxPrice: ''})}
-                className={`flex-1 py-2.5 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'product' ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
+                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'product' ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
                 🎮 منتجات محددة
               </button>
             </div>
