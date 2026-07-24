@@ -67,3 +67,12 @@ body { background-color: #050A14; color: #e2e8f0; overflow-x: hidden; }
 .animation-delay-200 { animation-delay: 200ms; }
 .animation-delay-400 { animation-delay: 400ms; }
 .animation-delay-600 { animation-delay: 600ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-float, .animate-glow, .animate-slide-up, .animate-fade-in,
+  .ps-btn, .card-hover {
+    animation: none !important;
+    transition: none !important;
+  }
+}
