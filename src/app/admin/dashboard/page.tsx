@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { Pencil, Save, Target, Tag, Trash2, Megaphone, TrendingUp, TrendingDown, AlertTriangle, BarChart3, CheckCircle2, XCircle, X } from 'lucide-react';
+import { Pencil, Save, Target, Tag, Trash2, Megaphone, TrendingUp, TrendingDown, AlertTriangle, BarChart3, Package, CheckCircle2, XCircle, X } from 'lucide-react';
 
 interface Product {
   id: number;
@@ -412,7 +412,7 @@ export default function AdminDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'إجمالي المنتجات', value: products.length, icon: '📦', color: 'primary' },
+            { label: 'إجمالي المنتجات', value: products.length, icon: <Package size={30} className="text-primary" />, color: 'primary' },
             { label: 'ألعاب', value: products.filter(p => p.category === 'games').length, icon: '🎮', color: 'blue' },
             { label: 'اشتراكات', value: products.filter(p => p.category === 'subscription').length, icon: '⭐', color: 'accent' },
             { label: 'منتجات مميزة', value: products.filter(p => p.featured).length, icon: '🏆', color: 'amber' },
@@ -670,7 +670,7 @@ export default function AdminDashboard() {
             <div className="text-center py-16 text-muted">جاري التحميل...</div>
           ) : products.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-5xl mb-3">📦</div>
+              <div className="mb-3 flex items-center justify-center"><Package size={48} className="text-muted" /></div>
               <p className="text-slate-400">لا توجد منتجات بعد</p>
               <button onClick={openAdd} className="mt-4 ps-btn text-sm">أضف أول منتج</button>
             </div>
