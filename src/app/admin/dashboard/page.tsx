@@ -13,6 +13,17 @@ interface Product {
   featured: number;
 }
 
+interface TargetedRule {
+  id: number;
+  type: 'product' | 'range';
+  label: string;
+  percentage: number;
+  active: boolean;
+  productIds: number[];
+  minPrice: number | null;
+  maxPrice: number | null;
+}
+
 const EMPTY_FORM = { name: '', description: '', price: '', image: '', category: 'games', featured: false, release_date: '' };
 
 export default function AdminDashboard() {
@@ -31,7 +42,7 @@ export default function AdminDashboard() {
   const [discountForm, setDiscountForm] = useState({ percentage: '20', label: 'عرض خاص', active: true });
   const [discountModal, setDiscountModal] = useState(false);
   const [savingDiscount, setSavingDiscount] = useState(false);
-  const [targetedRules, setTargetedRules] = useState<any[]>([]);
+  const [targetedRules, setTargetedRules] = useState<TargetedRule[]>([]);
   const [targetedModal, setTargetedModal] = useState(false);
   const [targetedForm, setTargetedForm] = useState({
     type: 'range' as 'range' | 'product',
@@ -43,7 +54,7 @@ export default function AdminDashboard() {
     maxPrice: '',
   });
   const [savingTargeted, setSavingTargeted] = useState(false);
-  const [editingRule, setEditingRule] = useState<any | null>(null);
+  const [editingRule, setEditingRule] = useState<TargetedRule | null>(null);
   const [priceModal, setPriceModal] = useState(false);
   const [priceForm, setPriceForm] = useState({ mode: 'percentage', value: '', direction: 'increase', category: 'all' });
   const [savingPrice, setSavingPrice] = useState(false);
@@ -135,7 +146,7 @@ export default function AdminDashboard() {
     fetchTargetedRules();
   };
 
-  const toggleTargetedRule = async (rule: any) => {
+  const toggleTargetedRule = async (rule: TargetedRule) => {
     await fetch('/api/admin/discounts/targeted', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -474,7 +485,7 @@ export default function AdminDashboard() {
             <p className="text-slate-600 text-xs text-center py-4">لا توجد قواعد خصم مستهدفة</p>
           ) : (
             <div className="space-y-2">
-              {targetedRules.map((rule: any) => (
+              {targetedRules.map((rule) => (
                 <div key={rule.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${rule.active ? 'bg-primary/5 border-primary/20' : 'bg-dark border-dark-border opacity-60'}`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
