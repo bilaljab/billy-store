@@ -36,7 +36,7 @@ export default function ProductActions({ product, waMsg }: Props) {
   return (
     <div className="flex flex-col gap-3">
       {/* Main CTA buttons */}
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col lg:flex-row gap-3">
         <a href={`https://wa.me/966508949041?text=${waMsg}`} target="_blank" rel="noopener noreferrer"
           className="flex-1 flex items-center justify-center gap-3 bg-green-600 hover:bg-green-500 text-white font-black py-4 px-6 rounded-xl transition-all duration-300 hover:shadow-xl hover:shadow-green-500/30 text-lg">
           <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
