@@ -604,9 +604,9 @@ export default function AdminDashboard() {
 
         {/* Products Table */}
         <div className="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-4 border-b border-dark-border">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-dark-border">
             <h2 className="font-black text-white text-lg">إدارة المنتجات</h2>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <a href="/template.csv" download="billy-store-template.csv"
                 className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
