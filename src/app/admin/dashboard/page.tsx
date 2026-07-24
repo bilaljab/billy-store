@@ -70,7 +70,7 @@ export default function AdminDashboard() {
   });
 
   const fetchDiscount = useCallback(async () => {
-    const res = await fetch('/api/admin/discount', { credentials: 'include' });
+    const res = await fetch('/api/admin/discounts/global', { credentials: 'include' });
     if (res.ok) {
       const data = await res.json();
       setDiscount(data);
@@ -93,7 +93,7 @@ export default function AdminDashboard() {
 
   const fetchTargetedRules = useCallback(async () => {
     try {
-      const res = await fetch('/api/admin/discounts', { credentials: 'include' });
+      const res = await fetch('/api/admin/discounts/targeted', { credentials: 'include' });
       const data = await res.json();
       setTargetedRules(data);
     } catch {}
@@ -110,14 +110,14 @@ export default function AdminDashboard() {
     };
     if (editingRule) {
       // Update existing rule
-      await fetch('/api/admin/discounts', {
+      await fetch('/api/admin/discounts/targeted', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify({ ...body, id: editingRule.id }),
       });
     } else {
-      await fetch('/api/admin/discounts', {
+      await fetch('/api/admin/discounts/targeted', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -132,7 +132,7 @@ export default function AdminDashboard() {
   };
 
   const deleteTargetedRule = async (id: number) => {
-    await fetch('/api/admin/discounts', {
+    await fetch('/api/admin/discounts/targeted', {
       method: 'DELETE',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -142,7 +142,7 @@ export default function AdminDashboard() {
   };
 
   const toggleTargetedRule = async (rule: any) => {
-    await fetch('/api/admin/discounts', {
+    await fetch('/api/admin/discounts/targeted', {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -280,7 +280,7 @@ export default function AdminDashboard() {
 
   const saveDiscount = async () => {
     setSavingDiscount(true);
-    await fetch('/api/admin/discount', {
+    await fetch('/api/admin/discounts/global', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...discountForm, percentage: parseFloat(discountForm.percentage) }),
@@ -291,14 +291,14 @@ export default function AdminDashboard() {
   };
 
   const removeDiscount = async () => {
-    await fetch('/api/admin/discount', { method: 'DELETE', credentials: 'include' });
+    await fetch('/api/admin/discounts/global', { method: 'DELETE', credentials: 'include' });
     setDiscount(null);
     setDiscountModal(false);
   };
 
   const toggleDiscount = async (active: boolean) => {
     if (!discount) return;
-    await fetch('/api/admin/discount', {
+    await fetch('/api/admin/discounts/global', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...discount, active }),
