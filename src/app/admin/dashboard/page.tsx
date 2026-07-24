@@ -393,7 +393,7 @@ export default function AdminDashboard() {
             <span className="text-accent font-black text-xs">BS</span>
           </div>
           <div>
-            <span className="font-black text-white text-sm">Billy Store</span>
+            <h1 className="font-black text-white text-sm" aria-label="لوحة تحكم Billy Store">Billy Store</h1>
             <p className="text-slate-500 text-xs">لوحة التحكم</p>
           </div>
         </div>
