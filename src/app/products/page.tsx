@@ -4,6 +4,7 @@ import Navbar from '@/components/layout/Navbar';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
+import { Gamepad2, Star, Flame } from 'lucide-react';
 
 interface Product {
   id: number;
@@ -83,8 +84,8 @@ export default function ProductsPage() {
 
   const categories = [
     { value: 'all', label: 'الكل', icon: '🎯' },
-    { value: 'games', label: 'الألعاب', icon: '🎮' },
-    { value: 'subscription', label: 'الاشتراكات', icon: '⭐' },
+    { value: 'games', label: 'الألعاب', icon: <Gamepad2 size={16} className="text-current" /> },
+    { value: 'subscription', label: 'الاشتراكات', icon: <Star size={16} className="text-current" /> },
   ];
 
   return (
@@ -110,7 +111,7 @@ export default function ProductsPage() {
         {/* Discount Banner */}
         {discountsData?.global?.active && (
           <div className="mb-6 bg-gradient-to-l from-red-500/20 to-amber-500/10 border border-red-500/30 rounded-2xl px-5 py-4 flex items-center gap-3">
-            <span className="text-3xl">🔥</span>
+            <Flame size={30} className="text-red-400" />
             <div>
               <p className="text-white font-black text-lg">{discountsData.global.label}</p>
               <p className="text-red-400 text-sm">خصم <span className="font-black text-xl">{discountsData.global.percentage}%</span> على جميع المنتجات — عرض لفترة محدودة!</p>
@@ -184,7 +185,7 @@ export default function ProductsPage() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="text-center py-24">
-            <div className="text-6xl mb-4">🎮</div>
+            <div className="mb-4 flex items-center justify-center"><Gamepad2 size={60} className="text-muted" /></div>
             <h3 className="text-xl font-bold text-slate-400 mb-2">لا توجد نتائج</h3>
             <p className="text-muted">جرب البحث بكلمة مختلفة أو تصفح فئة أخرى</p>
           </div>

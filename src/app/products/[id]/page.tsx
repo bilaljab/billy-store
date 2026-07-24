@@ -22,6 +22,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import ProductActions from '@/components/ui/ProductActions';
 import RelatedProducts from '@/components/ui/RelatedProducts';
+import { Gamepad2, Star } from 'lucide-react';
 
 // Single DB connection for all data on this page
 async function getPageData(id: string) {
@@ -126,7 +127,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   </div>
                 ) : (
                   <div className="w-32 h-32 rounded-2xl bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
-                    <span className="text-7xl">🎮</span>
+                    <Gamepad2 size={72} className="text-primary-light" />
                   </div>
                 )}
               </div>
@@ -150,7 +151,9 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 product.category === 'subscription' ? 'text-accent bg-accent/10 border-accent/30' : 'text-primary-light bg-primary/10 border-primary/30'
               }`}>{categoryLabel}</span>
               {product.featured === 1 && (
-                <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400">⭐ منتج مميز</span>
+                <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 inline-flex items-center gap-1">
+                  <Star size={16} className="text-current" /> منتج مميز
+                </span>
               )}
               {views > 0 && (
                 <span className="text-xs text-muted flex items-center gap-1">

@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, memo } from 'react';
+import { Gamepad2, Star } from 'lucide-react';
 
 interface Product {
   id: number;
@@ -109,7 +110,7 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
                 </div>
               ) : (
                 <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
-                  <span className="text-2xl sm:text-3xl">🎮</span>
+                  <Gamepad2 className="w-6 h-6 sm:w-8 sm:h-8 text-primary-light" />
                 </div>
               )}
             </div>
@@ -121,7 +122,9 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
               </span>
             )}
             {product.featured === 1 && !discount && (
-              <span className="bg-amber-500 text-dark text-xs font-black px-1.5 py-0.5 rounded-full">⭐</span>
+              <span className="bg-amber-500 text-dark px-1.5 py-0.5 rounded-full inline-flex items-center justify-center">
+                <Star size={16} className="text-current" />
+              </span>
             )}
           </div>
           <div className="absolute inset-0 bg-gradient-to-t from-dark-card/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
