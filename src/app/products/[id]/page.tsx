@@ -108,7 +108,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <span className="text-slate-300 line-clamp-1">{product.name}</span>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
           <div className="relative aspect-square bg-gradient-to-br from-primary/20 to-dark-card border border-dark-border rounded-3xl overflow-hidden">
             {product.image ? (
               <Image
