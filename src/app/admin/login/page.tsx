@@ -55,8 +55,9 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-slate-400 text-sm font-semibold mb-2">اسم المستخدم</label>
+              <label htmlFor="login-username" className="block text-slate-400 text-sm font-semibold mb-2">اسم المستخدم</label>
               <input
+                id="login-username"
                 type="text"
                 value={form.username}
                 onChange={e => setForm({ ...form, username: e.target.value })}
@@ -66,8 +67,9 @@ export default function AdminLoginPage() {
               />
             </div>
             <div>
-              <label className="block text-slate-400 text-sm font-semibold mb-2">كلمة المرور</label>
+              <label htmlFor="login-password" className="block text-slate-400 text-sm font-semibold mb-2">كلمة المرور</label>
               <input
+                id="login-password"
                 type="password"
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}

@@ -770,8 +770,8 @@ export default function AdminDashboard() {
             <p className="text-slate-400 text-sm mb-6">يظهر في أعلى الموقع لجميع الزوار</p>
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">نص الإعلان</label>
-                <input type="text" value={annForm.text}
+                <label htmlFor="announcement-text" className="block text-slate-400 text-sm font-semibold mb-2">نص الإعلان</label>
+                <input id="announcement-text" type="text" value={annForm.text}
                   onChange={e => setAnnForm({...annForm, text: e.target.value})}
                   placeholder="مثال: 🔥 تسليم فوري خلال دقائق — تواصل معنا الآن!"
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
@@ -930,11 +930,11 @@ export default function AdminDashboard() {
 
               {/* Value */}
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">
+                <label htmlFor="bulk-price-value" className="block text-slate-400 text-sm font-semibold mb-2">
                   {priceForm.mode === 'percentage' ? 'النسبة (%)' : 'المبلغ (ريال)'}
                 </label>
                 <div className="relative">
-                  <input type="number" min="1" value={priceForm.value}
+                  <input id="bulk-price-value" type="number" min="1" value={priceForm.value}
                     onChange={e => setPriceForm({...priceForm, value: e.target.value})}
                     placeholder={priceForm.mode === 'percentage' ? 'مثال: 20' : 'مثال: 30'}
                     className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-amber-500 transition-colors" />
@@ -1020,8 +1020,8 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               {/* Label */}
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">اسم العرض</label>
-                <input type="text" value={targetedForm.label}
+                <label htmlFor="targeted-label" className="block text-slate-400 text-sm font-semibold mb-2">اسم العرض</label>
+                <input id="targeted-label" type="text" value={targetedForm.label}
                   onChange={e => setTargetedForm({...targetedForm, label: e.target.value})}
                   placeholder="مثال: عرض الألعاب الغالية"
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
@@ -1029,9 +1029,9 @@ export default function AdminDashboard() {
 
               {/* Percentage */}
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
+                <label htmlFor="targeted-percentage" className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
                 <div className="relative">
-                  <input type="number" min="1" max="90" value={targetedForm.percentage}
+                  <input id="targeted-percentage" type="number" min="1" max="90" value={targetedForm.percentage}
                     onChange={e => setTargetedForm({...targetedForm, percentage: e.target.value})}
                     className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-primary transition-colors"
                     placeholder="15" />
@@ -1043,15 +1043,15 @@ export default function AdminDashboard() {
               {targetedForm.type === 'range' && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-slate-400 text-sm font-semibold mb-2">السعر من (ر.س)</label>
-                    <input type="number" value={targetedForm.minPrice}
+                    <label htmlFor="targeted-min-price" className="block text-slate-400 text-sm font-semibold mb-2">السعر من (ر.س)</label>
+                    <input id="targeted-min-price" type="number" value={targetedForm.minPrice}
                       onChange={e => setTargetedForm({...targetedForm, minPrice: e.target.value})}
                       placeholder="0 (بدون حد أدنى)"
                       className="w-full bg-dark border border-dark-border rounded-xl px-3 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
                   </div>
                   <div>
-                    <label className="block text-slate-400 text-sm font-semibold mb-2">السعر إلى (ر.س)</label>
-                    <input type="number" value={targetedForm.maxPrice}
+                    <label htmlFor="targeted-max-price" className="block text-slate-400 text-sm font-semibold mb-2">السعر إلى (ر.س)</label>
+                    <input id="targeted-max-price" type="number" value={targetedForm.maxPrice}
                       onChange={e => setTargetedForm({...targetedForm, maxPrice: e.target.value})}
                       placeholder="∞ (بدون حد أعلى)"
                       className="w-full bg-dark border border-dark-border rounded-xl px-3 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
@@ -1134,9 +1134,9 @@ export default function AdminDashboard() {
             <p className="text-slate-400 text-sm mb-6">سيُطبق هذا الخصم تلقائياً على جميع المنتجات دون تعديل الأسعار الأصلية</p>
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
+                <label htmlFor="global-discount-percentage" className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
                 <div className="relative">
-                  <input type="number" min="1" max="90" value={discountForm.percentage}
+                  <input id="global-discount-percentage" type="number" min="1" max="90" value={discountForm.percentage}
                     onChange={e => setDiscountForm({...discountForm, percentage: e.target.value})}
                     className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-amber-500 transition-colors"
                     placeholder="20" />
@@ -1144,8 +1144,8 @@ export default function AdminDashboard() {
                 </div>
               </div>
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">اسم العرض (يظهر للزوار)</label>
-                <input type="text" value={discountForm.label}
+                <label htmlFor="global-discount-label" className="block text-slate-400 text-sm font-semibold mb-2">اسم العرض (يظهر للزوار)</label>
+                <input id="global-discount-label" type="text" value={discountForm.label}
                   onChange={e => setDiscountForm({...discountForm, label: e.target.value})}
                   placeholder="مثال: عرض رمضان، تخفيضات الصيف..."
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition-colors text-sm" />
@@ -1197,15 +1197,15 @@ export default function AdminDashboard() {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">اسم المنتج *</label>
-                <input value={form.name} onChange={e => setForm({...form, name: e.target.value})}
+                <label htmlFor="product-name" className="block text-slate-400 text-sm font-semibold mb-2">اسم المنتج *</label>
+                <input id="product-name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}
                   placeholder="مثال: God of War Ragnarök"
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
               </div>
 
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">الوصف</label>
-                <textarea value={form.description} onChange={e => setForm({...form, description: e.target.value})}
+                <label htmlFor="product-description" className="block text-slate-400 text-sm font-semibold mb-2">الوصف</label>
+                <textarea id="product-description" value={form.description} onChange={e => setForm({...form, description: e.target.value})}
                   placeholder="وصف مختصر للمنتج..."
                   rows={3}
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm resize-none" />
@@ -1213,14 +1213,14 @@ export default function AdminDashboard() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-slate-400 text-sm font-semibold mb-2">السعر (ريال) *</label>
-                  <input type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})}
+                  <label htmlFor="product-price" className="block text-slate-400 text-sm font-semibold mb-2">السعر (ريال) *</label>
+                  <input id="product-price" type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})}
                     placeholder="0"
                     className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
                 </div>
                 <div>
-                  <label className="block text-slate-400 text-sm font-semibold mb-2">الفئة</label>
-                  <select value={form.category} onChange={e => setForm({...form, category: e.target.value})}
+                  <label htmlFor="product-category" className="block text-slate-400 text-sm font-semibold mb-2">الفئة</label>
+                  <select id="product-category" value={form.category} onChange={e => setForm({...form, category: e.target.value})}
                     className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors text-sm">
                     <option value="games">🎮 لعبة</option>
                     <option value="subscription">⭐ اشتراك PS Plus</option>
@@ -1258,8 +1258,8 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">تاريخ الإصدار (اختياري)</label>
-                <input type="date" value={form.release_date || ''} onChange={e => setForm({...form, release_date: e.target.value})}
+                <label htmlFor="product-release-date" className="block text-slate-400 text-sm font-semibold mb-2">تاريخ الإصدار (اختياري)</label>
+                <input id="product-release-date" type="date" value={form.release_date || ''} onChange={e => setForm({...form, release_date: e.target.value})}
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors text-sm" />
                 <p className="text-slate-600 text-xs mt-1">يُستخدم لترتيب المنتجات حسب الأحدث</p>
               </div>
