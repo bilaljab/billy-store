@@ -139,7 +139,7 @@ export default function ProductsPage() {
           <div className="flex gap-1 bg-dark-card border border-dark-border rounded-xl p-1.5">
             {([['default','الافتراضي'],['asc','الأرخص'],['desc','الأغلى'],['discount','أكبر خصم 🏷️']] as const).map(([val,label]) => (
               <button key={val} onClick={() => setSort(val)}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${sort === val ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'}`}>
+                className={`min-h-11 inline-flex items-center justify-center px-3 rounded-lg text-xs font-semibold transition-all ${sort === val ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'}`}>
                 {label}
               </button>
             ))}
