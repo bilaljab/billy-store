@@ -141,7 +141,7 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
             <div>
               {discount ? (
                 <>
-                  <div className="text-slate-500 text-xs line-through leading-none mb-0.5">{product.price} ر.س</div>
+                  <div className="text-muted text-xs line-through leading-none mb-0.5">{product.price} ر.س</div>
                   <div className="flex items-baseline gap-1">
                     <span className="text-lg sm:text-2xl font-black text-red-400">{discountedPrice}</span>
                     <span className="text-slate-400 text-xs">ر.س</span>

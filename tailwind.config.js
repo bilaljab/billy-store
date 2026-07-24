@@ -11,6 +11,7 @@ module.exports = {
         dark: '#050A14',
         'dark-card': '#0A1628',
         'dark-border': '#0D2040',
+        muted: '#8492a8',
       },
       fontFamily: {
         arabic: ['Cairo', 'sans-serif'],

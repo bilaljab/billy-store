@@ -99,7 +99,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     <div className="min-h-screen bg-dark">
       <Navbar />
       <div className="pt-24 pb-20 px-4 max-w-6xl mx-auto">
-        <div className="flex items-center gap-2 text-sm text-slate-500 mb-8">
+        <div className="flex items-center gap-2 text-sm text-muted mb-8">
           <Link href="/" className="hover:text-accent transition-colors">الرئيسية</Link>
           <span>/</span>
           <Link href="/products" className="hover:text-accent transition-colors">المنتجات</Link>
@@ -153,7 +153,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400">⭐ منتج مميز</span>
               )}
               {views > 0 && (
-                <span className="text-xs text-slate-500 flex items-center gap-1">
+                <span className="text-xs text-muted flex items-center gap-1">
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
                   {views} مشاهدة
                 </span>
@@ -172,7 +172,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 <p className="text-slate-400 text-sm mb-1">السعر</p>
                 {discount ? (
                   <>
-                    <div className="text-slate-500 text-sm line-through">{product.price} ريال</div>
+                    <div className="text-muted text-sm line-through">{product.price} ريال</div>
                     <div className="flex items-baseline gap-2">
                       <span className="text-5xl font-black text-red-400">{discountedPrice}</span>
                       <span className="text-slate-300 text-lg font-semibold">ريال سعودي</span>
@@ -190,12 +190,12 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </div>
               <div className="text-right">
                 <p className="text-green-400 text-sm font-bold">✓ متوفر</p>
-                <p className="text-slate-500 text-xs mt-1">تسليم رقمي فوري</p>
+                <p className="text-muted text-xs mt-1">تسليم رقمي فوري</p>
               </div>
             </div>
 
             <ProductActions product={{ id: product.id, name: product.name, price: discountedPrice ?? product.price }} waMsg={waMsg} />
-            <Link href="/products" className="text-center text-slate-500 hover:text-accent text-sm transition-colors">← العودة للمنتجات</Link>
+            <Link href="/products" className="text-center text-muted hover:text-accent text-sm transition-colors">← العودة للمنتجات</Link>
           </div>
         </div>
         <RelatedProducts currentId={product.id} category={product.category} />

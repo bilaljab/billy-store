@@ -65,10 +65,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-dark-border mt-8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-slate-500 text-sm">© 2026 Billy Store. جميع الحقوق محفوظة.</p>
+          <p className="text-muted text-sm">© 2026 Billy Store. جميع الحقوق محفوظة.</p>
           <div className="flex items-center gap-2">
-            <span className="text-slate-500 text-xs">△ ○ ✕ □</span>
-            <span className="text-slate-500 text-xs">متجر ألعاب PlayStation منذ 2017</span>
+            <span className="text-muted text-xs">△ ○ ✕ □</span>
+            <span className="text-muted text-xs">متجر ألعاب PlayStation منذ 2017</span>
           </div>
         </div>
       </div>

@@ -154,7 +154,7 @@ export default function ProductsPage() {
               placeholder="ابحث عن لعبة أو اشتراك..."
               className="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors text-sm"
             />
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
           </div>
@@ -162,7 +162,7 @@ export default function ProductsPage() {
 
         {/* Results count */}
         {!loading && (
-          <p className="text-slate-500 text-sm mb-6">
+          <p className="text-muted text-sm mb-6">
             {filtered.length} منتج {search && `لـ "${search}"`}
           </p>
         )}
@@ -186,7 +186,7 @@ export default function ProductsPage() {
           <div className="text-center py-24">
             <div className="text-6xl mb-4">🎮</div>
             <h3 className="text-xl font-bold text-slate-400 mb-2">لا توجد نتائج</h3>
-            <p className="text-slate-600">جرب البحث بكلمة مختلفة أو تصفح فئة أخرى</p>
+            <p className="text-muted">جرب البحث بكلمة مختلفة أو تصفح فئة أخرى</p>
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">

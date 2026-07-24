@@ -394,7 +394,7 @@ export default function AdminDashboard() {
           </div>
           <div>
             <h1 className="font-black text-white text-sm" aria-label="لوحة تحكم Billy Store">Billy Store</h1>
-            <p className="text-slate-500 text-xs">لوحة التحكم</p>
+            <p className="text-muted text-xs">لوحة التحكم</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -419,7 +419,7 @@ export default function AdminDashboard() {
             <div key={s.label} className="bg-dark-card border border-dark-border rounded-2xl p-5">
               <div className="text-3xl mb-2">{s.icon}</div>
               <div className="text-3xl font-black text-white">{s.value}</div>
-              <div className="text-slate-500 text-sm mt-1">{s.label}</div>
+              <div className="text-muted text-sm mt-1">{s.label}</div>
             </div>
           ))}
         </div>
@@ -438,9 +438,9 @@ export default function AdminDashboard() {
                     ✅ خصم <span className="font-black">{discount.percentage}%</span> مفعّل — &quot;{discount.label}&quot;
                   </p>
                 ) : discount && !discount.active ? (
-                  <p className="text-slate-500 text-xs mt-0.5">⏸ خصم {discount.percentage}% موقوف مؤقتاً</p>
+                  <p className="text-muted text-xs mt-0.5">⏸ خصم {discount.percentage}% موقوف مؤقتاً</p>
                 ) : (
-                  <p className="text-slate-500 text-xs mt-0.5">لا يوجد خصم مفعّل حالياً</p>
+                  <p className="text-muted text-xs mt-0.5">لا يوجد خصم مفعّل حالياً</p>
                 )}
               </div>
             </div>
@@ -474,7 +474,7 @@ export default function AdminDashboard() {
               </div>
               <div>
                 <h3 className="font-bold text-white text-sm">خصومات مستهدفة</h3>
-                <p className="text-slate-500 text-xs mt-0.5">خصم على منتجات محددة أو نطاق سعري معين</p>
+                <p className="text-muted text-xs mt-0.5">خصم على منتجات محددة أو نطاق سعري معين</p>
               </div>
             </div>
             <button onClick={() => setTargetedModal(true)}
@@ -483,7 +483,7 @@ export default function AdminDashboard() {
             </button>
           </div>
           {targetedRules.length === 0 ? (
-            <p className="text-slate-600 text-xs text-center py-4">لا توجد قواعد خصم مستهدفة</p>
+            <p className="text-muted text-xs text-center py-4">لا توجد قواعد خصم مستهدفة</p>
           ) : (
             <div className="space-y-2">
               {targetedRules.map((rule) => (
@@ -496,7 +496,7 @@ export default function AdminDashboard() {
                       <span className="text-red-400 font-black text-sm">-{rule.percentage}%</span>
                       <span className="text-slate-400 text-xs truncate">{rule.label}</span>
                     </div>
-                    <p className="text-slate-600 text-xs mt-1">
+                    <p className="text-muted text-xs mt-1">
                       {rule.type === 'range' && (
                         <>
                           {rule.minPrice !== null && rule.maxPrice !== null ? `${rule.minPrice} - ${rule.maxPrice} ر.س` :
@@ -551,9 +551,9 @@ export default function AdminDashboard() {
                 {announcement && announcement.active ? (
                   <p className="text-primary-light text-xs mt-0.5 line-clamp-1">✅ &quot;{announcement.text}&quot;</p>
                 ) : announcement && !announcement.active ? (
-                  <p className="text-slate-500 text-xs mt-0.5">⏸ موقوف — &quot;{announcement.text}&quot;</p>
+                  <p className="text-muted text-xs mt-0.5">⏸ موقوف — &quot;{announcement.text}&quot;</p>
                 ) : (
-                  <p className="text-slate-500 text-xs mt-0.5">لا يوجد إعلان مفعّل</p>
+                  <p className="text-muted text-xs mt-0.5">لا يوجد إعلان مفعّل</p>
                 )}
               </div>
             </div>
@@ -590,7 +590,7 @@ export default function AdminDashboard() {
                   <p key={i} className="text-red-400 text-sm mt-1">⚠️ {e}</p>
                 ))}
               </div>
-              <button onClick={() => setImportResult(null)} className="text-slate-500 hover:text-white text-xl">×</button>
+              <button onClick={() => setImportResult(null)} className="text-muted hover:text-white text-xl">×</button>
             </div>
           </div>
         )}
@@ -660,7 +660,7 @@ export default function AdminDashboard() {
           )}
 
           {loading ? (
-            <div className="text-center py-16 text-slate-500">جاري التحميل...</div>
+            <div className="text-center py-16 text-muted">جاري التحميل...</div>
           ) : products.length === 0 ? (
             <div className="text-center py-16">
               <div className="text-5xl mb-3">📦</div>
@@ -678,11 +678,11 @@ export default function AdminDashboard() {
                         onChange={toggleSelectAll}
                         className="w-4 h-4 accent-primary cursor-pointer" />
                     </th>
-                    <th className="text-right text-slate-500 text-sm font-semibold px-6 py-3">المنتج</th>
-                    <th className="text-right text-slate-500 text-sm font-semibold px-4 py-3">الفئة</th>
-                    <th className="text-right text-slate-500 text-sm font-semibold px-4 py-3">السعر</th>
-                    <th className="text-right text-slate-500 text-sm font-semibold px-4 py-3">مميز</th>
-                    <th className="text-right text-slate-500 text-sm font-semibold px-6 py-3">إجراءات</th>
+                    <th className="text-right text-muted text-sm font-semibold px-6 py-3">المنتج</th>
+                    <th className="text-right text-muted text-sm font-semibold px-4 py-3">الفئة</th>
+                    <th className="text-right text-muted text-sm font-semibold px-4 py-3">السعر</th>
+                    <th className="text-right text-muted text-sm font-semibold px-4 py-3">مميز</th>
+                    <th className="text-right text-muted text-sm font-semibold px-6 py-3">إجراءات</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -707,7 +707,7 @@ export default function AdminDashboard() {
                           </div>
                           <div>
                             <p className="text-white font-semibold text-sm">{product.name}</p>
-                            <p className="text-slate-500 text-xs mt-0.5 line-clamp-1 max-w-[200px]">{product.description}</p>
+                            <p className="text-muted text-xs mt-0.5 line-clamp-1 max-w-[200px]">{product.description}</p>
                           </div>
                         </div>
                       </td>
@@ -718,13 +718,13 @@ export default function AdminDashboard() {
                       </td>
                       <td className="px-4 py-4">
                         <span className="text-accent font-black">{product.price}</span>
-                        <span className="text-slate-500 text-xs mr-1">ر.س</span>
+                        <span className="text-muted text-xs mr-1">ر.س</span>
                       </td>
                       <td className="px-4 py-4">
                         {product.featured ? (
                           <span className="text-amber-400 text-sm">⭐ نعم</span>
                         ) : (
-                          <span className="text-slate-600 text-sm">—</span>
+                          <span className="text-muted text-sm">—</span>
                         )}
                       </td>
                       <td className="px-6 py-4">
@@ -812,7 +812,7 @@ export default function AdminDashboard() {
           <div className="relative bg-dark-card border border-dark-border rounded-3xl p-6 w-full max-w-2xl max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between mb-5">
               <h3 className="text-xl font-black text-white">📊 إحصائيات الموقع</h3>
-              <button onClick={() => setShowStats(false)} className="text-slate-500 hover:text-white text-2xl leading-none">×</button>
+              <button onClick={() => setShowStats(false)} className="text-muted hover:text-white text-2xl leading-none">×</button>
             </div>
 
             {/* Visit counters */}
@@ -844,10 +844,10 @@ export default function AdminDashboard() {
               <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-dark-card">
                   <tr className="border-b border-dark-border">
-                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">#</th>
-                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">المنتج</th>
-                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">السعر</th>
-                    <th className="text-right text-slate-500 text-xs font-semibold py-2 px-3">المشاهدات</th>
+                    <th className="text-right text-muted text-xs font-semibold py-2 px-3">#</th>
+                    <th className="text-right text-muted text-xs font-semibold py-2 px-3">المنتج</th>
+                    <th className="text-right text-muted text-xs font-semibold py-2 px-3">السعر</th>
+                    <th className="text-right text-muted text-xs font-semibold py-2 px-3">المشاهدات</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -855,7 +855,7 @@ export default function AdminDashboard() {
                     .sort((a, b) => statsSort === 'views' ? b.views - a.views : b.price - a.price)
                     .map((p, i) => (
                     <tr key={p.id} className="border-b border-dark-border/40 hover:bg-dark/40 transition-colors">
-                      <td className="py-2.5 px-3 text-slate-600 text-xs">{i + 1}</td>
+                      <td className="py-2.5 px-3 text-muted text-xs">{i + 1}</td>
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2">
                           {p.image ? (
@@ -875,7 +875,7 @@ export default function AdminDashboard() {
                             <div className="bg-primary rounded-full h-1.5 transition-all"
                               style={{ width: `${stats.productViews[0]?.views > 0 ? (p.views / stats.productViews[0].views) * 100 : 0}%` }}></div>
                           </div>
-                          <span className={`font-black text-xs ${p.views > 0 ? 'text-primary-light' : 'text-slate-600'}`}>
+                          <span className={`font-black text-xs ${p.views > 0 ? 'text-primary-light' : 'text-muted'}`}>
                             {p.views > 0 ? p.views.toLocaleString() : '—'}
                           </span>
                         </div>
@@ -1057,7 +1057,7 @@ export default function AdminDashboard() {
                       className="w-full bg-dark border border-dark-border rounded-xl px-3 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
                   </div>
                   <div className="col-span-2">
-                    <p className="text-slate-600 text-xs">
+                    <p className="text-muted text-xs">
                       {targetedForm.minPrice && targetedForm.maxPrice && `سيُطبق على المنتجات من ${targetedForm.minPrice} إلى ${targetedForm.maxPrice} ر.س`}
                       {targetedForm.minPrice && !targetedForm.maxPrice && `سيُطبق على المنتجات فوق ${targetedForm.minPrice} ر.س`}
                       {!targetedForm.minPrice && targetedForm.maxPrice && `سيُطبق على المنتجات تحت ${targetedForm.maxPrice} ر.س`}
@@ -1083,7 +1083,7 @@ export default function AdminDashboard() {
                           }}
                           className="w-4 h-4 accent-primary" />
                         <span className="text-white text-sm">{p.name}</span>
-                        <span className="text-slate-500 text-xs mr-auto">{p.price} ر.س</span>
+                        <span className="text-muted text-xs mr-auto">{p.price} ر.س</span>
                       </label>
                     ))}
                   </div>
@@ -1162,7 +1162,7 @@ export default function AdminDashboard() {
               {discountForm.percentage && (
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm">
                   <p className="text-amber-400 font-bold mb-1">معاينة التأثير:</p>
-                  <p className="text-slate-300">منتج بسعر <span className="line-through text-slate-500">100 ر.س</span> → <span className="text-amber-400 font-black">{(100 * (1 - parseFloat(discountForm.percentage || '0') / 100)).toFixed(0)} ر.س</span></p>
+                  <p className="text-slate-300">منتج بسعر <span className="line-through text-muted">100 ر.س</span> → <span className="text-amber-400 font-black">{(100 * (1 - parseFloat(discountForm.percentage || '0') / 100)).toFixed(0)} ر.س</span></p>
                 </div>
               )}
             </div>
@@ -1231,7 +1231,7 @@ export default function AdminDashboard() {
               <div>
                 <label className="block text-slate-400 text-sm font-semibold mb-2">صورة المنتج</label>
                 <div className="flex gap-3">
-                  <label className="flex-1 flex items-center justify-center gap-2 bg-dark border border-dark-border border-dashed rounded-xl px-4 py-3 text-slate-500 hover:border-primary hover:text-primary-light transition-all cursor-pointer text-sm">
+                  <label className="flex-1 flex items-center justify-center gap-2 bg-dark border border-dark-border border-dashed rounded-xl px-4 py-3 text-muted hover:border-primary hover:text-primary-light transition-all cursor-pointer text-sm">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -1261,7 +1261,7 @@ export default function AdminDashboard() {
                 <label htmlFor="product-release-date" className="block text-slate-400 text-sm font-semibold mb-2">تاريخ الإصدار (اختياري)</label>
                 <input id="product-release-date" type="date" value={form.release_date || ''} onChange={e => setForm({...form, release_date: e.target.value})}
                   className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors text-sm" />
-                <p className="text-slate-600 text-xs mt-1">يُستخدم لترتيب المنتجات حسب الأحدث</p>
+                <p className="text-muted text-xs mt-1">يُستخدم لترتيب المنتجات حسب الأحدث</p>
               </div>
             </div>
 

@@ -134,7 +134,7 @@ export default async function HomePage() {
                 <div className="bg-dark-card border border-dark-border rounded-xl p-4 hover:border-primary/50 transition-colors h-full">
                   <div className="text-3xl mb-3">{item.icon}</div>
                   <h4 className="font-bold text-white text-sm mb-1">{item.title}</h4>
-                  <p className="text-slate-500 text-xs">{item.desc}</p>
+                  <p className="text-muted text-xs">{item.desc}</p>
                 </div>
               </ScrollReveal>
             ))}
@@ -166,7 +166,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="text-center py-16 text-slate-500">لا توجد منتجات مميزة حالياً</div>
+            <div className="text-center py-16 text-muted">لا توجد منتجات مميزة حالياً</div>
           )}
 
           <div className="text-center mt-8 sm:hidden">
