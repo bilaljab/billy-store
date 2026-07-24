@@ -8,9 +8,7 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {
-      // Downgraded to warn so `next build` doesn't fail on pre-existing code.
-      // Left as-is intentionally during initial cleanup; revisit separately.
-      '@typescript-eslint/no-explicit-any': 'warn',
+      // no-require-imports downgraded to warn: intentional dynamic require() workaround in lib/db.ts.
       '@typescript-eslint/no-require-imports': 'warn',
     },
   },
