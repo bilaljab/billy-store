@@ -507,7 +507,7 @@ export default function AdminDashboard() {
                       {rule.type === 'product' && `${rule.productIds.length} منتج`}
                     </p>
                   </div>
-                  <div className="flex gap-1 flex-shrink-0">
+                  <div className="flex gap-2 flex-shrink-0">
                     <button onClick={() => {
                         setEditingRule(rule);
                         setTargetedForm({
