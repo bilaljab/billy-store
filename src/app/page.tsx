@@ -6,6 +6,7 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import Link from 'next/link';
+import { Trophy, Zap, HandCoins, Lock, Smartphone, MessageCircle } from 'lucide-react';
 
 async function getFeaturedProducts() {
   try {
@@ -125,8 +126,8 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              {icon:'🏆',title:'موثوقية عالية',desc:'أكثر من 7 سنوات في السوق'},
-              {icon:'⚡',title:'تسليم فوري',desc:'رقمي وسريع 24/7'},
+              {icon:<Trophy size={30} className="text-amber-400" />,title:'موثوقية عالية',desc:'أكثر من 7 سنوات في السوق'},
+              {icon:<Zap size={30} className="text-accent" />,title:'تسليم فوري',desc:'رقمي وسريع 24/7'},
               {icon:'💰',title:'أسعار منافسة',desc:'أرخص من المتجر الرسمي'},
               {icon:'🎮',title:'مكتبة ضخمة',desc:'PS4 و PS5 وكل جديد'},
             ].map((item,i) => (
@@ -187,10 +188,10 @@ export default async function HomePage() {
         </ScrollReveal>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
-            {icon:'💸',title:'أسعار لا تُنافس',desc:'وفّر أكثر مع كل عملية شراء مقارنة بالمتجر الرسمي والسوق المحلي'},
-            {icon:'🔒',title:'متجر موثوق',desc:'أكثر من 7 سنوات من الخبرة وآلاف العملاء الراضين في المملكة'},
-            {icon:'📱',title:'تسليم رقمي فوري',desc:'استلم منتجك في دقائق مباشرة على حسابك دون انتظار أو شحن'},
-            {icon:'💬',title:'دعم على مدار الساعة',desc:'فريقنا متاح دائماً عبر واتساب لمساعدتك والرد على استفساراتك'},
+            {icon:<HandCoins size={48} className="text-accent" />,title:'أسعار لا تُنافس',desc:'وفّر أكثر مع كل عملية شراء مقارنة بالمتجر الرسمي والسوق المحلي'},
+            {icon:<Lock size={48} className="text-accent" />,title:'متجر موثوق',desc:'أكثر من 7 سنوات من الخبرة وآلاف العملاء الراضين في المملكة'},
+            {icon:<Smartphone size={48} className="text-accent" />,title:'تسليم رقمي فوري',desc:'استلم منتجك في دقائق مباشرة على حسابك دون انتظار أو شحن'},
+            {icon:<MessageCircle size={48} className="text-accent" />,title:'دعم على مدار الساعة',desc:'فريقنا متاح دائماً عبر واتساب لمساعدتك والرد على استفساراتك'},
           ].map((item,i) => (
             <ScrollReveal key={item.title} direction="up" delay={i*120}>
               <div className="bg-dark-card border border-dark-border rounded-2xl p-6 text-center group hover:border-primary/50 hover:bg-dark-card/80 transition-all duration-300 card-hover h-full">
