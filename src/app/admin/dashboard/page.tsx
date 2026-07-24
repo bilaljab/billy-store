@@ -426,7 +426,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Discount Banner */}
-        <div className="mb-6 bg-dark-card border border-dark-border rounded-2xl p-5">
+        <div className="mb-8 bg-dark-card border border-dark-border rounded-2xl p-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
@@ -467,7 +467,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Targeted Discounts */}
-        <div className="mb-6 bg-dark-card border border-dark-border rounded-2xl p-5">
+        <div className="mb-8 bg-dark-card border border-dark-border rounded-2xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
@@ -541,7 +541,7 @@ export default function AdminDashboard() {
         </div>
 
         {/* Announcement Bar */}
-        <div className="mb-6 bg-dark-card border border-dark-border rounded-2xl p-5">
+        <div className="mb-8 bg-dark-card border border-dark-border rounded-2xl p-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
