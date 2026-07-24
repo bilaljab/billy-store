@@ -85,15 +85,15 @@ export default function Navbar() {
               </Link>
             ))}
             <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
-              className="w-9 h-9 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all flex items-center justify-center" title="واتساب">
+              className="w-11 h-11 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all flex items-center justify-center" aria-label="واتساب">
               <WaIcon />
             </a>
             <a href="https://instagram.com/Billy_Store3" target="_blank" rel="noopener noreferrer"
-              className="w-9 h-9 bg-gradient-to-l from-purple-600 to-pink-500 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center" title="إنستقرام">
+              className="w-11 h-11 bg-gradient-to-l from-purple-600 to-pink-500 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center" aria-label="إنستقرام">
               <IgIcon />
             </a>
             <a href="https://t.me/BillyStore1" target="_blank" rel="noopener noreferrer"
-              className="w-9 h-9 bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all flex items-center justify-center" title="تيليجرام">
+              className="w-11 h-11 bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all flex items-center justify-center" aria-label="تيليجرام">
               <TgIcon />
             </a>
           </div>
