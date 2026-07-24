@@ -778,8 +778,10 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setAnnForm({...annForm, active: !annForm.active})}
-                  className={`w-12 h-6 rounded-full transition-all duration-300 relative ${annForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${annForm.active ? 'right-1' : 'left-1'}`}></div>
+                  className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${annForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
+                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${annForm.active ? 'right-1' : 'left-1'}`}></span>
+                  </span>
                 </button>
                 <span className="text-slate-300 text-sm font-semibold">
                   {annForm.active ? '✅ مفعّل — يظهر للزوار' : '⏸ موقوف'}
@@ -1104,8 +1106,10 @@ export default function AdminDashboard() {
               {/* Active toggle */}
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setTargetedForm({...targetedForm, active: !targetedForm.active})}
-                  className={`w-12 h-6 rounded-full transition-all duration-300 relative ${targetedForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${targetedForm.active ? 'right-1' : 'left-1'}`}></div>
+                  className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${targetedForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
+                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${targetedForm.active ? 'right-1' : 'left-1'}`}></span>
+                  </span>
                 </button>
                 <span className="text-slate-300 text-sm">{targetedForm.active ? '✅ مفعّل' : '⏸ موقوف'}</span>
               </div>
@@ -1152,8 +1156,10 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setDiscountForm({...discountForm, active: !discountForm.active})}
-                  className={`w-12 h-6 rounded-full transition-all duration-300 relative ${discountForm.active ? 'bg-amber-500' : 'bg-dark-border'}`}>
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${discountForm.active ? 'right-1' : 'left-1'}`}></div>
+                  className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${discountForm.active ? 'bg-amber-500' : 'bg-dark-border'}`}>
+                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${discountForm.active ? 'right-1' : 'left-1'}`}></span>
+                  </span>
                 </button>
                 <span className="text-slate-300 text-sm font-semibold">
                   {discountForm.active ? '✅ مفعّل — سيظهر للزوار فوراً' : '⏸ موقوف — لن يظهر للزوار'}
@@ -1251,8 +1257,10 @@ export default function AdminDashboard() {
 
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setForm({...form, featured: !form.featured})}
-                  className={`w-12 h-6 rounded-full transition-all duration-300 relative ${form.featured ? 'bg-amber-500' : 'bg-dark-border'}`}>
-                  <div className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${form.featured ? 'right-1' : 'left-1'}`}></div>
+                  className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${form.featured ? 'bg-amber-500' : 'bg-dark-border'}`}>
+                    <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${form.featured ? 'right-1' : 'left-1'}`}></span>
+                  </span>
                 </button>
                 <span className="text-slate-300 text-sm font-semibold">منتج مميز (يظهر في الصفحة الرئيسية)</span>
               </div>
