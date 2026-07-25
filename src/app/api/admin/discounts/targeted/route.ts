@@ -16,6 +16,9 @@ interface RuleInput {
 }
 
 function validateRuleInput(body: Record<string, unknown>): { valid: true; rule: RuleInput } | { valid: false; error: string } {
+  if (body.type !== 'product' && body.type !== 'range') {
+    return { valid: false, error: 'نوع القاعدة غير صالح' };
+  }
   const percentage = Math.min(90, Math.max(1, Number(body.percentage)));
   const minPrice = body.minPrice !== undefined && body.minPrice !== null ? Number(body.minPrice) : null;
   const maxPrice = body.maxPrice !== undefined && body.maxPrice !== null ? Number(body.maxPrice) : null;
