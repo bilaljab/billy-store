@@ -709,6 +709,7 @@ export default function AdminDashboard() {
                       <input type="checkbox"
                         checked={selectedIds.size === products.length && products.length > 0}
                         onChange={toggleSelectAll}
+                        aria-label="تحديد كل المنتجات"
                         className="w-5 h-5 accent-primary cursor-pointer" />
                     </th>
                     <th className="text-right text-muted text-sm font-semibold px-6 py-3">المنتج</th>
@@ -725,6 +726,7 @@ export default function AdminDashboard() {
                         <input type="checkbox"
                           checked={selectedIds.has(product.id)}
                           onChange={() => toggleSelect(product.id)}
+                          aria-label={`تحديد ${product.name}`}
                           className="w-5 h-5 accent-primary cursor-pointer" />
                       </td>
                       <td className="px-6 py-4">
