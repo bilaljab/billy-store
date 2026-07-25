@@ -511,7 +511,7 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-2">
               {targetedRules.map((rule) => (
-                <div key={rule.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${rule.active ? 'bg-primary/5 border-primary/20' : 'bg-dark border-dark-border opacity-60'}`}>
+                <div key={rule.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${rule.active ? 'bg-primary/5 border-primary/20' : 'bg-dark border-dark-border opacity-90'}`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span className={`text-xs font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${rule.type === 'product' ? 'bg-accent/20 text-accent' : 'bg-purple-500/20 text-purple-400'}`}>
