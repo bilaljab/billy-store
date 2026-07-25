@@ -29,7 +29,8 @@ function validateRuleInput(body: Record<string, unknown>): { valid: true; rule: 
   return { valid: true, rule };
 }
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   await initDb();
   const db = getDb();
   const result = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
