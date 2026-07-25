@@ -297,6 +297,7 @@ export default function AdminDashboard() {
     await fetch('/api/admin/discounts/global', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ ...discountForm, percentage: pct }),
     });
     await fetchDiscount();
@@ -315,6 +316,7 @@ export default function AdminDashboard() {
     await fetch('/api/admin/discounts/global', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ ...discount, active }),
     });
     await fetchDiscount();
