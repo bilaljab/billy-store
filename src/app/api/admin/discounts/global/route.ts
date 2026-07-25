@@ -15,7 +15,10 @@ export async function POST(req: NextRequest) {
   await initDb();
   const db = getDb();
   const body = await req.json();
-  const value = JSON.stringify({ percentage: Number(body.percentage), label: String(body.label || ''), active: Boolean(body.active) });
+  const percentage = Number(body.percentage);
+  if (!Number.isFinite(percentage)) return NextResponse.json({ error: 'نسبة الخصم غير صالحة' }, { status: 400 });
+  const clamped = Math.min(90, Math.max(1, percentage));
+  const value = JSON.stringify({ percentage: clamped, label: String(body.label || ''), active: Boolean(body.active) });
   await db.execute({ sql: "INSERT INTO settings (key, value) VALUES ('discount', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value", args: [value] });
   return NextResponse.json({ success: true });
 }

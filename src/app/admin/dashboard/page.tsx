@@ -44,6 +44,7 @@ export default function AdminDashboard() {
   const [discountForm, setDiscountForm] = useState({ percentage: '20', label: 'عرض خاص', active: true });
   const [discountModal, setDiscountModal] = useState(false);
   const [savingDiscount, setSavingDiscount] = useState(false);
+  const [discountError, setDiscountError] = useState('');
   const [targetedRules, setTargetedRules] = useState<TargetedRule[]>([]);
   const [targetedModal, setTargetedModal] = useState(false);
   const [targetedForm, setTargetedForm] = useState({
@@ -286,11 +287,17 @@ export default function AdminDashboard() {
   };
 
   const saveDiscount = async () => {
+    const pct = parseFloat(discountForm.percentage);
+    if (!Number.isFinite(pct) || pct < 1 || pct > 90) {
+      setDiscountError('نسبة الخصم يجب أن تكون رقماً بين 1 و90');
+      return;
+    }
+    setDiscountError('');
     setSavingDiscount(true);
     await fetch('/api/admin/discounts/global', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...discountForm, percentage: parseFloat(discountForm.percentage) }),
+      body: JSON.stringify({ ...discountForm, percentage: pct }),
     });
     await fetchDiscount();
     setSavingDiscount(false);
@@ -452,7 +459,7 @@ export default function AdminDashboard() {
                   {discount.active ? <><Pause size={16} className="text-current" /> إيقاف مؤقت</> : <><Play size={16} className="text-current" /> تفعيل</>}
                 </button>
               )}
-              <button onClick={() => setDiscountModal(true)}
+              <button onClick={() => { setDiscountError(''); setDiscountModal(true); }}
                 className="text-xs font-bold px-4 min-h-11 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 transition-all inline-flex items-center justify-center gap-1">
                 {discount ? <><Pencil size={16} className="text-current" /> تعديل الخصم</> : '+ إضافة خصم'}
               </button>
@@ -1154,10 +1161,15 @@ export default function AdminDashboard() {
       {/* Discount Modal */}
       {discountModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setDiscountModal(false)}></div>
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => { setDiscountModal(false); setDiscountError(''); }}></div>
           <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-md">
             <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2"><Tag size={20} className="text-current" /> إعداد الخصم العالمي</h3>
             <p className="text-slate-400 text-sm mb-6">سيُطبق هذا الخصم تلقائياً على جميع المنتجات دون تعديل الأسعار الأصلية</p>
+            {discountError && (
+              <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-5 text-sm">
+                {discountError}
+              </div>
+            )}
             <div className="space-y-4">
               <div>
                 <label htmlFor="global-discount-percentage" className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
@@ -1199,7 +1211,7 @@ export default function AdminDashboard() {
                 className="flex-1 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-dark font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
                 {savingDiscount ? 'جاري الحفظ...' : <><Save size={16} className="text-current" /> حفظ الخصم</>}
               </button>
-              <button onClick={() => setDiscountModal(false)}
+              <button onClick={() => { setDiscountModal(false); setDiscountError(''); }}
                 className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
                 إلغاء
               </button>
