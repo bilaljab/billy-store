@@ -545,15 +545,18 @@ export default function AdminDashboard() {
                         });
                         setTargetedModal(true);
                       }}
-                      className="text-xs px-2 py-1 rounded-lg border border-primary/30 text-primary-light hover:bg-primary/20 transition-all">
+                      className="text-xs px-2 py-1 rounded-lg border border-primary/30 text-primary-light hover:bg-primary/20 transition-all"
+                      aria-label="تعديل القاعدة">
                       <Pencil size={16} className="text-current" />
                     </button>
                     <button onClick={() => toggleTargetedRule(rule)}
-                      className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-slate-700/50 border-slate-600 text-slate-400' : 'bg-green-600/20 border-green-600/40 text-green-400'}`}>
+                      className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-slate-700/50 border-slate-600 text-slate-400' : 'bg-green-600/20 border-green-600/40 text-green-400'}`}
+                      aria-label={rule.active ? 'إيقاف القاعدة' : 'تفعيل القاعدة'}>
                       {rule.active ? <Pause size={16} className="text-current" /> : <Play size={16} className="text-current" />}
                     </button>
                     <button onClick={() => setDeleteTargetedConfirm(rule.id)}
-                      className="text-xs px-2 py-1 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
+                      className="text-xs px-2 py-1 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all"
+                      aria-label="حذف القاعدة">
                       <X size={16} className="text-current" />
                     </button>
                   </div>
