@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb, initDb, col } from '@/lib/db';
 import { isAuthenticated } from '@/lib/auth';
 
-export async function GET() {
+export async function GET(req: NextRequest) {
+  if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   await initDb();
   const db = getDb();
   const result = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'announcement'", args: [] });
