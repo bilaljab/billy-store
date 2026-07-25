@@ -58,6 +58,7 @@ export default function AdminDashboard() {
   });
   const [savingTargeted, setSavingTargeted] = useState(false);
   const [editingRule, setEditingRule] = useState<TargetedRule | null>(null);
+  const [targetedFetchError, setTargetedFetchError] = useState(false);
   const [priceModal, setPriceModal] = useState(false);
   const [priceForm, setPriceForm] = useState({ mode: 'percentage', value: '', direction: 'increase', category: 'all' });
   const [savingPrice, setSavingPrice] = useState(false);
@@ -102,9 +103,13 @@ export default function AdminDashboard() {
   const fetchTargetedRules = useCallback(async () => {
     try {
       const res = await fetch('/api/admin/discounts/targeted', { credentials: 'include' });
+      if (!res.ok) { setTargetedFetchError(true); return; }
       const data = await res.json();
       setTargetedRules(data);
-    } catch {}
+      setTargetedFetchError(false);
+    } catch {
+      setTargetedFetchError(true);
+    }
   }, []);
 
   const saveTargetedRule = async () => {
@@ -492,7 +497,11 @@ export default function AdminDashboard() {
               + إضافة قاعدة
             </button>
           </div>
-          {targetedRules.length === 0 ? (
+          {targetedFetchError ? (
+            <p className="text-red-400 text-xs text-center py-4 flex items-center justify-center gap-1">
+              <AlertTriangle size={16} className="text-current flex-shrink-0" /> تعذّر تحميل قواعد الخصم — حاول تحديث الصفحة
+            </p>
+          ) : targetedRules.length === 0 ? (
             <p className="text-muted text-xs text-center py-4">لا توجد قواعد خصم مستهدفة</p>
           ) : (
             <div className="space-y-2">
