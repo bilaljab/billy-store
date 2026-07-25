@@ -134,7 +134,7 @@ export default async function HomePage() {
               <ScrollReveal key={item.title} direction="up" delay={i*100}>
                 <div className="bg-dark-card border border-dark-border rounded-xl p-4 hover:border-primary/50 transition-colors h-full">
                   <div className="text-3xl mb-3">{item.icon}</div>
-                  <h4 className="font-bold text-white text-sm mb-1">{item.title}</h4>
+                  <h3 className="font-bold text-white text-sm mb-1">{item.title}</h3>
                   <p className="text-muted text-xs">{item.desc}</p>
                 </div>
               </ScrollReveal>

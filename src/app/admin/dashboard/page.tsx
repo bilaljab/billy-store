@@ -452,7 +452,7 @@ export default function AdminDashboard() {
                 <Tag size={20} className="text-amber-400" />
               </div>
               <div>
-                <h3 className="font-bold text-white text-sm">الخصم العالمي على المنتجات</h3>
+                <h2 className="font-bold text-white text-sm">الخصم العالمي على المنتجات</h2>
                 {discount && discount.active ? (
                   <p className="text-amber-400 text-xs mt-0.5 flex items-center gap-1">
                     <CheckCircle2 size={16} className="text-current flex-shrink-0" /> خصم <span className="font-black">{discount.percentage}%</span> مفعّل — &quot;{discount.label}&quot;
@@ -493,7 +493,7 @@ export default function AdminDashboard() {
                 <Target size={20} className="text-purple-400" />
               </div>
               <div>
-                <h3 className="font-bold text-white text-sm">خصومات مستهدفة</h3>
+                <h2 className="font-bold text-white text-sm">خصومات مستهدفة</h2>
                 <p className="text-muted text-xs mt-0.5">خصم على منتجات محددة أو نطاق سعري معين</p>
               </div>
             </div>
@@ -574,7 +574,7 @@ export default function AdminDashboard() {
                 <Megaphone size={20} className="text-primary-light" />
               </div>
               <div>
-                <h3 className="font-bold text-white text-sm">الشريط الإعلاني</h3>
+                <h2 className="font-bold text-white text-sm">الشريط الإعلاني</h2>
                 {announcement && announcement.active ? (
                   <p className="text-primary-light text-xs mt-0.5 line-clamp-1 flex items-center gap-1">
                     <CheckCircle2 size={16} className="text-current flex-shrink-0" /> &quot;{announcement.text}&quot;

@@ -166,7 +166,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight">{product.name}</h1>
 
             <div className="bg-dark-card border border-dark-border rounded-2xl p-5">
-              <h3 className="text-slate-400 text-sm font-semibold mb-3">الوصف</h3>
+              <h2 className="text-slate-400 text-sm font-semibold mb-3">الوصف</h2>
               <p className="text-slate-200 leading-loose">{product.description}</p>
             </div>
 

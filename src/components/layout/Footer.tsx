@@ -18,7 +18,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-bold text-white mb-4">روابط سريعة</h4>
+            <h3 className="font-bold text-white mb-4">روابط سريعة</h3>
             <ul className="space-y-2">
               {[['/', 'الرئيسية'], ['/products', 'المنتجات'], ['/about', 'من نحن'], ['/faq', 'الأسئلة الشائعة']].map(([href, label]) => (
                 <li key={href}>
@@ -32,7 +32,7 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h4 className="font-bold text-white mb-4">تواصل معنا</h4>
+            <h3 className="font-bold text-white mb-4">تواصل معنا</h3>
             <div className="space-y-3">
               <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-3 text-slate-400 hover:text-green-400 transition-colors text-sm group">
