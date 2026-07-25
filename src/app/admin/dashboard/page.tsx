@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Pencil, Save, Target, Tag, Trash2, Megaphone, TrendingUp, TrendingDown, AlertTriangle, BarChart3, Package, CheckCircle2, XCircle, X, Trophy, HandCoins, Pause, Play, Gamepad2, Star } from 'lucide-react';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 interface Product {
   id: number;
@@ -45,6 +46,7 @@ export default function AdminDashboard() {
   const [discountModal, setDiscountModal] = useState(false);
   const [savingDiscount, setSavingDiscount] = useState(false);
   const [discountError, setDiscountError] = useState('');
+  const [deleteDiscountConfirm, setDeleteDiscountConfirm] = useState(false);
   const [targetedRules, setTargetedRules] = useState<TargetedRule[]>([]);
   const [targetedModal, setTargetedModal] = useState(false);
   const [targetedForm, setTargetedForm] = useState({
@@ -58,6 +60,7 @@ export default function AdminDashboard() {
   });
   const [savingTargeted, setSavingTargeted] = useState(false);
   const [editingRule, setEditingRule] = useState<TargetedRule | null>(null);
+  const [deleteTargetedConfirm, setDeleteTargetedConfirm] = useState<number | null>(null);
   const [targetedFetchError, setTargetedFetchError] = useState(false);
   const [priceModal, setPriceModal] = useState(false);
   const [priceForm, setPriceForm] = useState({ mode: 'percentage', value: '', direction: 'increase', category: 'all' });
@@ -151,6 +154,7 @@ export default function AdminDashboard() {
       credentials: 'include',
       body: JSON.stringify({ id }),
     });
+    setDeleteTargetedConfirm(null);
     fetchTargetedRules();
   };
 
@@ -314,6 +318,7 @@ export default function AdminDashboard() {
     await fetch('/api/admin/discounts/global', { method: 'DELETE', credentials: 'include' });
     setDiscount(null);
     setDiscountModal(false);
+    setDeleteDiscountConfirm(false);
   };
 
   const toggleDiscount = async (active: boolean) => {
@@ -471,7 +476,7 @@ export default function AdminDashboard() {
                 {discount ? <><Pencil size={16} className="text-current" /> تعديل الخصم</> : '+ إضافة خصم'}
               </button>
               {discount && (
-                <button onClick={removeDiscount}
+                <button onClick={() => setDeleteDiscountConfirm(true)}
                   className="text-xs font-bold px-3 min-h-11 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all inline-flex items-center justify-center gap-1">
                   <Trash2 size={16} className="text-current" /> حذف
                 </button>
@@ -547,7 +552,7 @@ export default function AdminDashboard() {
                       className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-slate-700/50 border-slate-600 text-slate-400' : 'bg-green-600/20 border-green-600/40 text-green-400'}`}>
                       {rule.active ? <Pause size={16} className="text-current" /> : <Play size={16} className="text-current" />}
                     </button>
-                    <button onClick={() => deleteTargetedRule(rule.id)}
+                    <button onClick={() => setDeleteTargetedConfirm(rule.id)}
                       className="text-xs px-2 py-1 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all">
                       <X size={16} className="text-current" />
                     </button>
@@ -775,25 +780,32 @@ export default function AdminDashboard() {
 
       {/* Delete Confirm Modal */}
       {deleteConfirm !== null && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setDeleteConfirm(null)}></div>
-          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-sm">
-            <h3 className="text-xl font-black text-white mb-2">حذف المنتج</h3>
-            <p className="text-slate-400 text-sm mb-6">
-              هل تريد حذف &quot;{products.find(p => p.id === deleteConfirm)?.name}&quot;؟ هذا الإجراء لا يمكن التراجع عنه.
-            </p>
-            <div className="flex gap-3">
-              <button onClick={() => handleDelete(deleteConfirm)}
-                className="flex-1 bg-red-500 hover:bg-red-600 text-white font-black py-3 rounded-xl transition-all">
-                تأكيد الحذف
-              </button>
-              <button onClick={() => setDeleteConfirm(null)}
-                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
-                إلغاء
-              </button>
-            </div>
-          </div>
-        </div>
+        <ConfirmDialog
+          title="حذف المنتج"
+          message={`هل تريد حذف "${products.find(p => p.id === deleteConfirm)?.name}"؟ هذا الإجراء لا يمكن التراجع عنه.`}
+          onConfirm={() => handleDelete(deleteConfirm)}
+          onCancel={() => setDeleteConfirm(null)}
+        />
+      )}
+
+      {/* Delete Global Discount Confirm Modal */}
+      {deleteDiscountConfirm && (
+        <ConfirmDialog
+          title="حذف الخصم العام"
+          message="هل تريد حذف الخصم العالمي على المنتجات؟ هذا الإجراء لا يمكن التراجع عنه."
+          onConfirm={removeDiscount}
+          onCancel={() => setDeleteDiscountConfirm(false)}
+        />
+      )}
+
+      {/* Delete Targeted Rule Confirm Modal */}
+      {deleteTargetedConfirm !== null && (
+        <ConfirmDialog
+          title="حذف قاعدة الخصم"
+          message={`هل تريد حذف قاعدة "${targetedRules.find(r => r.id === deleteTargetedConfirm)?.label}"؟ هذا الإجراء لا يمكن التراجع عنه.`}
+          onConfirm={() => deleteTargetedRule(deleteTargetedConfirm)}
+          onCancel={() => setDeleteTargetedConfirm(null)}
+        />
       )}
 
       {/* Announcement Modal */}
