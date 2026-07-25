@@ -1151,7 +1151,7 @@ export default function AdminDashboard() {
                 className="flex-1 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
                 {savingTargeted ? 'جاري الحفظ...' : <><Save size={16} className="text-current" /> {editingRule ? 'حفظ التعديل' : 'إضافة القاعدة'}</>}
               </button>
-              <button onClick={() => setTargetedModal(false)}
+              <button onClick={() => { setTargetedModal(false); setEditingRule(null); setTargetedForm({ type: 'range', label: '', percentage: '15', active: true, productIds: [], minPrice: '', maxPrice: '' }); }}
                 className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl">
                 إلغاء
               </button>
