@@ -92,6 +92,7 @@ export default function ProductsPage() {
     <div className="min-h-screen bg-dark">
       <Navbar />
 
+      <main>
       {/* Header */}
       <div className="relative pt-24 pb-16 px-4 overflow-hidden">
         <div className="absolute inset-0 grid-bg opacity-50"></div>
@@ -200,6 +201,7 @@ export default function ProductsPage() {
           </div>
         )}
       </div>
+      </main>
 
       <Footer />
     </div>

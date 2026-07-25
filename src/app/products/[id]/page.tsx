@@ -99,7 +99,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="min-h-screen bg-dark">
       <Navbar />
-      <div className="pt-24 pb-20 px-4 max-w-6xl mx-auto">
+      <main className="pt-24 pb-20 px-4 max-w-6xl mx-auto">
         <div className="flex items-center gap-2 text-sm text-muted mb-8">
           <Link href="/" className="hover:text-accent transition-colors">الرئيسية</Link>
           <span>/</span>
@@ -202,7 +202,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
         <RelatedProducts currentId={product.id} category={product.category} />
-      </div>
+      </main>
       <Footer />
     </div>
   );

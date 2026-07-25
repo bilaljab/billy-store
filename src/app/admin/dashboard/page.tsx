@@ -427,7 +427,7 @@ export default function AdminDashboard() {
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <main className="max-w-7xl mx-auto px-4 py-8">
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
@@ -781,7 +781,7 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
-      </div>
+      </main>
 
       {/* Delete Confirm Modal */}
       {deleteConfirm !== null && (

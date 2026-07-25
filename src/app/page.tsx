@@ -35,6 +35,7 @@ export default async function HomePage() {
     <div className="min-h-screen bg-dark">
       <Navbar />
 
+      <main>
       {/* ── HERO ── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden grid-bg">
         <div className="absolute inset-0">
@@ -233,6 +234,7 @@ export default async function HomePage() {
           </div>
         </ScrollReveal>
       </section>
+      </main>
 
       <Footer />
     </div>
