@@ -125,6 +125,9 @@ export async function DELETE(req: NextRequest) {
     const db = getDb();
     const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
     let rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
+    if (!rules.some((r: { id: number }) => r.id === id)) {
+      return NextResponse.json({ error: 'القاعدة غير موجودة' }, { status: 404 });
+    }
     rules = rules.filter((r: { id: number }) => r.id !== id);
 
     await db.execute({
