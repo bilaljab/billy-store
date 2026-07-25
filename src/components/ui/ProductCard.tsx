@@ -77,7 +77,7 @@ function getProductDiscount(product: Product, discounts: DiscountsData): { perce
   return best;
 }
 
-const ProductCard = memo(function ProductCard({ product }: { product: Product }) {
+const ProductCard = memo(function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
   const [discount, setDiscount] = useState<{ percentage: number; label: string } | null>(null);
 
   useEffect(() => {
@@ -101,7 +101,8 @@ const ProductCard = memo(function ProductCard({ product }: { product: Product })
           {product.image ? (
             <Image src={product.image} alt={product.name} fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-              className="object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
+              className="object-cover group-hover:scale-105 transition-transform duration-500"
+              {...(priority ? { priority: true } : { loading: 'lazy' as const })} />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center">
               {product.category === 'subscription' ? (
