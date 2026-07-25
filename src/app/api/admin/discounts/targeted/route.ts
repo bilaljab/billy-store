@@ -17,14 +17,19 @@ interface RuleInput {
 
 function validateRuleInput(body: Record<string, unknown>): { valid: true; rule: RuleInput } | { valid: false; error: string } {
   const percentage = Math.min(90, Math.max(1, Number(body.percentage)));
+  const minPrice = body.minPrice !== undefined && body.minPrice !== null ? Number(body.minPrice) : null;
+  const maxPrice = body.maxPrice !== undefined && body.maxPrice !== null ? Number(body.maxPrice) : null;
+  if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) {
+    return { valid: false, error: 'السعر الأدنى يجب أن يكون أقل من أو يساوي السعر الأعلى' };
+  }
   const rule: RuleInput = {
     type: body.type as string,
     label: String(body.label || '').slice(0, 100),
     percentage,
     active: Boolean(body.active),
     productIds: Array.isArray(body.productIds) ? (body.productIds as unknown[]).map(Number).filter((n) => n > 0) : [],
-    minPrice: body.minPrice !== undefined && body.minPrice !== null ? Number(body.minPrice) : null,
-    maxPrice: body.maxPrice !== undefined && body.maxPrice !== null ? Number(body.maxPrice) : null,
+    minPrice,
+    maxPrice,
   };
   return { valid: true, rule };
 }
