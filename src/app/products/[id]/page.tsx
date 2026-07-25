@@ -1,8 +1,12 @@
 import Navbar from '@/components/layout/Navbar';
+import { cache } from 'react';
+import type { Metadata } from 'next';
 
 // ISR: serve from cache, rebuild in background every 30 seconds
 // This means near-instant page loads after first visit
 export const revalidate = 30;
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://billy-store.vercel.app';
 
 // Pre-render all product pages at build time for instant loads
 export async function generateStaticParams() {
@@ -25,7 +29,8 @@ import RelatedProducts from '@/components/ui/RelatedProducts';
 import { Gamepad2, Star } from 'lucide-react';
 
 // Single DB connection for all data on this page
-async function getPageData(id: string) {
+// cache() shares one result between generateMetadata and the page component per request
+const getPageData = cache(async (id: string) => {
   try {
     const { getDb, initDb, col } = await import('@/lib/db');
     await initDb();
@@ -84,6 +89,31 @@ async function getPageData(id: string) {
 
     return { product, discount, views };
   } catch { return null; }
+});
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params;
+  const data = await getPageData(id);
+  if (!data) return {};
+
+  const { product } = data;
+  const description = product.description
+    ? product.description.slice(0, 160)
+    : `تسوق ${product.name} بأفضل سعر من بيلي ستور — تسليم رقمي فوري.`;
+  const url = `${SITE_URL}/products/${product.id}`;
+  const image = product.image || `${SITE_URL}/logo.jpg`;
+
+  return {
+    title: `${product.name} | Billy Store`,
+    description,
+    alternates: { canonical: url },
+    openGraph: {
+      title: product.name,
+      description,
+      url,
+      images: [{ url: image }],
+    },
+  };
 }
 
 export default async function ProductDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -96,8 +126,28 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const discountedPrice = discount ? Math.round(product.price * (1 - discount.percentage / 100)) : null;
   const waMsg = encodeURIComponent(`مرحباً، أريد الاستفسار عن:\n🎮 ${product.name}\n💰 السعر: ${discountedPrice ?? product.price} ريال`);
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description || undefined,
+    image: product.image || `${SITE_URL}/logo.jpg`,
+    category: categoryLabel,
+    offers: {
+      '@type': 'Offer',
+      url: `${SITE_URL}/products/${product.id}`,
+      priceCurrency: 'SAR',
+      price: discountedPrice ?? product.price,
+      availability: 'https://schema.org/InStock',
+    },
+  };
+
   return (
     <div className="min-h-screen bg-dark">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Navbar />
       <main className="pt-24 pb-20 px-4 max-w-6xl mx-auto">
         <div className="flex items-center gap-2 text-sm text-muted mb-8">

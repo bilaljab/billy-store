@@ -6,6 +6,7 @@ import WhatsAppFloat from '@/components/ui/WhatsAppFloat';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://billy-store.vercel.app'),
   title: 'Billy Store - متجر ألعاب بلايستيشن',
   description: 'تسوق أفضل ألعاب PlayStation 4 و 5 واشتراكات PS Plus بأسعار لا تُنافس. بيلي ستور - متجرك الموثوق للألعاب الرقمية.',
   keywords: 'بيلي ستور, ألعاب بلايستيشن, PS Plus, PS4, PS5, ألعاب رقمية, السعودية',
