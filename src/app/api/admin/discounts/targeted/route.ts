@@ -5,6 +5,30 @@ import { isAuthenticated } from '@/lib/auth';
 // Targeted discounts: per-product or price-range based
 // Stored as JSON array in settings table under key 'targeted_discounts'
 
+interface RuleInput {
+  type: string;
+  label: string;
+  percentage: number;
+  active: boolean;
+  productIds: number[];
+  minPrice: number | null;
+  maxPrice: number | null;
+}
+
+function validateRuleInput(body: Record<string, unknown>): { valid: true; rule: RuleInput } | { valid: false; error: string } {
+  const percentage = Math.min(90, Math.max(1, Number(body.percentage)));
+  const rule: RuleInput = {
+    type: body.type as string,
+    label: String(body.label || '').slice(0, 100),
+    percentage,
+    active: Boolean(body.active),
+    productIds: Array.isArray(body.productIds) ? (body.productIds as unknown[]).map(Number).filter((n) => n > 0) : [],
+    minPrice: body.minPrice !== undefined && body.minPrice !== null ? Number(body.minPrice) : null,
+    maxPrice: body.maxPrice !== undefined && body.maxPrice !== null ? Number(body.maxPrice) : null,
+  };
+  return { valid: true, rule };
+}
+
 export async function GET() {
   await initDb();
   const db = getDb();
@@ -19,19 +43,9 @@ export async function POST(req: NextRequest) {
   const db = getDb();
   const body = await req.json();
 
-  // Validate rule
-  const rule = {
-    id: Date.now(),
-    type: body.type, // 'product' | 'range'
-    label: String(body.label || '').slice(0, 100),
-    percentage: Math.min(90, Math.max(1, Number(body.percentage))),
-    active: Boolean(body.active),
-    // For type='product'
-    productIds: Array.isArray(body.productIds) ? body.productIds.map(Number).filter((n: number) => n > 0) : [],
-    // For type='range'
-    minPrice: body.minPrice !== undefined ? Number(body.minPrice) : null,
-    maxPrice: body.maxPrice !== undefined ? Number(body.maxPrice) : null,
-  };
+  const result = validateRuleInput(body);
+  if (!result.valid) return NextResponse.json({ error: result.error }, { status: 400 });
+  const rule = { id: Date.now(), ...result.rule };
 
   // Get existing rules
   const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
@@ -51,11 +65,14 @@ export async function PUT(req: NextRequest) {
   const db = getDb();
   const body = await req.json();
 
+  const result = validateRuleInput(body);
+  if (!result.valid) return NextResponse.json({ error: result.error }, { status: 400 });
+
   const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
   let rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
 
   // Update specific rule by id
-  rules = rules.map((r: { id: number }) => r.id === body.id ? { ...r, ...body } : r);
+  rules = rules.map((r: { id: number }) => r.id === body.id ? { id: r.id, ...result.rule } : r);
 
   await db.execute({
     sql: "INSERT INTO settings (key, value) VALUES ('targeted_discounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
