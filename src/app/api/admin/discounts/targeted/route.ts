@@ -31,70 +31,100 @@ function validateRuleInput(body: Record<string, unknown>): { valid: true; rule: 
 
 export async function GET(req: NextRequest) {
   if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  await initDb();
-  const db = getDb();
-  const result = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
-  if (!result.rows[0]) return NextResponse.json([]);
-  return NextResponse.json(JSON.parse(String(col(result.rows[0], 'value'))));
+  try {
+    await initDb();
+    const db = getDb();
+    const result = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
+    if (!result.rows[0]) return NextResponse.json([]);
+    return NextResponse.json(JSON.parse(String(col(result.rows[0], 'value'))));
+  } catch {
+    return NextResponse.json({ error: 'فشل جلب قواعد الخصم' }, { status: 500 });
+  }
 }
 
 export async function POST(req: NextRequest) {
   if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  await initDb();
-  const db = getDb();
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'بيانات غير صالحة' }, { status: 400 });
+  }
 
   const result = validateRuleInput(body);
   if (!result.valid) return NextResponse.json({ error: result.error }, { status: 400 });
   const rule = { id: Date.now(), ...result.rule };
 
-  // Get existing rules
-  const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
-  const rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
-  rules.push(rule);
+  try {
+    await initDb();
+    const db = getDb();
+    const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
+    const rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
+    rules.push(rule);
 
-  await db.execute({
-    sql: "INSERT INTO settings (key, value) VALUES ('targeted_discounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-    args: [JSON.stringify(rules)],
-  });
-  return NextResponse.json({ success: true, rule });
+    await db.execute({
+      sql: "INSERT INTO settings (key, value) VALUES ('targeted_discounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+      args: [JSON.stringify(rules)],
+    });
+    return NextResponse.json({ success: true, rule });
+  } catch {
+    return NextResponse.json({ error: 'فشل حفظ القاعدة' }, { status: 500 });
+  }
 }
 
 export async function PUT(req: NextRequest) {
   if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  await initDb();
-  const db = getDb();
-  const body = await req.json();
+  let body;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: 'بيانات غير صالحة' }, { status: 400 });
+  }
 
   const result = validateRuleInput(body);
   if (!result.valid) return NextResponse.json({ error: result.error }, { status: 400 });
 
-  const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
-  let rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
+  try {
+    await initDb();
+    const db = getDb();
+    const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
+    let rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
 
-  // Update specific rule by id
-  rules = rules.map((r: { id: number }) => r.id === body.id ? { id: r.id, ...result.rule } : r);
+    // Update specific rule by id
+    rules = rules.map((r: { id: number }) => r.id === body.id ? { id: r.id, ...result.rule } : r);
 
-  await db.execute({
-    sql: "INSERT INTO settings (key, value) VALUES ('targeted_discounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-    args: [JSON.stringify(rules)],
-  });
-  return NextResponse.json({ success: true });
+    await db.execute({
+      sql: "INSERT INTO settings (key, value) VALUES ('targeted_discounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+      args: [JSON.stringify(rules)],
+    });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'فشل تعديل القاعدة' }, { status: 500 });
+  }
 }
 
 export async function DELETE(req: NextRequest) {
   if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  await initDb();
-  const db = getDb();
-  const { id } = await req.json();
+  let id;
+  try {
+    ({ id } = await req.json());
+  } catch {
+    return NextResponse.json({ error: 'بيانات غير صالحة' }, { status: 400 });
+  }
 
-  const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
-  let rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
-  rules = rules.filter((r: { id: number }) => r.id !== id);
+  try {
+    await initDb();
+    const db = getDb();
+    const existing = await db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] });
+    let rules = existing.rows[0] ? JSON.parse(String(col(existing.rows[0], 'value'))) : [];
+    rules = rules.filter((r: { id: number }) => r.id !== id);
 
-  await db.execute({
-    sql: "INSERT INTO settings (key, value) VALUES ('targeted_discounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-    args: [JSON.stringify(rules)],
-  });
-  return NextResponse.json({ success: true });
+    await db.execute({
+      sql: "INSERT INTO settings (key, value) VALUES ('targeted_discounts', ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value",
+      args: [JSON.stringify(rules)],
+    });
+    return NextResponse.json({ success: true });
+  } catch {
+    return NextResponse.json({ error: 'فشل حذف القاعدة' }, { status: 500 });
+  }
 }
