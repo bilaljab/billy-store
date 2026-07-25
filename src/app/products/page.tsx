@@ -1,10 +1,11 @@
-'use client';
-import { useState, useEffect } from 'react';
 import Navbar from '@/components/layout/Navbar';
-import ScrollReveal from '@/components/ui/ScrollReveal';
 import Footer from '@/components/layout/Footer';
-import ProductCard from '@/components/ui/ProductCard';
-import { Gamepad2, Star, Flame, Target } from 'lucide-react';
+import ProductsBrowser from '@/components/ui/ProductsBrowser';
+import { Flame } from 'lucide-react';
+
+// ISR: matches product-detail page's cadence (this is the primary shopping/catalog
+// surface, so price/discount freshness matters as much as on a single product page)
+export const revalidate = 30;
 
 interface Product {
   id: number;
@@ -15,78 +16,64 @@ interface Product {
   category: string;
   featured: number;
   release_date?: string | null;
-  discountedPrice?: number | null;
 }
 
-export default function ProductsPage() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [discountsData, setDiscountsData] = useState<{
-    global: { percentage: number; label: string; active: boolean } | null;
-    targeted: { id: number; type: string; percentage: number; label: string; active: boolean; productIds: number[]; minPrice: number | null; maxPrice: number | null }[];
-  } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [category, setCategory] = useState('all');
-  const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<'default' | 'asc' | 'desc' | 'discount'>('default');
+interface GlobalDiscount { percentage: number; label: string; active: boolean }
 
-  useEffect(() => {
-    fetch('/api/discounts').then(r => r.json()).then(d => setDiscountsData(d)).catch(() => {});
-  }, []);
+async function getProductsWithDiscounts(): Promise<{
+  products: (Product & { discount: { percentage: number; label: string } | null })[];
+  globalDiscount: GlobalDiscount | null;
+  error: boolean;
+}> {
+  try {
+    const { getDb, initDb, serializeProduct, col } = await import('@/lib/db');
+    await initDb();
+    const db = getDb();
 
-  // Calculate discount for a specific product
-  const getDiscount = (p: Product) => {
-    if (!discountsData) return null;
-    let best: { percentage: number; label: string } | null = null;
-    for (const rule of discountsData.targeted || []) {
-      if (!rule.active) continue;
-      let applies = false;
-      if (rule.type === 'product' && rule.productIds.includes(p.id)) applies = true;
-      if (rule.type === 'range') {
-        const aboveMin = rule.minPrice === null || p.price >= rule.minPrice;
-        const belowMax = rule.maxPrice === null || p.price <= rule.maxPrice;
-        if (aboveMin && belowMax) applies = true;
+    const [productsResult, globalResult, targetedResult] = await Promise.all([
+      db.execute('SELECT * FROM products ORDER BY RANDOM()'),
+      db.execute({ sql: "SELECT value FROM settings WHERE key = 'discount'", args: [] }),
+      db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] }),
+    ]);
+
+    const global: GlobalDiscount | null = globalResult.rows[0]
+      ? JSON.parse(String(col(globalResult.rows[0], 'value')))
+      : null;
+    const targetedRules = targetedResult.rows[0]
+      ? JSON.parse(String(col(targetedResult.rows[0], 'value')))
+      : [];
+
+    // Calculate best applicable discount per product (targeted takes priority over global) —
+    // same priority logic as products/[id]/page.tsx's getPageData (duplicated by design, see CLAUDE.md Gotcha #9)
+    const products = productsResult.rows.map(serializeProduct).map(product => {
+      let discount: { percentage: number; label: string } | null = null;
+      for (const rule of targetedRules) {
+        if (!rule.active) continue;
+        let applies = false;
+        if (rule.type === 'product' && rule.productIds.includes(product.id)) applies = true;
+        if (rule.type === 'range') {
+          const aboveMin = rule.minPrice === null || product.price >= rule.minPrice;
+          const belowMax = rule.maxPrice === null || product.price <= rule.maxPrice;
+          if (aboveMin && belowMax) applies = true;
+        }
+        if (applies && (!discount || rule.percentage > discount.percentage)) {
+          discount = { percentage: rule.percentage, label: rule.label };
+        }
       }
-      if (applies && (!best || rule.percentage > best.percentage)) {
-        best = { percentage: rule.percentage, label: rule.label };
+      if (!discount && global?.active) {
+        discount = { percentage: global.percentage, label: global.label };
       }
-    }
-    if (!best && discountsData.global?.active) {
-      best = { percentage: discountsData.global.percentage, label: discountsData.global.label };
-    }
-    return best;
-  };
+      return { ...product, discount };
+    });
 
-  useEffect(() => {
-    const url = category === 'all' ? '/api/products' : `/api/products?category=${category}`;
-    fetch(url)
-      .then(r => r.json())
-      .then(data => { setProducts(data); setLoading(false); })
-      .catch(() => setLoading(false));
-  }, [category]);
+    return { products, globalDiscount: global?.active ? global : null, error: false };
+  } catch {
+    return { products: [], globalDiscount: null, error: true };
+  }
+}
 
-  const sorted = [...products].sort((a, b) => {
-    if (sort === 'asc') return a.price - b.price;
-    if (sort === 'desc') return b.price - a.price;
-    if (sort === 'discount') {
-      const dA = getDiscount(a);
-      const dB = getDiscount(b);
-      // Products with discount first, sorted by discount percentage desc
-      if (dA && !dB) return -1;
-      if (!dA && dB) return 1;
-      if (dA && dB) return dB.percentage - dA.percentage;
-    }
-    return 0;
-  });
-  const filtered = sorted.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.description?.toLowerCase().includes(search.toLowerCase())
-  );
-
-  const categories = [
-    { value: 'all', label: 'الكل', icon: <Target size={16} className="text-current" /> },
-    { value: 'games', label: 'الألعاب', icon: <Gamepad2 size={16} className="text-current" /> },
-    { value: 'subscription', label: 'الاشتراكات', icon: <Star size={16} className="text-current" /> },
-  ];
+export default async function ProductsPage() {
+  const { products, globalDiscount, error } = await getProductsWithDiscounts();
 
   return (
     <div className="min-h-screen bg-dark">
@@ -110,96 +97,17 @@ export default function ProductsPage() {
 
       <div className="max-w-7xl mx-auto px-4 pb-20">
         {/* Discount Banner */}
-        {discountsData?.global?.active && (
+        {globalDiscount && (
           <div className="mb-6 bg-gradient-to-l from-red-500/20 to-amber-500/10 border border-red-500/30 rounded-2xl px-5 py-4 flex items-center gap-3">
             <Flame size={30} className="text-red-400" />
             <div>
-              <p className="text-white font-black text-lg">{discountsData.global.label}</p>
-              <p className="text-red-400 text-sm">خصم <span className="font-black text-xl">{discountsData.global.percentage}%</span> على جميع المنتجات — عرض لفترة محدودة!</p>
+              <p className="text-white font-black text-lg">{globalDiscount.label}</p>
+              <p className="text-red-400 text-sm">خصم <span className="font-black text-xl">{globalDiscount.percentage}%</span> على جميع المنتجات — عرض لفترة محدودة!</p>
             </div>
           </div>
         )}
 
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-4 mb-10">
-          {/* Category tabs */}
-          <div className="flex gap-2 bg-dark-card border border-dark-border rounded-xl p-1.5">
-            {categories.map(cat => (
-              <button key={cat.value} onClick={() => setCategory(cat.value)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 ${
-                  category === cat.value
-                    ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                    : 'text-slate-400 hover:text-white'
-                }`}>
-                <span>{cat.icon}</span>
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Sort */}
-          <div className="flex gap-1 bg-dark-card border border-dark-border rounded-xl p-1.5">
-            {([['default','الافتراضي'],['asc','الأرخص'],['desc','الأغلى'],['discount','أكبر خصم 🏷️']] as const).map(([val,label]) => (
-              <button key={val} onClick={() => setSort(val)}
-                className={`min-h-11 inline-flex items-center justify-center px-3 rounded-lg text-xs font-semibold transition-all ${sort === val ? 'bg-primary text-white' : 'text-slate-400 hover:text-white'}`}>
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {/* Search */}
-          <div className="flex-1 relative">
-            <input
-              type="text"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-              placeholder="ابحث عن لعبة أو اشتراك..."
-              className="w-full bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors text-sm"
-            />
-            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </div>
-        </div>
-
-        {/* Results count */}
-        {!loading && (
-          <p className="text-muted text-sm mb-6">
-            {filtered.length} منتج {search && `لـ "${search}"`}
-          </p>
-        )}
-
-        {/* Grid */}
-        <h2 className="sr-only">نتائج البحث</h2>
-        {loading ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-dark-card border border-dark-border rounded-2xl overflow-hidden animate-pulse">
-                <div className="aspect-[4/3] bg-dark-border"></div>
-                <div className="p-4 space-y-3">
-                  <div className="h-3 bg-dark-border rounded w-1/3"></div>
-                  <div className="h-4 bg-dark-border rounded"></div>
-                  <div className="h-3 bg-dark-border rounded w-2/3"></div>
-                  <div className="h-6 bg-dark-border rounded w-1/4"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="text-center py-24">
-            <div className="mb-4 flex items-center justify-center"><Gamepad2 size={60} className="text-muted" /></div>
-            <h3 className="text-xl font-bold text-slate-400 mb-2">لا توجد نتائج</h3>
-            <p className="text-muted">جرب البحث بكلمة مختلفة أو تصفح فئة أخرى</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
-            {filtered.map((product, i) => (
-              <ScrollReveal key={product.id} direction="up" delay={i % 4 * 80}>
-                <ProductCard product={product} />
-              </ScrollReveal>
-            ))}
-          </div>
-        )}
+        <ProductsBrowser products={products} error={error} />
       </div>
       </main>
 
