@@ -830,6 +830,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setAnnForm({...annForm, active: !annForm.active})}
+                  aria-label={annForm.active ? 'إيقاف الإعلان' : 'تفعيل الإعلان'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
                   <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${annForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${annForm.active ? 'right-1' : 'left-1'}`}></span>
@@ -1163,6 +1164,7 @@ export default function AdminDashboard() {
               {/* Active toggle */}
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setTargetedForm({...targetedForm, active: !targetedForm.active})}
+                  aria-label={targetedForm.active ? 'إيقاف القاعدة' : 'تفعيل القاعدة'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
                   <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${targetedForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${targetedForm.active ? 'right-1' : 'left-1'}`}></span>
@@ -1218,6 +1220,7 @@ export default function AdminDashboard() {
               </div>
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setDiscountForm({...discountForm, active: !discountForm.active})}
+                  aria-label={discountForm.active ? 'إيقاف الخصم' : 'تفعيل الخصم'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
                   <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${discountForm.active ? 'bg-amber-500' : 'bg-dark-border'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${discountForm.active ? 'right-1' : 'left-1'}`}></span>
@@ -1319,6 +1322,7 @@ export default function AdminDashboard() {
 
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setForm({...form, featured: !form.featured})}
+                  aria-label={form.featured ? 'إلغاء تمييز المنتج' : 'تمييز المنتج'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
                   <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${form.featured ? 'bg-amber-500' : 'bg-dark-border'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${form.featured ? 'right-1' : 'left-1'}`}></span>
