@@ -913,7 +913,7 @@ export default function AdminDashboard() {
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2">
                           {p.image ? (
-                            <img src={p.image} alt={p.name} className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
+                            <Image src={p.image} alt={p.name} width={32} height={32} loading="lazy" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
                           ) : (
                             <div className="w-8 h-8 rounded-lg bg-dark-border flex items-center justify-center flex-shrink-0 text-sm">
                               {p.category === 'subscription' ? '⭐' : '🎮'}

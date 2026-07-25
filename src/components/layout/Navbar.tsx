@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const WaIcon = () => (
@@ -73,7 +74,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="Billy Store" className="h-10 w-10 rounded-lg object-cover" />
+            <Image src="/logo.jpg" alt="Billy Store" width={40} height={40} className="h-10 w-10 rounded-lg object-cover" />
             <span className="font-black text-xl text-white">Billy <span className="text-accent">Store</span></span>
           </Link>
 
