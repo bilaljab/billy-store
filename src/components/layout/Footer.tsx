@@ -13,7 +13,7 @@ export default function Footer() {
               <span className="font-black text-xl text-white">Billy <span className="text-accent">Store</span></span>
             </div>
             <p className="text-slate-400 text-sm leading-relaxed">
-              متجرك الموثوق لألعاب PlayStation 4 و 5 واشتراكات PS Plus منذ عام 2017. أسعار لا تُنافس وخدمة لا تُقارن.
+              متجرك الموثوق لألعاب PlayStation 4 و 5 واشتراكات PS Plus منذ عام 2017. أسعار أرخص من السوق، ودعم عملاء على مدار الساعة.
             </p>
           </div>
 
