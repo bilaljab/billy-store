@@ -137,7 +137,7 @@ export default function AboutPage() {
                 </div>
               </a>
 
-              <a href="https://instagram.com/Billy_Store3" target="_blank" rel="noopener noreferrer"
+              <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-4 bg-pink-600/10 border border-pink-600/30 hover:border-pink-500/60 hover:bg-pink-600/20 rounded-2xl p-6 transition-all group">
                 <div className="w-14 h-14 rounded-xl bg-pink-600/20 flex items-center justify-center group-hover:bg-pink-600/40 transition-all flex-shrink-0">
                   <svg className="w-7 h-7 text-pink-400" fill="currentColor" viewBox="0 0 24 24">

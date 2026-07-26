@@ -89,7 +89,7 @@ export default function Navbar() {
               className="w-11 h-11 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all flex items-center justify-center" aria-label="واتساب">
               <WaIcon />
             </a>
-            <a href="https://instagram.com/Billy_Store3" target="_blank" rel="noopener noreferrer"
+            <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
               className="w-11 h-11 bg-gradient-to-l from-purple-600 to-pink-500 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center" aria-label="إنستقرام">
               <IgIcon />
             </a>
@@ -121,7 +121,7 @@ export default function Navbar() {
               className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white font-bold py-2.5 rounded-lg text-sm">
               <WaIcon /> واتساب
             </a>
-            <a href="https://instagram.com/Billy_Store3" target="_blank" rel="noopener noreferrer"
+            <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
               className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-l from-purple-600 to-pink-500 text-white font-bold py-2.5 rounded-lg text-sm">
               <IgIcon /> إنستقرام
             </a>

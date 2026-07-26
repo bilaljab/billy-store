@@ -45,7 +45,7 @@ export default function Footer() {
                 </div>
                 +966 50 894 9041
               </a>
-              <a href="https://instagram.com/Billy_Store3" target="_blank" rel="noopener noreferrer"
+              <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
                 className="flex items-center gap-3 text-slate-400 hover:text-pink-400 transition-colors text-sm group">
                 <div className="w-8 h-8 rounded-lg bg-pink-600/20 border border-pink-600/30 flex items-center justify-center group-hover:bg-pink-600/30 transition-all">
                   <svg className="w-4 h-4 text-pink-400" fill="currentColor" viewBox="0 0 24 24">
