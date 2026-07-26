@@ -59,6 +59,7 @@ export default function ProductActions({ product, waMsg }: Props) {
       </div>
 
       {/* Quick action buttons */}
+      <p className="text-xs text-muted text-center">💡 انسخ الرسالة وألصقها بمحادثة إنستقرام</p>
       <div className="grid grid-cols-3 gap-2">
         <button onClick={() => copy('name')}
           className="flex items-center justify-center gap-2 bg-dark-card border border-dark-border hover:border-primary/50 text-slate-300 hover:text-white font-semibold py-2.5 px-3 rounded-xl transition-all text-xs">
