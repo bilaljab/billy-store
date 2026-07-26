@@ -100,7 +100,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const { product } = data;
   const description = product.description
     ? product.description.slice(0, 160)
-    : `تسوق ${product.name} بأفضل سعر من بيلي ستور — تسليم رقمي فوري.`;
+    : `تسوق ${product.name} بأفضل سعر من بيلي ستور — تسليم رقمي بدون انتظار.`;
   const url = `${SITE_URL}/products/${product.id}`;
   const image = product.image || `${SITE_URL}/logo.jpg`;
 
@@ -244,7 +244,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               </div>
               <div className="text-right">
                 <p className="text-green-400 text-sm font-bold">✓ متوفر</p>
-                <p className="text-muted text-xs mt-1">تسليم رقمي فوري</p>
+                <p className="text-muted text-xs mt-1">تسليم رقمي سريع</p>
               </div>
             </div>
 

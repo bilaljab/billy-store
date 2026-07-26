@@ -69,7 +69,7 @@ export default async function HomePage() {
             بل وأرخص من المتجر الرسمي نفسه
           </p>
           <p className="text-slate-400 mb-12 max-w-xl mx-auto leading-relaxed animate-slide-up animation-delay-400">
-            تشكيلة ضخمة من ألعاب PS4 و PS5 واشتراكات PS Plus. تسليم رقمي فوري وخدمة عملاء على مدار الساعة.
+            تشكيلة ضخمة من ألعاب PS4 و PS5 واشتراكات PS Plus. تسليم رقمي خلال دقائق وخدمة عملاء على مدار الساعة.
           </p>
           <div className="flex flex-col items-center gap-3 animate-slide-up animation-delay-600 w-full max-w-sm mx-auto">
             {/* Main button - full width */}
@@ -191,7 +191,7 @@ export default async function HomePage() {
           {[
             {icon:<HandCoins size={48} className="text-accent" />,title:'أسعار لا تُنافس',desc:'وفّر أكثر مع كل عملية شراء مقارنة بالمتجر الرسمي والسوق المحلي'},
             {icon:<Lock size={48} className="text-accent" />,title:'متجر موثوق',desc:'أكثر من 7 سنوات من الخبرة وآلاف العملاء الراضين في المملكة'},
-            {icon:<Smartphone size={48} className="text-accent" />,title:'تسليم رقمي فوري',desc:'استلم منتجك في دقائق مباشرة على حسابك دون انتظار أو شحن'},
+            {icon:<Smartphone size={48} className="text-accent" />,title:'تسليم رقمي سريع',desc:'استلم منتجك في دقائق مباشرة على حسابك دون انتظار أو شحن'},
             {icon:<MessageCircle size={48} className="text-accent" />,title:'دعم على مدار الساعة',desc:'فريقنا متاح دائماً عبر واتساب لمساعدتك والرد على استفساراتك'},
           ].map((item,i) => (
             <ScrollReveal key={item.title} direction="up" delay={i*120}>
