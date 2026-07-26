@@ -1,5 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
+import { buildInquiryMessage } from '@/lib/messages';
 
 interface Props {
   product: { id: number; name: string; price: number };
@@ -16,7 +17,7 @@ export default function ProductActions({ product, waMsg }: Props) {
   }, [product.id]);
 
   const copy = async (type: 'name' | 'msg') => {
-    const text = type === 'name' ? product.name : `أريد الاستفسار عن:\n🎮 ${product.name}\n💰 السعر: ${product.price} ريال`;
+    const text = type === 'name' ? product.name : buildInquiryMessage(product.name, product.price);
     await navigator.clipboard.writeText(text);
     setCopied(type);
     setTimeout(() => setCopied(null), 2000);

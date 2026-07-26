@@ -27,6 +27,7 @@ import { notFound } from 'next/navigation';
 import ProductActions from '@/components/ui/ProductActions';
 import RelatedProducts from '@/components/ui/RelatedProducts';
 import { Gamepad2, Star } from 'lucide-react';
+import { buildInquiryMessage } from '@/lib/messages';
 
 // Single DB connection for all data on this page
 // cache() shares one result between generateMetadata and the page component per request
@@ -124,7 +125,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const { product, discount, views } = data;
   const categoryLabel = product.category === 'subscription' ? 'اشتراك PS Plus' : 'لعبة PlayStation';
   const discountedPrice = discount ? Math.round(product.price * (1 - discount.percentage / 100)) : null;
-  const waMsg = encodeURIComponent(`مرحباً، أريد الاستفسار عن:\n🎮 ${product.name}\n💰 السعر: ${discountedPrice ?? product.price} ريال`);
+  const waMsg = encodeURIComponent(buildInquiryMessage(product.name, discountedPrice ?? product.price));
 
   const jsonLd = {
     '@context': 'https://schema.org',
