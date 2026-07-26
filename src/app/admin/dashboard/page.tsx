@@ -768,6 +768,12 @@ export default function AdminDashboard() {
               <p className="text-slate-400">لا توجد منتجات بعد</p>
               <button onClick={openAdd} className="mt-4 ps-btn text-sm">أضف أول منتج</button>
             </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="mb-3 flex items-center justify-center"><Package size={48} className="text-muted" /></div>
+              <p className="text-slate-400">لا توجد نتائج مطابقة للبحث/الفلتر</p>
+              <button onClick={() => { setSearch(''); setCategoryFilter('all'); }} className="mt-4 ps-btn text-sm">مسح الفلاتر</button>
+            </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -788,7 +794,7 @@ export default function AdminDashboard() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map(product => (
+                  {pagedProducts.map(product => (
                     <tr key={product.id} className={`border-b border-dark-border/50 hover:bg-dark/30 transition-colors ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
                       <td className="px-4 py-4">
                         <input type="checkbox"
@@ -846,6 +852,25 @@ export default function AdminDashboard() {
                   ))}
                 </tbody>
               </table>
+            </div>
+          )}
+
+          {filteredProducts.length > 0 && totalPages > 1 && (
+            <div className="flex items-center justify-between px-6 py-4 border-t border-dark-border">
+              <p className="text-muted text-sm" aria-live="polite">
+                عرض {(page - 1) * PRODUCTS_PAGE_SIZE + 1}–{Math.min(page * PRODUCTS_PAGE_SIZE, filteredProducts.length)} من {filteredProducts.length}
+              </p>
+              <div className="flex gap-2">
+                <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
+                  className="text-slate-400 hover:text-white text-xs font-bold px-3 min-h-11 rounded-lg border border-dark-border transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                  السابق
+                </button>
+                <span className="text-muted text-xs self-center px-1">صفحة {page} من {totalPages}</span>
+                <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
+                  className="text-slate-400 hover:text-white text-xs font-bold px-3 min-h-11 rounded-lg border border-dark-border transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                  التالي
+                </button>
+              </div>
             </div>
           )}
         </div>
