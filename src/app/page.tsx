@@ -114,7 +114,7 @@ export default async function HomePage() {
               <span className="text-accent font-bold text-sm uppercase tracking-wider">من نحن</span>
               <h2 className="text-4xl font-black text-white mt-2 mb-6">
                 أكثر من مجرد متجر —<br />
-                <span className="text-primary-light">نحن مجتمع لاعبين</span>
+                <span className="text-primary-light">نحن لاعبون نخدم لاعبين</span>
               </h2>
               <p className="text-slate-400 leading-relaxed mb-6">
                 بيلي ستور هو متجرك الموثوق لألعاب PlayStation منذ عام 2017. بدأنا بشغف حقيقي للألعاب ورغبة في توفير أسعار مناسبة للاعبين السعوديين، واليوم نخدم آلاف العملاء بأفضل الأسعار وأسرع التسليم.
