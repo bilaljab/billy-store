@@ -60,13 +60,13 @@ export default async function HomePage() {
             متجر موثوق منذ 2017
           </div>
           <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white mb-5 leading-tight animate-slide-up">
-            <span className="block">أفضل ألعاب</span>
+            <span className="block">ألعاب PlayStation</span>
             <span className="block bg-gradient-to-l from-accent via-primary-light to-primary bg-clip-text text-transparent text-glow">
-              PlayStation
+              بأسعار أرخص من السوق
             </span>
           </h1>
           <p className="text-xl sm:text-2xl text-slate-300 mb-4 font-semibold animate-slide-up animation-delay-200">
-            بأسعار أرخص من السوق والمتجر الرسمي
+            بل وأرخص من المتجر الرسمي نفسه
           </p>
           <p className="text-slate-400 mb-12 max-w-xl mx-auto leading-relaxed animate-slide-up animation-delay-400">
             تشكيلة ضخمة من ألعاب PS4 و PS5 واشتراكات PS Plus. تسليم رقمي فوري وخدمة عملاء على مدار الساعة.
