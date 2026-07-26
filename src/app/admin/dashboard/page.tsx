@@ -28,6 +28,7 @@ interface TargetedRule {
 }
 
 const EMPTY_FORM = { name: '', description: '', price: '', image: '', category: 'games', featured: false, release_date: '' };
+const PRODUCTS_PAGE_SIZE = 20;
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -75,6 +76,9 @@ export default function AdminDashboard() {
   const [savingAnn, setSavingAnn] = useState(false);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [deletingSelected, setDeletingSelected] = useState(false);
+  const [search, setSearch] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState<'all' | 'games' | 'subscription'>('all');
+  const [page, setPage] = useState(1);
   const router = useRouter();
 
   // Token is handled via httpOnly cookie automatically - no localStorage needed
@@ -178,6 +182,9 @@ export default function AdminDashboard() {
 
   useEffect(() => { fetchProducts(); fetchDiscount(); fetchTargetedRules(); fetchAnnouncement(); }, [fetchProducts, fetchDiscount, fetchTargetedRules, fetchAnnouncement]);
 
+  // تصفير الصفحة والتحديد عند تغيير البحث/الفلتر فقط (منع "تحديد صامت" عبر فلتر مختلف)
+  useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, categoryFilter]);
+
   const openAdd = () => { setEditProduct(null); setForm(EMPTY_FORM); setError(''); setModalOpen(true); };
   const openEdit = (p: Product) => {
     setEditProduct(p);
@@ -269,6 +276,7 @@ export default function AdminDashboard() {
       body: JSON.stringify({ ids: Array.from(selectedIds) }),
     });
     setSelectedIds(new Set());
+    setPage(1); // صراحة، مش اعتمادًا على effect التثبيت العام (بند 5 بالخطة)
     setDeletingSelected(false);
     fetchProducts();
   };
@@ -282,10 +290,10 @@ export default function AdminDashboard() {
   };
 
   const toggleSelectAll = () => {
-    if (selectedIds.size === products.length) {
+    if (filteredProducts.length > 0 && filteredProducts.every(p => selectedIds.has(p.id))) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(products.map(p => p.id)));
+      setSelectedIds(new Set(filteredProducts.map(p => p.id)));
     }
   };
 
@@ -403,6 +411,24 @@ export default function AdminDashboard() {
     // Token cleared by server cookie deletion
     router.push('/admin/login');
   };
+
+  const q = search.trim().toLowerCase();
+  const filteredProducts = products.filter(p =>
+    (categoryFilter === 'all' || p.category === categoryFilter) &&
+    (p.name.toLowerCase().includes(q) || p.description.toLowerCase().includes(q))
+  );
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PAGE_SIZE));
+  const pagedProducts = filteredProducts.slice((page - 1) * PRODUCTS_PAGE_SIZE, page * PRODUCTS_PAGE_SIZE);
+
+  // عدد الصفحات التي يمتد عبرها التحديد الحالي (لعرض "محدد عبر N صفحات")
+  const selectedPageSet = new Set(
+    filteredProducts
+      .map((p, i) => (selectedIds.has(p.id) ? Math.floor(i / PRODUCTS_PAGE_SIZE) + 1 : null))
+      .filter((x): x is number => x !== null)
+  );
+
+  // تثبيت الصفحة ضمن الحدود بعد حذف يقلّص النتائج (مثلاً حذف آخر عنصر بآخر صفحة)
+  useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
 
   return (
     <div className="min-h-screen bg-dark">
@@ -678,7 +704,11 @@ export default function AdminDashboard() {
           {/* Bulk action bar */}
           {selectedIds.size > 0 && (
             <div className="flex items-center gap-3 mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-              <span className="text-red-400 text-sm font-bold">تم تحديد {selectedIds.size} منتج</span>
+              <span className="text-red-400 text-sm font-bold">
+                {selectedPageSet.size > 1
+                  ? `تم تحديد ${selectedIds.size} منتج عبر ${selectedPageSet.size} صفحات`
+                  : `تم تحديد ${selectedIds.size} منتج`}
+              </span>
               <div className="flex gap-2 mr-auto">
                 <button onClick={() => setSelectedIds(new Set())}
                   className="text-slate-400 hover:text-white text-xs px-3 min-h-11 rounded-lg border border-dark-border transition-all">
@@ -707,7 +737,7 @@ export default function AdminDashboard() {
                   <tr className="border-b border-dark-border">
                     <th className="px-4 py-3 w-10">
                       <input type="checkbox"
-                        checked={selectedIds.size === products.length && products.length > 0}
+                        checked={filteredProducts.length > 0 && filteredProducts.every(p => selectedIds.has(p.id))}
                         onChange={toggleSelectAll}
                         aria-label="تحديد كل المنتجات"
                         className="w-5 h-5 accent-primary cursor-pointer" />
