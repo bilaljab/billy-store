@@ -701,6 +701,44 @@ export default function AdminDashboard() {
             </div>
           </div>
 
+          {/* Search + category filter */}
+          {products.length > 0 && (
+            <div className="flex flex-col sm:flex-row gap-3 px-6 py-3 border-b border-dark-border">
+              <div className="flex-1 relative">
+                <label htmlFor="admin-product-search" className="sr-only">ابحث عن منتج بالاسم أو الوصف</label>
+                <input
+                  id="admin-product-search"
+                  type="text"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  placeholder="ابحث عن منتج بالاسم أو الوصف..."
+                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors text-sm"
+                />
+                <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+              </div>
+              <div role="group" aria-label="فلترة حسب الفئة" className="flex gap-2 bg-dark border border-dark-border rounded-xl p-1.5">
+                {([
+                  { value: 'all' as const, label: 'الكل', icon: <Target size={16} className="text-current" /> },
+                  { value: 'games' as const, label: 'الألعاب', icon: <Gamepad2 size={16} className="text-current" /> },
+                  { value: 'subscription' as const, label: 'الاشتراكات', icon: <Star size={16} className="text-current" /> },
+                ]).map(cat => (
+                  <button key={cat.value} type="button" onClick={() => setCategoryFilter(cat.value)}
+                    aria-pressed={categoryFilter === cat.value}
+                    className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 ${
+                      categoryFilter === cat.value
+                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
+                        : 'text-slate-400 hover:text-white'
+                    }`}>
+                    {cat.icon}
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Bulk action bar */}
           {selectedIds.size > 0 && (
             <div className="flex items-center gap-3 mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
