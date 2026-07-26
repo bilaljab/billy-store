@@ -6,7 +6,7 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
 import ScrollReveal from '@/components/ui/ScrollReveal';
 import Link from 'next/link';
-import { Trophy, Zap, HandCoins, Lock, Smartphone, MessageCircle } from 'lucide-react';
+import { Zap, HandCoins, Lock, Smartphone, MessageCircle, ShieldCheck, Wallet } from 'lucide-react';
 
 async function getFeaturedProducts() {
   try {
@@ -127,9 +127,9 @@ export default async function HomePage() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             {[
-              {icon:<Trophy size={30} className="text-amber-400" />,title:'موثوقية عالية',desc:'أكثر من 7 سنوات في السوق'},
-              {icon:<Zap size={30} className="text-accent" />,title:'تسليم فوري',desc:'رقمي وسريع 24/7'},
-              {icon:<HandCoins size={30} className="text-accent" />,title:'أسعار منافسة',desc:'أرخص من المتجر الرسمي'},
+              {icon:<ShieldCheck size={30} className="text-amber-400" />,title:'ضمان مدى الحياة',desc:'استبدال سريع لأي مشكلة'},
+              {icon:<Zap size={30} className="text-accent" />,title:'تفعيل بسيط',desc:'حساب جاهز بخطوة واحدة'},
+              {icon:<Wallet size={30} className="text-accent" />,title:'دفع سهل وآمن',desc:'تحويل بنكي أو STC Pay'},
               {icon:'🎮',title:'مكتبة ضخمة',desc:'PS4 و PS5 وكل جديد'},
             ].map((item,i) => (
               <ScrollReveal key={item.title} direction="up" delay={i*100}>
