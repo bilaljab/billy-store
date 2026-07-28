@@ -59,14 +59,11 @@ export default async function HomePage() {
             <span className="w-2 h-2 bg-accent rounded-full animate-pulse"></span>
             متجر موثوق منذ 2017
           </div>
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-white mb-5 leading-tight animate-slide-up">
-            <span className="block">ألعاب PlayStation</span>
-            <span className="block bg-gradient-to-l from-accent via-primary-light to-primary bg-clip-text text-transparent text-glow">
-              بأسعار أرخص من السوق
-            </span>
+          <h1 className="text-4xl/tight sm:text-6xl/tight md:text-7xl/tight font-black text-white mb-4 animate-slide-up">
+            نفس المتعة، نفس اللعبة
           </h1>
-          <p className="text-xl sm:text-2xl text-slate-300 mb-4 font-semibold animate-slide-up animation-delay-200">
-            بل وأرخص من المتجر الرسمي نفسه
+          <p className="text-2xl/relaxed sm:text-4xl/relaxed md:text-5xl/relaxed font-black mb-4 py-1 bg-gradient-to-l from-accent via-primary-light to-primary bg-clip-text text-transparent text-glow animate-slide-up animation-delay-200">
+            بسعر أقل من المتجر الرسمي بكثير
           </p>
           <p className="text-slate-400 mb-12 max-w-xl mx-auto leading-relaxed animate-slide-up animation-delay-400">
             تشكيلة ضخمة من ألعاب PS4 و PS5 واشتراكات PS Plus. تسليم رقمي خلال دقائق وخدمة عملاء على مدار الساعة.
