@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { useSearchParams } from 'next/navigation';
 import ScrollReveal from './ScrollReveal';
 import ProductCard from './ProductCard';
 import { Gamepad2, Star, Target } from 'lucide-react';
@@ -16,8 +17,15 @@ interface Product {
   discount: { percentage: number; label: string } | null;
 }
 
+const CATEGORY_VALUES = ['all', 'games', 'subscription'] as const;
+
 export default function ProductsBrowser({ products, error }: { products: Product[]; error: boolean }) {
-  const [category, setCategory] = useState('all');
+  // القراءة من جهة العميل (لا searchParams بالـServer Component) حتى تبقى الصفحة static/ISR
+  const searchParams = useSearchParams();
+  const requested = searchParams.get('category');
+  const initialCategory = CATEGORY_VALUES.find(v => v === requested) ?? 'all';
+
+  const [category, setCategory] = useState<string>(initialCategory);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState<'default' | 'asc' | 'desc' | 'discount'>('default');
 

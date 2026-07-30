@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductsBrowser from '@/components/ui/ProductsBrowser';
@@ -107,7 +108,11 @@ export default async function ProductsPage() {
           </div>
         )}
 
-        <ProductsBrowser products={products} error={error} />
+        {/* Suspense مطلوب لأن ProductsBrowser يقرأ useSearchParams — بدونه تسقط الصفحة
+            لـdynamic rendering ويضيع revalidate أعلاه */}
+        <Suspense fallback={null}>
+          <ProductsBrowser products={products} error={error} />
+        </Suspense>
       </div>
       </main>
 

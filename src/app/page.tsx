@@ -5,16 +5,37 @@ export const revalidate = 60;
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/ui/ProductCard';
 import ScrollReveal from '@/components/ui/ScrollReveal';
+import CategoryTiles, { type CategoryTile } from '@/components/ui/CategoryTiles';
 import Link from 'next/link';
 import { Zap, HandCoins, Lock, Smartphone, MessageCircle, ShieldCheck, Wallet } from 'lucide-react';
+import { CATEGORY_TILES } from '@/lib/siteImages';
 
-async function getFeaturedProducts() {
+const HAS_IMAGE = "image IS NOT NULL AND image != ''";
+
+/**
+ * كل بيانات الصفحة الرئيسية باستعلامات متوازية. تعمل مرة كل 60 ثانية فقط
+ * بفضل revalidate أعلاه، لا لكل زائر.
+ */
+async function getHomeData() {
   try {
     const { getDb, initDb } = await import('@/lib/db');
     await initDb();
     const db = getDb();
-    const result = await db.execute('SELECT * FROM products WHERE featured = 1 ORDER BY created_at DESC LIMIT 6');
-    return result.rows.map(r => ({
+
+    const [featuredRes, countsRes, ...tileImageRes] = await Promise.all([
+      db.execute('SELECT * FROM products WHERE featured = 1 ORDER BY created_at DESC LIMIT 6'),
+      db.execute('SELECT category, COUNT(*) AS n FROM products GROUP BY category'),
+      // استعلام منفصل لكل تصنيف: استعلام عام واحد قد تبتلعه أحدث صور تصنيف
+      // واحد فيطلع التصنيف الآخر بلا صورة رغم توفّرها
+      ...CATEGORY_TILES.map(t =>
+        db.execute({
+          sql: `SELECT image FROM products WHERE category = ? AND ${HAS_IMAGE} ORDER BY created_at DESC LIMIT 1`,
+          args: [t.key],
+        })
+      ),
+    ]);
+
+    const featured = featuredRes.rows.map(r => ({
       id: Number(r.id),
       name: String(r.name ?? ''),
       description: String(r.description ?? ''),
@@ -23,13 +44,31 @@ async function getFeaturedProducts() {
       category: String(r.category ?? 'games'),
       featured: Number(r.featured ?? 0),
     }));
+
+    const counts = new Map(countsRes.rows.map(r => [String(r.category), Number(r.n ?? 0)]));
+
+    const tiles: CategoryTile[] = CATEGORY_TILES.map((t, i) => {
+      const count = counts.get(t.key) ?? 0;
+      const row = tileImageRes[i]?.rows[0];
+      return {
+        key: t.key,
+        label: t.label,
+        desc: t.desc,
+        href: t.href,
+        countText: t.countLabel(count),
+        image: row?.image ? String(row.image) : null,
+      };
+      // التصنيفات الفارغة تُستبعد أدناه حتى لا نرسل الزائر لصفحة بلا نتائج
+    }).filter(t => (counts.get(t.key) ?? 0) > 0);
+
+    return { featured, tiles };
   } catch {
-    return [];
+    return { featured: [], tiles: [] as CategoryTile[] };
   }
 }
 
 export default async function HomePage() {
-  const featured = await getFeaturedProducts();
+  const { featured, tiles } = await getHomeData();
 
   return (
     <div className="min-h-screen bg-dark">
@@ -102,6 +141,19 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* ── CATEGORY TILES ── */}
+      {tiles.length > 0 && (
+        <section className="py-16 px-4 max-w-7xl mx-auto">
+          <ScrollReveal direction="up">
+            <div className="text-center mb-10">
+              <span className="text-accent font-bold text-sm uppercase tracking-wider">وش تدور عليه؟</span>
+              <h2 className="text-3xl sm:text-4xl font-black text-white mt-2">اختر من وين تبدأ</h2>
+            </div>
+          </ScrollReveal>
+          <CategoryTiles tiles={tiles} />
+        </section>
+      )}
 
       {/* ── ABOUT PREVIEW ── */}
       <section className="py-20 px-4 max-w-7xl mx-auto">
