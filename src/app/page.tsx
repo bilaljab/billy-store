@@ -10,8 +10,6 @@ import Link from 'next/link';
 import { Zap, HandCoins, Lock, Smartphone, MessageCircle, ShieldCheck, Wallet } from 'lucide-react';
 import { CATEGORY_TILES } from '@/lib/siteImages';
 
-const HAS_IMAGE = "image IS NOT NULL AND image != ''";
-
 /**
  * كل بيانات الصفحة الرئيسية باستعلامات متوازية. تعمل مرة كل 60 ثانية فقط
  * بفضل revalidate أعلاه، لا لكل زائر.
@@ -22,17 +20,11 @@ async function getHomeData() {
     await initDb();
     const db = getDb();
 
-    const [featuredRes, countsRes, ...tileImageRes] = await Promise.all([
+    // بطاقات التصنيف تستخدم لوجوهات ثابتة، فلا حاجة لجلب غلاف لكل فئة —
+    // العدّاد وحده هو ما يأتي من قاعدة البيانات
+    const [featuredRes, countsRes] = await Promise.all([
       db.execute('SELECT * FROM products WHERE featured = 1 ORDER BY created_at DESC LIMIT 6'),
       db.execute('SELECT category, COUNT(*) AS n FROM products GROUP BY category'),
-      // استعلام منفصل لكل تصنيف: استعلام عام واحد قد تبتلعه أحدث صور تصنيف
-      // واحد فيطلع التصنيف الآخر بلا صورة رغم توفّرها
-      ...CATEGORY_TILES.map(t =>
-        db.execute({
-          sql: `SELECT image FROM products WHERE category = ? AND ${HAS_IMAGE} ORDER BY created_at DESC LIMIT 1`,
-          args: [t.key],
-        })
-      ),
     ]);
 
     const featured = featuredRes.rows.map(r => ({
@@ -47,19 +39,15 @@ async function getHomeData() {
 
     const counts = new Map(countsRes.rows.map(r => [String(r.category), Number(r.n ?? 0)]));
 
-    const tiles: CategoryTile[] = CATEGORY_TILES.map((t, i) => {
-      const count = counts.get(t.key) ?? 0;
-      const row = tileImageRes[i]?.rows[0];
-      return {
-        key: t.key,
-        label: t.label,
-        desc: t.desc,
-        href: t.href,
-        countText: t.countLabel(count),
-        image: row?.image ? String(row.image) : null,
-      };
+    const tiles: CategoryTile[] = CATEGORY_TILES.map(t => ({
+      key: t.key,
+      label: t.label,
+      desc: t.desc,
+      href: t.href,
+      countText: t.countLabel(counts.get(t.key) ?? 0),
+      logo: t.logo,
       // التصنيفات الفارغة تُستبعد أدناه حتى لا نرسل الزائر لصفحة بلا نتائج
-    }).filter(t => (counts.get(t.key) ?? 0) > 0);
+    })).filter(t => (counts.get(t.key) ?? 0) > 0);
 
     return { featured, tiles };
   } catch {

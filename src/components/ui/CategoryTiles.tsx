@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Gamepad2, Star } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
-import type { CategoryKey } from '@/lib/siteImages';
+import type { CategoryKey, CategoryTileLogo } from '@/lib/siteImages';
 
 export interface CategoryTile {
   key: CategoryKey;
@@ -10,7 +10,7 @@ export interface CategoryTile {
   desc: string;
   href: string;
   countText: string;
-  image: string | null;
+  logo: CategoryTileLogo;
 }
 
 export default function CategoryTiles({ tiles }: { tiles: CategoryTile[] }) {
@@ -26,33 +26,26 @@ export default function CategoryTiles({ tiles }: { tiles: CategoryTile[] }) {
             href={tile.href}
             className="group relative block aspect-[3/4] sm:aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border border-dark-border hover:border-primary/50 bg-dark-card card-hover"
           >
-            {tile.image ? (
-              <Image
-                src={tile.image}
-                alt=""
-                fill
-                sizes="(max-width: 640px) 50vw, 50vw"
-                loading="lazy"
-                className="object-cover opacity-55 group-hover:opacity-75 group-hover:scale-105 transition-all duration-700"
-              />
-            ) : (
-              /* نفس مفردات الـfallback ببطاقة المنتج — لا صورة مكسورة ولا فراغ */
-              <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-dark flex items-center justify-center">
-                {tile.key === 'subscription' ? (
-                  // dir=ltr وإلا انقلبت لـ"+PS" داخل صفحة RTL
-                  <div dir="ltr" className="w-14 h-14 sm:w-24 sm:h-24 rounded-full bg-accent/20 border-2 border-accent/40 flex items-center justify-center text-accent font-black text-sm sm:text-2xl">
-                    PS+
-                  </div>
-                ) : (
-                  <div className="w-14 h-14 sm:w-24 sm:h-24 rounded-xl sm:rounded-2xl bg-primary/20 flex items-center justify-center">
-                    {/* الحجم بكلاسات لا بـsize، حتى يتغيّر مع المقاس */}
-                    <Gamepad2 className="w-7 h-7 sm:w-14 sm:h-14 text-primary-light" />
-                  </div>
-                )}
-              </div>
-            )}
+            {/* تدرّج بلون الفئة — يميّز البطاقتين ويمنع الخلفية من أن تكون مسطّحة */}
+            <div className={`absolute inset-0 bg-gradient-to-br ${tile.logo.tintClass}`} />
 
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-card via-dark-card/70 to-transparent" />
+            {/* اللوجو مرفوع فوق كتلة النص (وليس بمنتصف البطاقة) حتى لا يتزاحما،
+                وخلفه توهج مموّه يدمجه بالخلفية بدل أن يبدو ملصقًا فوقها */}
+            <div className="absolute inset-x-0 top-0 bottom-[38%] sm:bottom-[42%] flex items-center justify-center">
+              <div className={`absolute w-20 h-20 sm:w-40 sm:h-40 rounded-full blur-2xl ${tile.logo.glowClass}`} />
+              <Image
+                src={tile.logo.src}
+                alt=""
+                width={tile.logo.width}
+                height={tile.logo.height}
+                sizes="(max-width: 640px) 30vw, 20vw"
+                loading="lazy"
+                className={`relative w-16 sm:w-32 h-auto object-contain transition-all duration-500 group-hover:scale-105 ${tile.logo.className}`}
+              />
+            </div>
+
+            {/* يفصل النص عن اللوجو ويضمن تباينه */}
+            <div className="absolute inset-0 bg-gradient-to-t from-dark-card via-dark-card/75 to-transparent" />
 
             <div className="absolute inset-x-0 bottom-0 p-3 sm:p-7">
               <div className="inline-flex items-center gap-1 sm:gap-2 bg-primary/20 border border-primary/40 text-primary-light text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded-full mb-1.5 sm:mb-3">
