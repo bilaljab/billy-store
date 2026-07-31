@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
     }
     await initDb();
     const db = getDb();
-    const exists = await db.execute({ sql: 'SELECT id FROM products WHERE id = ?', args: [id] });
+    const exists = await db.execute({ sql: 'SELECT id FROM products WHERE id = ? AND deleted_at IS NULL', args: [id] });
     if (exists.rows.length === 0) return NextResponse.json({ success: false }, { status: 404 });
     await db.execute({
       sql: 'INSERT INTO product_views (product_id, views) VALUES (?, 1) ON CONFLICT(product_id) DO UPDATE SET views = views + 1',

@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   if (!await isAuthenticated(req)) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   await initDb();
   const db = getDb();
-  const result = await db.execute('SELECT * FROM products ORDER BY created_at DESC');
+  const result = await db.execute('SELECT * FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC');
   return NextResponse.json(result.rows.map(serializeProduct));
 }
 

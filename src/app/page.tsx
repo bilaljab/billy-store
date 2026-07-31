@@ -23,8 +23,8 @@ async function getHomeData() {
     // بطاقات التصنيف تستخدم لوجوهات ثابتة، فلا حاجة لجلب غلاف لكل فئة —
     // العدّاد وحده هو ما يأتي من قاعدة البيانات
     const [featuredRes, countsRes] = await Promise.all([
-      db.execute('SELECT * FROM products WHERE featured = 1 ORDER BY created_at DESC LIMIT 6'),
-      db.execute('SELECT category, COUNT(*) AS n FROM products GROUP BY category'),
+      db.execute('SELECT * FROM products WHERE featured = 1 AND deleted_at IS NULL ORDER BY created_at DESC LIMIT 6'),
+      db.execute('SELECT category, COUNT(*) AS n FROM products WHERE deleted_at IS NULL GROUP BY category'),
     ]);
 
     const featured = featuredRes.rows.map(r => ({

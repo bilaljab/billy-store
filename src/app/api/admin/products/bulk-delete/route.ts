@@ -19,12 +19,26 @@ export async function POST(req: NextRequest) {
   await initDb();
   const db = getDb();
 
-  // Delete all in ONE query instead of N separate requests
+  // Soft delete: mark deleted_at instead of removing the row, so this is recoverable for
+  // 7 days from the trash section — applies regardless of caller (this route, not a
+  // separate assistant-only path), so the manual dashboard button gets recovery too.
   const placeholders = ids.map(() => '?').join(',');
-  await db.execute({
-    sql: `DELETE FROM products WHERE id IN (${placeholders})`,
+  const result = await db.execute({
+    sql: `UPDATE products SET deleted_at = CURRENT_TIMESTAMP WHERE id IN (${placeholders}) AND deleted_at IS NULL`,
     args: ids,
   });
+  const deleted = Number(result.rowsAffected ?? 0);
 
-  return NextResponse.json({ success: true, deleted: ids.length });
+  await db.execute({
+    sql: 'INSERT INTO audit_log (tool, input, status, result, undo_data) VALUES (?, ?, ?, ?, ?)',
+    args: [
+      'bulkDeleteProducts',
+      JSON.stringify({ ids }),
+      'success',
+      JSON.stringify({ deleted }),
+      JSON.stringify({ ids }),
+    ],
+  });
+
+  return NextResponse.json({ success: true, deleted });
 }

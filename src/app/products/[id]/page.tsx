@@ -14,7 +14,7 @@ export async function generateStaticParams() {
     const { getDb, initDb } = await import('@/lib/db');
     await initDb();
     const db = getDb();
-    const result = await db.execute('SELECT id FROM products');
+    const result = await db.execute('SELECT id FROM products WHERE deleted_at IS NULL');
     return result.rows.map(r => ({ id: String((r as Record<string, unknown>)['id']) }));
   } catch {
     return [];
@@ -39,7 +39,7 @@ const getPageData = cache(async (id: string) => {
 
     // Run all 3 queries in parallel with single DB connection
     const [productResult, globalDiscountResult, targetedDiscountResult, viewsResult] = await Promise.all([
-      db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] }),
+      db.execute({ sql: 'SELECT * FROM products WHERE id = ? AND deleted_at IS NULL', args: [id] }),
       db.execute({ sql: "SELECT value FROM settings WHERE key = 'discount'", args: [] }),
       db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] }),
       db.execute({ sql: 'SELECT views FROM product_views WHERE product_id = ?', args: [id] }),

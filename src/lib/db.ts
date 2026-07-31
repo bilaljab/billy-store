@@ -96,6 +96,23 @@ export async function initDb() {
     await db.execute("ALTER TABLE site_visits ADD COLUMN ip TEXT NOT NULL DEFAULT 'unknown'");
   } catch { /* column already exists */ }
 
+  // Soft-delete support for products (used by bulk-delete + trash recovery section)
+  try {
+    await db.execute('ALTER TABLE products ADD COLUMN deleted_at DATETIME');
+  } catch { /* column already exists */ }
+
+  await db.execute(`CREATE TABLE IF NOT EXISTS audit_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    actor TEXT NOT NULL DEFAULT 'admin',
+    tool TEXT NOT NULL,
+    input TEXT NOT NULL,
+    status TEXT NOT NULL,
+    result TEXT,
+    undo_data TEXT,
+    undone_at DATETIME,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
   const a = await db.execute({ sql: 'SELECT id FROM admins WHERE username = ?', args: ['admin'] });
   if (a.rows.length === 0) {
     const adminPassword = process.env.ADMIN_PASSWORD;

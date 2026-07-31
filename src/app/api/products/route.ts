@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
   const category = searchParams.get('category');
   const featured = searchParams.get('featured');
 
-  let sql = 'SELECT * FROM products WHERE 1=1';
+  let sql = 'SELECT * FROM products WHERE deleted_at IS NULL';
   const args: (string | number)[] = [];
 
   if (category && category !== 'all') { sql += ' AND category = ?'; args.push(category); }

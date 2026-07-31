@@ -19,6 +19,7 @@ export async function GET(req: NextRequest) {
              COALESCE(pv.views, 0) as views
       FROM products p
       LEFT JOIN product_views pv ON p.id = pv.product_id
+      WHERE p.deleted_at IS NULL
       ORDER BY views DESC
     `),
   ]);

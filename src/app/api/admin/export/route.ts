@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
 
   await initDb();
   const db = getDb();
-  const result = await db.execute('SELECT * FROM products ORDER BY created_at DESC');
+  const result = await db.execute('SELECT * FROM products WHERE deleted_at IS NULL ORDER BY created_at DESC');
   const products = result.rows.map(serializeProduct);
 
   // Build CSV

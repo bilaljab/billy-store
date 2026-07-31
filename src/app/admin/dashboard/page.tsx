@@ -1,9 +1,11 @@
 'use client';
 import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Image from 'next/image';
 import { Pencil, Save, Target, Tag, Trash2, Megaphone, TrendingUp, TrendingDown, AlertTriangle, BarChart3, Package, CheckCircle2, XCircle, X, Trophy, HandCoins, Pause, Play, Gamepad2, Star } from 'lucide-react';
 import ConfirmDialog from '@/components/ui/ConfirmDialog';
+import BulkPriceUndoDialog from '@/components/admin/BulkPriceUndoDialog';
 
 interface Product {
   id: number;
@@ -79,6 +81,15 @@ export default function AdminDashboard() {
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<'all' | 'games' | 'subscription'>('all');
   const [page, setPage] = useState(1);
+  const [priceUndoAuditId, setPriceUndoAuditId] = useState<number | null>(null);
+  const [importUndoAuditId, setImportUndoAuditId] = useState<number | null>(null);
+  const [priceUndoItems, setPriceUndoItems] = useState<{ id: number; name: string; currentPrice: number | null; oldPrice: number }[] | null>(null);
+  const [priceUndoing, setPriceUndoing] = useState(false);
+  const [importUndoing, setImportUndoing] = useState(false);
+  const [trashOpen, setTrashOpen] = useState(false);
+  const [trashItems, setTrashItems] = useState<(Product & { deleted_at: string; daysRemaining: number })[]>([]);
+  const [trashLoading, setTrashLoading] = useState(false);
+  const [restoringIds, setRestoringIds] = useState<Set<number>>(new Set());
   const router = useRouter();
 
   // Token is handled via httpOnly cookie automatically - no localStorage needed
@@ -180,7 +191,83 @@ export default function AdminDashboard() {
     setLoading(false);
   }, [router]);
 
-  useEffect(() => { fetchProducts(); fetchDiscount(); fetchTargetedRules(); fetchAnnouncement(); }, [fetchProducts, fetchDiscount, fetchTargetedRules, fetchAnnouncement]);
+  const checkUndoAvailability = useCallback(async () => {
+    const [priceRes, importRes] = await Promise.all([
+      fetch('/api/admin/audit-log/undo?tool=bulkUpdatePrices', { credentials: 'include' }),
+      fetch('/api/admin/audit-log/undo?tool=importProducts', { credentials: 'include' }),
+    ]);
+    const priceData = await priceRes.json();
+    const importData = await importRes.json();
+    setPriceUndoAuditId(priceData.auditLogId ?? null);
+    setImportUndoAuditId(importData.auditLogId ?? null);
+  }, []);
+
+  useEffect(() => { fetchProducts(); fetchDiscount(); fetchTargetedRules(); fetchAnnouncement(); checkUndoAvailability(); }, [fetchProducts, fetchDiscount, fetchTargetedRules, fetchAnnouncement, checkUndoAvailability]);
+
+  const openPriceUndoDialog = async () => {
+    const res = await fetch('/api/admin/audit-log/undo?tool=bulkUpdatePrices', { credentials: 'include' });
+    const data = await res.json();
+    if (data.auditLogId) {
+      setPriceUndoAuditId(data.auditLogId);
+      setPriceUndoItems(data.items);
+    }
+  };
+
+  const confirmPriceUndo = async () => {
+    if (!priceUndoAuditId) return;
+    setPriceUndoing(true);
+    await fetch('/api/admin/audit-log/undo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ auditLogId: priceUndoAuditId }),
+    });
+    setPriceUndoing(false);
+    setPriceUndoItems(null);
+    setPriceUndoAuditId(null);
+    fetchProducts();
+  };
+
+  const confirmImportUndo = async () => {
+    if (!importUndoAuditId) return;
+    setImportUndoing(true);
+    await fetch('/api/admin/audit-log/undo', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ auditLogId: importUndoAuditId }),
+    });
+    setImportUndoing(false);
+    setImportUndoAuditId(null);
+    fetchProducts();
+  };
+
+  const fetchTrash = async () => {
+    setTrashLoading(true);
+    const res = await fetch('/api/admin/products/trash', { credentials: 'include' });
+    const data = await res.json();
+    setTrashItems(data);
+    setTrashLoading(false);
+  };
+
+  const toggleTrash = () => {
+    const next = !trashOpen;
+    setTrashOpen(next);
+    if (next) fetchTrash();
+  };
+
+  const restoreFromTrash = async (id: number) => {
+    setRestoringIds(prev => new Set(prev).add(id));
+    await fetch('/api/admin/products/trash/restore', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ ids: [id] }),
+    });
+    setRestoringIds(prev => { const next = new Set(prev); next.delete(id); return next; });
+    fetchTrash();
+    fetchProducts();
+  };
 
   // تصفير الصفحة والتحديد عند تغيير البحث/الفلتر فقط (منع "تحديد صامت" عبر فلتر مختلف)
   useEffect(() => { setPage(1); setSelectedIds(new Set()); }, [search, categoryFilter]);
@@ -444,6 +531,9 @@ export default function AdminDashboard() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          <Link href="/admin/assistant" className="text-slate-400 hover:text-accent text-sm transition-colors">
+            المساعد الذكي
+          </Link>
           <a href="/" target="_blank" className="text-slate-400 hover:text-accent text-sm transition-colors">
             عرض الموقع ↗
           </a>
@@ -687,6 +777,23 @@ export default function AdminDashboard() {
                 </svg>
                 تعديل الأسعار
               </button>
+              {priceUndoAuditId !== null && (
+                <button onClick={openPriceUndoDialog}
+                  className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                  تراجع عن آخر تعديل جماعي
+                </button>
+              )}
+              {importUndoAuditId !== null && (
+                <button onClick={confirmImportUndo} disabled={importUndoing}
+                  className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs disabled:opacity-50">
+                  {importUndoing ? 'جارٍ التراجع...' : 'تراجع عن آخر استيراد'}
+                </button>
+              )}
+              <button onClick={toggleTrash}
+                className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                <Trash2 size={14} className="text-current" />
+                المحذوفات
+              </button>
               <label className="bg-green-600/20 hover:bg-green-600/30 border border-green-600/40 text-green-400 font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 text-sm cursor-pointer">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -874,7 +981,49 @@ export default function AdminDashboard() {
             </div>
           )}
         </div>
+
+        {/* Trash section */}
+        {trashOpen && (
+          <div className="mt-8 bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-dark-border">
+              <h2 className="font-black text-white text-lg">المحذوفات</h2>
+              <p className="text-muted text-sm mt-1">منتجات محذوفة جماعياً — قابلة للاسترجاع خلال 7 أيام من الحذف.</p>
+            </div>
+            {trashLoading ? (
+              <div className="px-6 py-8 text-center text-muted">جارٍ التحميل...</div>
+            ) : trashItems.length === 0 ? (
+              <div className="px-6 py-8 text-center text-muted">لا توجد منتجات محذوفة حالياً.</div>
+            ) : (
+              <div className="divide-y divide-dark-border">
+                {trashItems.map(item => (
+                  <div key={item.id} className="flex items-center justify-between gap-3 px-6 py-4">
+                    <div>
+                      <p className="text-slate-200 font-semibold">{item.name}</p>
+                      <p className="text-muted text-xs mt-1">{item.daysRemaining} يوم متبقٍ قبل انتهاء فترة الاسترجاع</p>
+                    </div>
+                    <button
+                      onClick={() => restoreFromTrash(item.id)}
+                      disabled={restoringIds.has(item.id)}
+                      className="bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
+                    >
+                      {restoringIds.has(item.id) ? 'جارٍ الاسترجاع...' : 'استرجاع'}
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </main>
+
+      {priceUndoItems && (
+        <BulkPriceUndoDialog
+          items={priceUndoItems}
+          onConfirm={confirmPriceUndo}
+          onCancel={() => setPriceUndoItems(null)}
+          confirming={priceUndoing}
+        />
+      )}
 
       {/* Delete Confirm Modal */}
       {deleteConfirm !== null && (

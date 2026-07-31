@@ -32,7 +32,7 @@ async function getProductsWithDiscounts(): Promise<{
     const db = getDb();
 
     const [productsResult, globalResult, targetedResult] = await Promise.all([
-      db.execute('SELECT * FROM products ORDER BY RANDOM()'),
+      db.execute('SELECT * FROM products WHERE deleted_at IS NULL ORDER BY RANDOM()'),
       db.execute({ sql: "SELECT value FROM settings WHERE key = 'discount'", args: [] }),
       db.execute({ sql: "SELECT value FROM settings WHERE key = 'targeted_discounts'", args: [] }),
     ]);

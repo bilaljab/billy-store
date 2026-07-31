@@ -18,10 +18,14 @@ export async function POST(req: NextRequest) {
   const db = getDb();
 
   const sql = category === 'all'
-    ? 'SELECT id, price FROM products'
-    : 'SELECT id, price FROM products WHERE category = ?';
+    ? 'SELECT id, price FROM products WHERE deleted_at IS NULL'
+    : 'SELECT id, price FROM products WHERE category = ? AND deleted_at IS NULL';
   const args = category === 'all' ? [] : [category];
   const result = await db.execute({ sql, args });
+
+  // Snapshot old prices before touching anything, so this batch can be undone later
+  // regardless of who triggered it (manual dashboard button or the AI assistant).
+  const snapshot: { id: number; oldPrice: number }[] = [];
 
   let updated = 0;
   for (const row of result.rows) {
@@ -42,8 +46,20 @@ export async function POST(req: NextRequest) {
       sql: 'UPDATE products SET price = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
       args: [newPrice, Number(r.id)],
     });
+    snapshot.push({ id: Number(r.id), oldPrice });
     updated++;
   }
+
+  await db.execute({
+    sql: 'INSERT INTO audit_log (tool, input, status, result, undo_data) VALUES (?, ?, ?, ?, ?)',
+    args: [
+      'bulkUpdatePrices',
+      JSON.stringify({ mode, value, direction, category }),
+      'success',
+      JSON.stringify({ updated }),
+      JSON.stringify(snapshot),
+    ],
+  });
 
   return NextResponse.json({ success: true, updated });
 }

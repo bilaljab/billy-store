@@ -2,28 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb, initDb, col } from '@/lib/db';
 import bcrypt from 'bcryptjs';
 import { signToken } from '@/lib/auth';
+import { checkRateLimit, getClientIp, type RateLimitRecord } from '@/lib/rate-limit';
 
-const loginAttempts = new Map<string, { count: number; resetAt: number }>();
+const loginAttempts = new Map<string, RateLimitRecord>();
 const MAX_ATTEMPTS = 5;
 const WINDOW_MS = 15 * 60 * 1000;
 
-function checkRateLimit(ip: string): { allowed: boolean; retryAfter?: number } {
-  const now = Date.now();
-  const record = loginAttempts.get(ip);
-  if (!record || now > record.resetAt) {
-    loginAttempts.set(ip, { count: 1, resetAt: now + WINDOW_MS });
-    return { allowed: true };
-  }
-  if (record.count >= MAX_ATTEMPTS) {
-    return { allowed: false, retryAfter: Math.ceil((record.resetAt - now) / 1000) };
-  }
-  record.count++;
-  return { allowed: true };
-}
-
 export async function POST(req: NextRequest) {
-  const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || 'unknown';
-  const limit = checkRateLimit(ip);
+  const ip = getClientIp(req);
+  const limit = checkRateLimit(loginAttempts, ip, MAX_ATTEMPTS, WINDOW_MS);
   if (!limit.allowed) {
     return NextResponse.json({ error: `حاول بعد ${limit.retryAfter} ثانية` }, { status: 429 });
   }

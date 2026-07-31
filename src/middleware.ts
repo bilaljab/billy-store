@@ -32,7 +32,7 @@ export async function middleware(req: NextRequest) {
   );
 
   // ── Admin page protection ──
-  if (pathname.startsWith('/admin/dashboard')) {
+  if (pathname.startsWith('/admin/dashboard') || pathname.startsWith('/admin/assistant')) {
     const token = req.cookies.get('admin_token');
     if (!token?.value) {
       return NextResponse.redirect(new URL('/admin/login', req.url));

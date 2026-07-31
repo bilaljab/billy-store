@@ -26,6 +26,7 @@ export async function POST(req: NextRequest) {
     const db = getDb();
     let imported = 0;
     const errors: string[] = [];
+    const newIds: number[] = [];
     for (const p of products) {
       const item = p as Record<string, unknown>;
       const name = String(item.name || '').trim().slice(0, 200);
@@ -40,13 +41,26 @@ export async function POST(req: NextRequest) {
         continue;
       }
       try {
-        await db.execute({
+        const insertResult = await db.execute({
           sql: 'INSERT INTO products (name, description, price, image, category, featured, release_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
           args: [name, description, price, image, category, featured, release_date],
         });
+        newIds.push(Number(insertResult.lastInsertRowid));
         imported++;
       } catch { errors.push(`خطأ في إضافة: ${name}`); }
     }
+
+    await db.execute({
+      sql: 'INSERT INTO audit_log (tool, input, status, result, undo_data) VALUES (?, ?, ?, ?, ?)',
+      args: [
+        'importProducts',
+        JSON.stringify({ count: products.length }),
+        'success',
+        JSON.stringify({ imported, errors }),
+        JSON.stringify({ newIds }),
+      ],
+    });
+
     return NextResponse.json({ success: true, imported, errors });
   } catch { return NextResponse.json({ error: 'خطأ في معالجة البيانات' }, { status: 500 }); }
 }
