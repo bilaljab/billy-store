@@ -90,6 +90,8 @@ export default function AdminDashboard() {
   const [trashItems, setTrashItems] = useState<(Product & { deleted_at: string; daysRemaining: number })[]>([]);
   const [trashLoading, setTrashLoading] = useState(false);
   const [restoringIds, setRestoringIds] = useState<Set<number>>(new Set());
+  const [permanentDeleteConfirm, setPermanentDeleteConfirm] = useState<number | null>(null);
+  const [permanentDeletingIds, setPermanentDeletingIds] = useState<Set<number>>(new Set());
   const router = useRouter();
 
   // Token is handled via httpOnly cookie automatically - no localStorage needed
@@ -267,6 +269,17 @@ export default function AdminDashboard() {
     setRestoringIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     fetchTrash();
     fetchProducts();
+  };
+
+  // يستخدم نفس مسار الحذف الفردي الحقيقي الموجود أصلاً (DELETE /api/admin/products/[id])
+  // — هذا المسار كان دائماً حذفاً حقيقياً (لم يتحول لـsoft-delete، فقط bulk-delete تحول)،
+  // فلا حاجة لـroute جديد: يحذف الصف نهائياً بغض النظر عن deleted_at الحالي.
+  const handlePermanentDelete = async (id: number) => {
+    setPermanentDeletingIds(prev => new Set(prev).add(id));
+    await fetch(`/api/admin/products/${id}`, { method: 'DELETE', credentials: 'include' });
+    setPermanentDeletingIds(prev => { const next = new Set(prev); next.delete(id); return next; });
+    setPermanentDeleteConfirm(null);
+    fetchTrash();
   };
 
   // تصفير الصفحة والتحديد عند تغيير البحث/الفلتر فقط (منع "تحديد صامت" عبر فلتر مختلف)
@@ -1001,13 +1014,22 @@ export default function AdminDashboard() {
                       <p className="text-slate-200 font-semibold">{item.name}</p>
                       <p className="text-muted text-xs mt-1">{item.daysRemaining} يوم متبقٍ قبل انتهاء فترة الاسترجاع</p>
                     </div>
-                    <button
-                      onClick={() => restoreFromTrash(item.id)}
-                      disabled={restoringIds.has(item.id)}
-                      className="bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
-                    >
-                      {restoringIds.has(item.id) ? 'جارٍ الاسترجاع...' : 'استرجاع'}
-                    </button>
+                    <div className="flex gap-2 flex-shrink-0">
+                      <button
+                        onClick={() => restoreFromTrash(item.id)}
+                        disabled={restoringIds.has(item.id) || permanentDeletingIds.has(item.id)}
+                        className="bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
+                      >
+                        {restoringIds.has(item.id) ? 'جارٍ الاسترجاع...' : 'استرجاع'}
+                      </button>
+                      <button
+                        onClick={() => setPermanentDeleteConfirm(item.id)}
+                        disabled={restoringIds.has(item.id) || permanentDeletingIds.has(item.id)}
+                        className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 disabled:opacity-50 font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
+                      >
+                        {permanentDeletingIds.has(item.id) ? 'جارٍ الحذف...' : 'حذف نهائي'}
+                      </button>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -1052,6 +1074,16 @@ export default function AdminDashboard() {
           message={`هل تريد حذف قاعدة "${targetedRules.find(r => r.id === deleteTargetedConfirm)?.label}"؟ هذا الإجراء لا يمكن التراجع عنه.`}
           onConfirm={() => deleteTargetedRule(deleteTargetedConfirm)}
           onCancel={() => setDeleteTargetedConfirm(null)}
+        />
+      )}
+
+      {/* Permanent Delete From Trash Confirm Modal */}
+      {permanentDeleteConfirm !== null && (
+        <ConfirmDialog
+          title="حذف نهائي"
+          message={`هل تريد حذف "${trashItems.find(p => p.id === permanentDeleteConfirm)?.name}" نهائياً من قاعدة البيانات؟ هذا الإجراء نهائي ولا يمكن التراجع عنه — لن يبقى قابلاً للاسترجاع من سلة المحذوفات بعد الآن.`}
+          onConfirm={() => handlePermanentDelete(permanentDeleteConfirm)}
+          onCancel={() => setPermanentDeleteConfirm(null)}
         />
       )}
 
