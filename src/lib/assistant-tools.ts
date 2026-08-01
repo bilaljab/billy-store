@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { selfFetch } from './self-fetch';
 import type { AIFunctionDeclaration } from './ai-provider';
 import { findGamePosterUrl } from './poster-search';
+import { findGameInfo } from './game-info';
 
 export type RiskTier = 'safe' | 'single-confirm' | 'double-confirm';
 
@@ -154,6 +155,30 @@ export const TOOLS: ToolDef[] = [
       const result = await findGamePosterUrl(String(args.gameName ?? ''));
       return result.ok
         ? { ok: true, status: 200, data: { imageUrl: result.imageUrl } }
+        : { ok: false, status: 404, data: { error: result.error } };
+    },
+  },
+
+  {
+    name: 'findGameInfo',
+    description:
+      'يبحث عن بيانات لعبة حقيقية من قاعدة بيانات RAWG (وصف عربي مُعاد صياغته بأسلوب أدبي، رابط صورة غلاف، ' +
+      'تاريخ الإصدار، الأنواع) لاستخدامها عند إضافة منتج جديد عبر createProduct. مرّر قيمة description ' +
+      'المسترجعة كما هي لـcreateProduct دون إعادة صياغتها من جديد — هي جاهزة أصلاً. بحث أفضل جهد فقط، قد لا يجد نتيجة مطابقة.',
+    parameters: {
+      type: 'object',
+      properties: { gameName: { type: 'string', description: 'اسم اللعبة بالإنجليزي أو كما يُعرف رسمياً' } },
+      required: ['gameName'],
+    },
+    riskTier: 'safe',
+    route: '(external: api.rawg.io)',
+    method: 'GET',
+    buildRequest: async () => ({ path: '' }),
+    summarize: async () => '',
+    execute: async (args) => {
+      const result = await findGameInfo(String(args.gameName ?? ''));
+      return result.ok
+        ? { ok: true, status: 200, data: result.data }
         : { ok: false, status: 404, data: { error: result.error } };
     },
   },

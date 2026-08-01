@@ -94,6 +94,46 @@ export async function callAI(history: AIMessage[], tools: AIFunctionDeclaration[
   return { text: text || null, functionCall: null, thoughtSignature: null };
 }
 
+// One-shot plain-text rewrite call — deliberately separate from callAI's function-calling loop
+// (no tools, no history, no thoughtSignature). Used by src/lib/game-info.ts to turn RAWG's raw
+// English description into an Arabic description matching the catalog's editorial voice
+// (see copywriting-audit.md), decoupled from the main assistant chat's system prompt/context so
+// quality/length stay consistent regardless of how the admin phrased their request. Shares the
+// same GEMINI_API_KEY quota as the main assistant chat (~140 req/day) — not a separate budget.
+export async function rewriteGameDescriptionAr(input: {
+  gameName: string;
+  englishDescription: string;
+  genres: string[];
+}): Promise<string> {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) throw new AIApiError('GEMINI_API_KEY غير مُعرَّف بمتغيرات البيئة');
+
+  const prompt =
+    `أنت كاتب محتوى تسويقي لمتجر ألعاب PS4/PS5 سعودي. لديك وصف إنجليزي خام للعبة "${input.gameName}"` +
+    ` (الأنواع: ${input.genres.join('، ') || 'غير محددة'}):\n"""\n${input.englishDescription}\n"""\n` +
+    `اكتب وصفاً عربياً فصيحاً أدبياً أصلياً (وليس ترجمة حرفية) بطول 200-300 حرف تقريباً، يذكر شخصيات أو أماكن أو` +
+    ` آليات لعب فعلية مذكورة بالنص أعلاه إن وُجدت. بدون مقدمة أو خاتمة أو علامات اقتباس — فقط نص الوصف نفسه.`;
+
+  let res: Response;
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ role: 'user', parts: [{ text: prompt }] }] }),
+      }
+    );
+  } catch {
+    throw new AIApiError('تعذّر الاتصال بخدمة Gemini لإعادة صياغة الوصف');
+  }
+  if (!res.ok) throw new AIApiError(`Gemini API responded with ${res.status}`);
+
+  const data = await res.json();
+  const parts: AIPart[] = data?.candidates?.[0]?.content?.parts ?? [];
+  return parts.map(p => p.text ?? '').join('').trim();
+}
+
 // ⚠️ BUILT BUT NOT WIRED UP — Gemini's Google Search grounding tool consistently returns 429
 // RESOURCE_EXHAUSTED on this key, reproduced identically across two different models
 // (gemini-3.1-flash-lite and gemini-3.6-flash), while plain generateContent and normal function
