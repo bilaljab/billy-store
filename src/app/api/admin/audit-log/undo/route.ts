@@ -78,10 +78,6 @@ export async function POST(req: NextRequest) {
         args: [point.oldPrice, point.id],
       });
     }
-  } else if (tool === 'bulkDeleteProducts' && Array.isArray(undoData?.ids)) {
-    for (const id of undoData.ids as number[]) {
-      await db.execute({ sql: 'UPDATE products SET deleted_at = NULL WHERE id = ?', args: [id] });
-    }
   } else if (tool === 'importProducts' && Array.isArray(undoData?.newIds)) {
     for (const id of undoData.newIds as number[]) {
       await db.execute({ sql: 'UPDATE products SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?', args: [id] });

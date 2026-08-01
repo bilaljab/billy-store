@@ -32,11 +32,19 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const message = String(body.message ?? '').trim();
-    const history = Array.isArray(body.history) ? (body.history as HistoryTurn[]) : [];
+    const rawHistory = Array.isArray(body.history) ? body.history : [];
+    const isValidTurn = (h: unknown): h is HistoryTurn =>
+      typeof h === 'object' && h !== null &&
+      ((h as HistoryTurn).role === 'user' || (h as HistoryTurn).role === 'model') &&
+      typeof (h as HistoryTurn).text === 'string';
 
     if (!message || message.length > MAX_MESSAGE_LENGTH) {
       return NextResponse.json({ type: 'error', error: 'رسالة غير صالحة' }, { status: 400 });
     }
+    if (!rawHistory.every(isValidTurn)) {
+      return NextResponse.json({ type: 'error', error: 'سجل محادثة غير صالح' }, { status: 400 });
+    }
+    const history = rawHistory as HistoryTurn[];
 
     const trimmedHistory = history.slice(-MAX_HISTORY_TURNS);
     const aiHistory: AIMessage[] = [

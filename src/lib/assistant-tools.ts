@@ -499,13 +499,14 @@ async function countAffectedByCategory(category: unknown, req: NextRequest): Pro
   return products.filter(p => p.category === category).length;
 }
 
-export function getTool(name: string): ToolDef | undefined {
-  return TOOLS.find(t => t.name === name);
-}
-
 // Tools present in TOOLS but never advertised to Gemini — kept implemented, deliberately
 // unreachable. See the "DISABLED" comment on each entry above for the specific reason.
 const DISABLED_TOOLS = new Set(['findGamePoster']);
+
+export function getTool(name: string): ToolDef | undefined {
+  if (DISABLED_TOOLS.has(name)) return undefined;
+  return TOOLS.find(t => t.name === name);
+}
 
 export function toAIDeclarations(): AIFunctionDeclaration[] {
   return TOOLS

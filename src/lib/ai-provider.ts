@@ -55,18 +55,23 @@ export async function callAI(history: AIMessage[], tools: AIFunctionDeclaration[
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) throw new AIApiError('GEMINI_API_KEY غير مُعرَّف بمتغيرات البيئة');
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: history,
-        tools: tools.length > 0 ? [{ functionDeclarations: tools }] : undefined,
-        systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-      }),
-    }
-  );
+  let res: Response;
+  try {
+    res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: history,
+          tools: tools.length > 0 ? [{ functionDeclarations: tools }] : undefined,
+          systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
+        }),
+      }
+    );
+  } catch {
+    throw new AIApiError('تعذّر الاتصال بخدمة Gemini');
+  }
 
   if (!res.ok) {
     throw new AIApiError(`Gemini API responded with ${res.status}`);
