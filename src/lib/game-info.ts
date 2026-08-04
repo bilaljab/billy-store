@@ -1,9 +1,17 @@
 import { rewriteGameDescriptionAr } from './ai-provider';
+import { findPsnGameInfo } from './psn-store';
 
-// Best-effort automatic game data lookup for the AI assistant's createProduct tool, via the RAWG
-// Video Games Database API (free tier, no billing required — replaces the disabled findGamePoster/
-// Google Search grounding approach, see CLAUDE.md Gotcha #24). Same "never throw, always return
-// {ok, error}" convention as src/lib/poster-search.ts.
+// Best-effort automatic game data lookup for the AI assistant's createProduct tool — replaces
+// the disabled findGamePoster/Google Search grounding approach (CLAUDE.md Gotcha #24). Uses
+// PSN's own unofficial store API (src/lib/psn-store.ts — official Arabic Sony copy + real
+// cover art, no key needed) as the sole source. Same "never throw, always return {ok, error}"
+// convention as src/lib/poster-search.ts.
+//
+// RAWG fallback disabled by explicit user decision (2026-08-03): RAWG (api.rawg.io) has been
+// unreachable (connection failures, not just rate-limited) across this entire session's
+// testing — user judged it unreliable enough that falling through to it wasn't worth keeping
+// live. findRawgGameInfo() below is kept fully intact and exported (not deleted) so it can be
+// re-wired in one line if RAWG's uptime improves later — see the disabled call site comment.
 
 interface GameInfoResult {
   ok: boolean;
@@ -37,6 +45,15 @@ function isPlayStationTitle(result: RawgSearchResult): boolean {
 }
 
 export async function findGameInfo(gameName: string): Promise<GameInfoResult> {
+  return findPsnGameInfo(gameName);
+  // RAWG fallback disabled — see comment above. Re-enable with:
+  // const psnResult = await findPsnGameInfo(gameName);
+  // if (psnResult.ok) return psnResult;
+  // return findRawgGameInfo(gameName);
+}
+
+// Kept intact but currently unused — disabled RAWG fallback, see comment above.
+export async function findRawgGameInfo(gameName: string): Promise<GameInfoResult> {
   const name = gameName.trim();
   if (!name) return { ok: false, error: 'اسم اللعبة فارغ' };
 
