@@ -29,19 +29,26 @@ export default function Navbar() {
 
   useEffect(() => {
     let lastY = window.scrollY;
+    let barHeight = 0;
 
-    const updateOffset = () => {
+    // AnnouncementBar sits in normal flow above the fixed navbar, so as the
+    // page scrolls it moves out of view — the navbar's top offset must shrink
+    // in lockstep (viewport-relative `top`, not document-relative) or a gap
+    // the size of the bar's height is left exposed above the navbar forever.
+    const updateBarHeight = () => {
       const bar = document.getElementById('announcement-bar');
-      setTopOffset(bar ? bar.offsetHeight : 0);
+      barHeight = bar ? bar.offsetHeight : 0;
+      setTopOffset(Math.max(0, barHeight - window.scrollY));
     };
-    updateOffset();
+    updateBarHeight();
 
-    const observer = new MutationObserver(updateOffset);
+    const observer = new MutationObserver(updateBarHeight);
     observer.observe(document.body, { childList: true, subtree: true });
 
     const handleScroll = () => {
       const currentY = window.scrollY;
       setScrolled(currentY > 20);
+      setTopOffset(Math.max(0, barHeight - currentY));
       // Hide on scroll down, show on scroll up
       if (currentY > lastY && currentY > 80) {
         setVisible(false);
