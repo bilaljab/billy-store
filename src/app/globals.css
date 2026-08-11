@@ -1,55 +1,80 @@
-@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-* { font-family: 'Cairo', sans-serif; }
-html { direction: rtl; scroll-behavior: smooth; }
-body { background-color: #050A14; color: #e2e8f0; overflow-x: hidden; }
+@layer base {
+  :root {
+    --brand: #0A5CC0;
+    --brand-ink: #083f87;
+    --ink: #0F2B52;
+    --muted: #4A6084;
+    --canvas-a: #EAF3FF;
+    --canvas-b: #F1EEFC;
+    --surface: #FFFFFF;
+    --chip-bg: #DCEAFB;
+    --gold-bg: #FFF3CE;
+    --sale: #DC2626;
+    /* RGB triplets (no #, space-separated) so Tailwind can build opacity variants
+       (e.g. border-brand/50) via rgb(var(--x-rgb) / <alpha-value>) — a plain
+       var(--brand) hex reference can't be alpha-blended by Tailwind at build time,
+       which silently produced zero CSS for every hover:border-brand/NN etc. site-wide. */
+    --brand-rgb: 10 92 192;
+    --brand-ink-rgb: 8 63 135;
+    --ink-rgb: 15 43 82;
+    --muted-rgb: 74 96 132;
+    --canvas-a-rgb: 234 243 255;
+    --canvas-b-rgb: 241 238 252;
+    --surface-rgb: 255 255 255;
+    --chip-bg-rgb: 220 234 251;
+    --gold-bg-rgb: 255 243 206;
+    --sale-rgb: 220 38 38;
+    --radius-lg: 28px;
+    --radius-pill: 999px;
+    --shadow-float: 0 24px 48px -16px rgba(15,43,82,.16), 0 2px 10px -2px rgba(15,43,82,.08);
+    --shadow-soft: 0 10px 24px -10px rgba(15,43,82,.12);
+  }
+
+  html { direction: rtl; scroll-behavior: smooth; color-scheme: light; }
+  body {
+    background: linear-gradient(135deg, var(--canvas-a) 0%, var(--canvas-b) 100%);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+}
 
 ::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: #050A14; }
-::-webkit-scrollbar-thumb { background: #0070CC; border-radius: 3px; }
+::-webkit-scrollbar-track { background: var(--canvas-a); }
+::-webkit-scrollbar-thumb { background: var(--brand); border-radius: 3px; }
 
 .ps-btn {
-  background-color: #0070CC;
+  background-color: var(--brand);
   color: white;
   font-weight: 700;
   padding: 0.75rem 2rem;
-  border-radius: 0.5rem;
+  border-radius: var(--radius-pill);
   transition: all 0.3s;
   display: inline-block;
 }
 .ps-btn:hover {
-  background-color: #005BA3;
-  box-shadow: 0 10px 25px rgba(0,112,204,0.3);
+  background-color: var(--brand-ink);
+  box-shadow: var(--shadow-soft);
   transform: translateY(-2px);
 }
 
-.card-hover { transition: all 0.3s; }
+.card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
 .card-hover:hover {
-  box-shadow: 0 20px 40px rgba(0,112,204,0.2);
+  box-shadow: var(--shadow-float);
   transform: translateY(-4px);
 }
 
-.glow-blue { box-shadow: 0 0 30px rgba(0,112,204,0.3); }
-.text-glow { text-shadow: 0 0 20px rgba(0,200,255,0.5); }
-
 .grid-bg {
-  background-image:
-    linear-gradient(rgba(0,112,204,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,112,204,0.05) 1px, transparent 1px);
-  background-size: 50px 50px;
+  background-image: radial-gradient(rgba(15,43,82,.08) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 @keyframes float {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-10px); }
-}
-@keyframes glowAnim {
-  0%, 100% { box-shadow: 0 0 20px rgba(0,112,204,0.4); }
-  50% { box-shadow: 0 0 40px rgba(0,200,255,0.6); }
 }
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(30px); }
@@ -60,19 +85,42 @@ body { background-color: #050A14; color: #e2e8f0; overflow-x: hidden; }
   to { opacity: 1; }
 }
 
-.animate-float { animation: float 3s ease-in-out infinite; }
-.animate-glow { animation: glowAnim 2s ease-in-out infinite; }
+@keyframes psglyphDrift {
+  0%   { transform: translate(0, 0) rotate(0deg); }
+  25%  { transform: translate(6px, -10px) rotate(3deg); }
+  50%  { transform: translate(-4px, -16px) rotate(-2deg); }
+  75%  { transform: translate(-8px, -6px) rotate(2deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+.animate-float { animation: float 6s ease-in-out infinite; }
 .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
 .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
 .animation-delay-200 { animation-delay: 200ms; }
 .animation-delay-400 { animation-delay: 400ms; }
 .animation-delay-600 { animation-delay: 600ms; }
 
+.animate-psglyph-drift {
+  animation-name: psglyphDrift;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.faq-answer-grid { transition: grid-template-rows 0.3s ease-in-out; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .animate-float, .animate-glow, .animate-slide-up, .animate-fade-in,
-  .ps-btn, .card-hover {
+  .animate-float, .animate-slide-up, .animate-fade-in,
+  .ps-btn, .card-hover, .animate-psglyph-drift, .faq-answer-grid {
     animation: none !important;
     transition: none !important;
+  }
+  /* Catch-all for inline Tailwind transition/animate utilities (Navbar scroll,
+     ScrollToTop, WhatsAppFloat, etc.) that aren't covered by the class list above. */
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
   }
 }
