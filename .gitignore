@@ -32,6 +32,10 @@ public/uploads/
 .DS_Store
 Thumbs.db
 
+# Thmanyah font source package - licensed, non-redistributable.
+# Only the specific woff2 subset extracted into public/fonts/thmanyah/ is committed.
+Thmanyah-Font-Family.zip
+
 # Logs
 *.log
 npm-debug.log*
