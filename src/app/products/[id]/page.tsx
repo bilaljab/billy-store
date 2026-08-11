@@ -26,6 +26,8 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import ProductActions from '@/components/ui/ProductActions';
 import RelatedProducts from '@/components/ui/RelatedProducts';
+import PsGlyphField from '@/components/ui/PsGlyphField';
+import Badge from '@/components/ui/Badge';
 import { Gamepad2, Star } from 'lucide-react';
 import { buildInquiryMessage } from '@/lib/messages';
 
@@ -102,7 +104,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     ? product.description.slice(0, 160)
     : `تسوق ${product.name} بأفضل سعر من بيلي ستور — تسليم رقمي بدون انتظار.`;
   const url = `${SITE_URL}/products/${product.id}`;
-  const image = product.image || `${SITE_URL}/logo.jpg`;
+  const image = product.image || `${SITE_URL}/logos/billy-store-icon.png`;
 
   return {
     title: `${product.name} | Billy Store`,
@@ -132,7 +134,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     '@type': 'Product',
     name: product.name,
     description: product.description || undefined,
-    image: product.image || `${SITE_URL}/logo.jpg`,
+    image: product.image || `${SITE_URL}/logos/billy-store-icon.png`,
     category: categoryLabel,
     offers: {
       '@type': 'Offer',
@@ -144,7 +146,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   };
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -152,15 +154,15 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
       <Navbar />
       <main className="pt-24 pb-20 px-4 max-w-6xl mx-auto">
         <div className="flex items-center gap-2 text-sm text-muted mb-8">
-          <Link href="/" className="hover:text-accent transition-colors">الرئيسية</Link>
+          <Link href="/" className="hover:text-brand transition-colors">الرئيسية</Link>
           <span>/</span>
-          <Link href="/products" className="hover:text-accent transition-colors">المنتجات</Link>
+          <Link href="/products" className="hover:text-brand transition-colors">المنتجات</Link>
           <span>/</span>
-          <span className="text-slate-300 line-clamp-1">{product.name}</span>
+          <span className="text-ink font-bold line-clamp-1">{product.name}</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          <div className="relative aspect-square bg-gradient-to-br from-primary/20 to-dark-card border border-dark-border rounded-3xl overflow-hidden">
+          <div className="relative aspect-square bg-gradient-to-br from-chip to-surface border border-chip rounded-card overflow-hidden shadow-soft">
             {product.image ? (
               <Image
                 src={product.image}
@@ -173,38 +175,29 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 {product.category === 'subscription' ? (
-                  <div className="w-32 h-32 rounded-full bg-accent/20 border-2 border-accent/40 flex items-center justify-center animate-glow">
-                    <span className="text-5xl text-accent font-black">PS+</span>
+                  <div className="w-32 h-32 rounded-full bg-gold border-2 border-gold flex items-center justify-center">
+                    <span className="text-5xl text-brand-ink font-bold">PS+</span>
                   </div>
                 ) : (
-                  <div className="w-32 h-32 rounded-2xl bg-primary/20 border-2 border-primary/40 flex items-center justify-center">
-                    <Gamepad2 size={72} className="text-primary-light" />
+                  <div className="w-32 h-32 rounded-2xl bg-chip border-2 border-brand/30 flex items-center justify-center">
+                    <Gamepad2 size={72} className="text-brand" />
                   </div>
                 )}
               </div>
             )}
             {discount && (
-              <div className="absolute top-4 right-4 bg-red-500 text-white font-black text-lg px-3 py-1.5 rounded-xl">
+              <div className="absolute top-4 right-4 bg-sale text-white font-bold text-lg px-3 py-1.5 rounded-xl">
                 -{discount.percentage}%
               </div>
             )}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden">
-              {['△','○','✕','□'].map((s,i) => (
-                <div key={i} className="absolute text-primary/10 font-black text-3xl animate-float"
-                  style={{top:`${15+i*20}%`,right:`${10+i*20}%`,animationDelay:`${i*0.4}s`}}>{s}</div>
-              ))}
-            </div>
+            <PsGlyphField layout="scatter" density="sparse" />
           </div>
 
           <div className="flex flex-col gap-5">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className={`text-xs font-bold px-3 py-1.5 rounded-full border ${
-                product.category === 'subscription' ? 'text-accent bg-accent/10 border-accent/30' : 'text-primary-light bg-primary/10 border-primary/30'
-              }`}>{categoryLabel}</span>
+              <Badge variant="category">{categoryLabel}</Badge>
               {product.featured === 1 && (
-                <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 inline-flex items-center gap-1">
-                  <Star size={16} className="text-current" /> منتج مميز
-                </span>
+                <Badge variant="gold" icon={<Star size={16} className="text-current" />}>منتج مميز</Badge>
               )}
               {views > 0 && (
                 <span className="text-xs text-muted flex items-center gap-1">
@@ -214,42 +207,42 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               )}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-black text-white leading-tight">{product.name}</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold font-display text-ink leading-tight">{product.name}</h1>
 
-            <div className="bg-dark-card border border-dark-border rounded-2xl p-5">
-              <h2 className="text-slate-400 text-sm font-semibold mb-3">الوصف</h2>
-              <p className="text-slate-200 leading-loose">{product.description}</p>
+            <div className="bg-surface border-2 border-black/15 rounded-card p-5 shadow-soft">
+              <h2 className="text-muted text-sm font-bold mb-3">الوصف</h2>
+              <p className="text-ink leading-loose">{product.description}</p>
             </div>
 
-            <div className="bg-gradient-to-l from-primary/10 to-dark-card border border-primary/30 rounded-2xl p-5 flex items-center justify-between">
+            <div className="bg-gradient-to-l from-chip to-surface border border-chip rounded-card p-5 flex items-center justify-between shadow-soft">
               <div>
-                <p className="text-slate-400 text-sm mb-1">السعر</p>
+                <p className="text-muted text-sm mb-1">السعر</p>
                 {discount ? (
                   <>
                     <div className="text-muted text-sm line-through">{product.price} ريال</div>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-5xl font-black text-red-400">{discountedPrice}</span>
-                      <span className="text-slate-300 text-lg font-semibold">ريال سعودي</span>
+                      <span className="text-5xl font-bold text-sale">{discountedPrice}</span>
+                      <span className="text-muted text-lg font-bold">ريال سعودي</span>
                     </div>
-                    <span className="inline-block mt-1.5 bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold px-2 py-1 rounded-full">
+                    <Badge variant="discount" className="mt-1.5">
                       خصم {discount.percentage}% — {discount.label}
-                    </span>
+                    </Badge>
                   </>
                 ) : (
                   <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black text-accent">{product.price}</span>
-                    <span className="text-slate-300 text-lg font-semibold">ريال سعودي</span>
+                    <span className="text-5xl font-bold text-brand">{product.price}</span>
+                    <span className="text-muted text-lg font-bold">ريال سعودي</span>
                   </div>
                 )}
               </div>
               <div className="text-right">
-                <p className="text-green-400 text-sm font-bold">✓ متوفر</p>
+                <p className="text-green-600 text-sm font-bold">✓ متوفر</p>
                 <p className="text-muted text-xs mt-1">تسليم رقمي سريع</p>
               </div>
             </div>
 
             <ProductActions product={{ id: product.id, name: product.name, price: discountedPrice ?? product.price }} waMsg={waMsg} />
-            <Link href="/products" className="text-center text-muted hover:text-accent text-sm transition-colors">← العودة للمنتجات</Link>
+            <Link href="/products" className="text-center text-muted hover:text-brand text-sm transition-colors">← العودة للمنتجات</Link>
           </div>
         </div>
         <RelatedProducts currentId={product.id} category={product.category} />

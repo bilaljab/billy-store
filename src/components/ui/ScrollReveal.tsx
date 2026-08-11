@@ -15,6 +15,12 @@ const ScrollReveal = memo(function ScrollReveal({ children, className = '', dela
     const el = ref.current;
     if (!el) return;
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      el.style.opacity = '1';
+      el.style.transform = 'translateY(0) translateX(0) scale(1)';
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -50,7 +56,7 @@ const ScrollReveal = memo(function ScrollReveal({ children, className = '', dela
       style={{
         opacity: 0,
         transform: getInitialTransform(),
-        transition: `opacity 0.7s ease, transform 0.7s ease`,
+        transition: `opacity 0.3s ease, transform 0.3s ease`,
         transitionDelay: `${delay}ms`,
       }}
     >

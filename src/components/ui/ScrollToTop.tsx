@@ -15,7 +15,7 @@ export default function ScrollToTop() {
   return (
     <button
       onClick={scrollUp}
-      className={`fixed bottom-6 right-6 z-50 w-12 h-12 bg-primary hover:bg-primary-dark text-white rounded-full flex items-center justify-center shadow-lg shadow-primary/30 transition-all duration-300 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+      className={`fixed bottom-6 right-6 z-50 w-12 h-12 bg-brand hover:bg-brand-ink text-white rounded-full flex items-center justify-center shadow-lg shadow-brand/30 transition-all duration-300 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
       aria-label="العودة لأعلى"
     >
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -16,9 +16,10 @@ export interface CategoryTileLogo {
   width: number;
   height: number;
   /**
-   * كلاسات المظهر. لوجو PlayStation أسود، و`brightness-0 invert` تحوّله أبيض
-   * نقيًا مع الحفاظ على الشفافية — لذلك لم نحتج نسخة بيضاء منه.
-   * لوجو PS Plus ذهبي أصلًا فيُترك بلونه.
+   * كلاسات المظهر. لوجو PlayStation (`playstation-seeklogo.png`) أزرق أصلًا
+   * ويقرأ بوضوح فوق الخلفية الفاتحة بدون أي تعديل لون — بعكس اللوجو الأسود
+   * القديم اللي احتاج `brightness-0`/`invert`. لوجو PS Plus ذهبي أصلًا فيُترك
+   * بلونه أيضًا.
    */
   className: string;
   /** لون التوهج خلف اللوجو — يدمجه بالخلفية بدل أن يبدو ملصقًا فوقها */
@@ -50,12 +51,12 @@ export const CATEGORY_TILES: CategoryTileConfig[] = [
     href: '/products?category=games',
     countLabel: (n) => `${n} لعبة متاحة`,
     logo: {
-      src: '/logos/playstation.png',
-      width: 640,
-      height: 496,
-      className: 'brightness-0 invert opacity-80 group-hover:opacity-100',
-      glowClass: 'bg-primary/25',
-      tintClass: 'from-primary/25 via-dark-card to-dark-card',
+      src: '/logos/playstation-seeklogo.png',
+      width: 2000,
+      height: 1549,
+      className: 'opacity-80 group-hover:opacity-100',
+      glowClass: 'bg-brand/20',
+      tintClass: 'from-brand/10 via-surface to-surface',
     },
   },
   {
@@ -69,8 +70,8 @@ export const CATEGORY_TILES: CategoryTileConfig[] = [
       width: 640,
       height: 618,
       className: 'opacity-90 group-hover:opacity-100',
-      glowClass: 'bg-amber-400/20',
-      tintClass: 'from-amber-500/15 via-dark-card to-dark-card',
+      glowClass: 'bg-brand/20',
+      tintClass: 'from-brand/10 via-surface to-surface',
     },
   },
 ];

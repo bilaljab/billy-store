@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductsBrowser from '@/components/ui/ProductsBrowser';
+import PsGlyphField from '@/components/ui/PsGlyphField';
 import { Flame } from 'lucide-react';
 
 // ISR: matches product-detail page's cadence (this is the primary shopping/catalog
@@ -77,20 +78,21 @@ export default async function ProductsPage() {
   const { products, globalDiscount, error } = await getProductsWithDiscounts();
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen">
       <Navbar />
 
       <main>
       {/* Header */}
       <div className="relative pt-24 pb-16 px-4 overflow-hidden">
         <div className="absolute inset-0 grid-bg opacity-50"></div>
-        <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-0 right-0 w-96 h-96 bg-brand/15 rounded-full blur-3xl"></div>
+        <PsGlyphField layout="scatter" density="sparse" />
         <div className="relative z-10 max-w-7xl mx-auto">
-          <span className="text-accent font-bold text-sm uppercase tracking-wider">المتجر</span>
-          <h1 className="text-5xl font-black text-white mt-2 mb-4">
-            جميع <span className="text-primary-light">المنتجات</span>
+          <span className="text-brand font-bold text-sm uppercase tracking-wider">المتجر</span>
+          <h1 className="text-5xl font-bold font-display text-ink mt-2 mb-4">
+            جميع <span className="text-brand">المنتجات</span>
           </h1>
-          <p className="text-slate-400 max-w-xl text-lg">
+          <p className="text-muted max-w-xl text-lg">
             تصفح مكتبتنا الكاملة من ألعاب PlayStation واشتراكات PS Plus بأفضل الأسعار
           </p>
         </div>
@@ -99,11 +101,11 @@ export default async function ProductsPage() {
       <div className="max-w-7xl mx-auto px-4 pb-20">
         {/* Discount Banner */}
         {globalDiscount && (
-          <div className="mb-6 bg-gradient-to-l from-red-500/20 to-amber-500/10 border border-red-500/30 rounded-2xl px-5 py-4 flex items-center gap-3">
-            <Flame size={30} className="text-red-400" />
+          <div className="mb-6 bg-gradient-to-l from-sale/10 to-gold/30 border border-sale/30 rounded-card px-5 py-4 flex items-center gap-3">
+            <Flame size={30} className="text-sale" />
             <div>
-              <p className="text-white font-black text-lg">{globalDiscount.label}</p>
-              <p className="text-red-400 text-sm">خصم <span className="font-black text-xl">{globalDiscount.percentage}%</span> على جميع المنتجات — عرض لفترة محدودة!</p>
+              <p className="text-ink font-bold text-lg">{globalDiscount.label}</p>
+              <p className="text-sale text-sm">خصم <span className="font-bold text-xl">{globalDiscount.percentage}%</span> على جميع المنتجات — عرض لفترة محدودة!</p>
             </div>
           </div>
         )}

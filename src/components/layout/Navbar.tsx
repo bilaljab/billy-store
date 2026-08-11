@@ -76,64 +76,63 @@ export default function Navbar() {
   return (
     <nav
       style={{ top: visible ? `${topOffset}px` : `-80px` }}
-      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-dark/95 backdrop-blur-md border-b border-dark-border shadow-lg shadow-primary/10' : 'bg-transparent'}`}
+      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-surface/90 backdrop-blur-md border-b border-chip shadow-soft' : 'bg-transparent'}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-2">
-            <Image src="/logo.jpg" alt="Billy Store" width={40} height={40} className="h-10 w-10 rounded-lg object-cover" />
-            <span className="font-black text-xl text-white">Billy <span className="text-accent">Store</span></span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logos/billy-store-logo.png" alt="Billy Store" width={1097} height={723} priority className="h-10 sm:h-12 w-auto" />
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
             {links.map(link => (
               <Link key={link.href} href={link.href}
-                className={`font-semibold transition-all duration-200 hover:text-accent relative after:absolute after:bottom-0 after:right-0 after:h-0.5 after:bg-accent after:transition-all after:duration-300 ${pathname === link.href ? 'text-accent after:w-full' : 'text-slate-300 after:w-0 hover:after:w-full'}`}>
+                className={`font-bold transition-all duration-200 hover:text-brand relative after:absolute after:bottom-0 after:right-0 after:h-0.5 after:bg-brand after:transition-all after:duration-300 ${pathname === link.href ? 'text-brand after:w-full' : 'text-muted after:w-0 hover:after:w-full'}`}>
                 {link.label}
               </Link>
             ))}
             <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
-              className="w-11 h-11 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all flex items-center justify-center" aria-label="واتساب">
+              className="w-11 h-11 bg-green-700 hover:bg-green-600 text-white rounded-lg transition-all flex items-center justify-center" aria-label="واتساب">
               <WaIcon />
             </a>
             <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
-              className="w-11 h-11 bg-gradient-to-l from-purple-600 to-pink-500 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center" aria-label="إنستقرام">
+              className="w-11 h-11 bg-gradient-to-l from-purple-600 to-pink-600 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center" aria-label="إنستقرام">
               <IgIcon />
             </a>
             <a href="https://t.me/BillyStore1" target="_blank" rel="noopener noreferrer"
-              className="w-11 h-11 bg-blue-500 hover:bg-blue-400 text-white rounded-lg transition-all flex items-center justify-center" aria-label="تيليجرام">
+              className="w-11 h-11 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all flex items-center justify-center" aria-label="تيليجرام">
               <TgIcon />
             </a>
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-white p-2"
+          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-ink min-w-11 min-h-11 flex flex-col items-center justify-center"
             aria-label={menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'} aria-expanded={menuOpen}>
-            <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
-            <div className={`w-6 h-0.5 bg-white my-1 transition-all ${menuOpen ? 'opacity-0' : ''}`}></div>
-            <div className={`w-6 h-0.5 bg-white transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
+            <div className={`w-6 h-0.5 bg-ink transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
+            <div className={`w-6 h-0.5 bg-ink my-1 transition-all ${menuOpen ? 'opacity-0' : ''}`}></div>
+            <div className={`w-6 h-0.5 bg-ink transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
           </button>
         </div>
       </div>
 
       {menuOpen && (
-        <div className="md:hidden bg-dark-card border-b border-dark-border px-4 pb-4">
+        <div className="md:hidden bg-surface border-b border-chip shadow-soft px-4 pb-4">
           {links.map(link => (
             <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
-              className={`block py-3 font-semibold border-b border-dark-border/50 ${pathname === link.href ? 'text-accent' : 'text-slate-300'}`}>
+              className={`block py-3 font-bold border-b border-chip/50 ${pathname === link.href ? 'text-brand' : 'text-muted'}`}>
               {link.label}
             </Link>
           ))}
           <div className="flex gap-2 mt-3">
             <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 bg-green-600 text-white font-bold py-2.5 rounded-lg text-sm">
+              className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-green-700 text-white font-bold py-2.5 rounded-lg text-sm">
               <WaIcon /> واتساب
             </a>
             <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-l from-purple-600 to-pink-500 text-white font-bold py-2.5 rounded-lg text-sm">
+              className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-gradient-to-l from-purple-600 to-pink-600 text-white font-bold py-2.5 rounded-lg text-sm">
               <IgIcon /> إنستقرام
             </a>
             <a href="https://t.me/BillyStore1" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white font-bold py-2.5 rounded-lg text-sm">
+              className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-sm">
               <TgIcon /> تيليجرام
             </a>
           </div>

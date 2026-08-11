@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Gamepad2, Star } from 'lucide-react';
 import ScrollReveal from './ScrollReveal';
+import Badge from './Badge';
 import type { CategoryKey, CategoryTileLogo } from '@/lib/siteImages';
 
 export interface CategoryTile {
@@ -24,7 +25,7 @@ export default function CategoryTiles({ tiles }: { tiles: CategoryTile[] }) {
         <ScrollReveal key={tile.key} direction="up" delay={i * 120}>
           <Link
             href={tile.href}
-            className="group relative block aspect-[3/4] sm:aspect-[16/9] rounded-2xl sm:rounded-3xl overflow-hidden border border-dark-border hover:border-primary/50 bg-dark-card card-hover"
+            className="group relative block aspect-[3/4] sm:aspect-[16/9] rounded-card overflow-hidden border border-chip hover:border-brand/50 bg-surface card-hover"
           >
             {/* تدرّج بلون الفئة — يميّز البطاقتين ويمنع الخلفية من أن تكون مسطّحة */}
             <div className={`absolute inset-0 bg-gradient-to-br ${tile.logo.tintClass}`} />
@@ -45,22 +46,23 @@ export default function CategoryTiles({ tiles }: { tiles: CategoryTile[] }) {
             </div>
 
             {/* يفصل النص عن اللوجو ويضمن تباينه */}
-            <div className="absolute inset-0 bg-gradient-to-t from-dark-card via-dark-card/75 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/80 to-transparent" />
 
             <div className="absolute inset-x-0 bottom-0 p-3 sm:p-7">
-              <div className="inline-flex items-center gap-1 sm:gap-2 bg-primary/20 border border-primary/40 text-primary-light text-[10px] sm:text-xs font-bold px-2 sm:px-3 py-1 sm:py-1.5 rounded-full mb-1.5 sm:mb-3">
-                {tile.key === 'subscription'
-                  ? <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
-                  : <Gamepad2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
+              <Badge
+                variant="category"
+                icon={tile.key === 'subscription' ? <Star className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> : <Gamepad2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />}
+                className="text-[10px] sm:text-xs px-2 sm:px-3 py-1 sm:py-1.5 mb-1.5 sm:mb-3"
+              >
                 {tile.countText}
-              </div>
-              <h3 className="text-base sm:text-3xl font-black text-white leading-snug mb-1 group-hover:text-accent transition-colors">
+              </Badge>
+              <h3 className="text-base sm:text-3xl font-normal text-ink leading-snug mb-1 group-hover:text-brand transition-colors">
                 {tile.label}
               </h3>
               {/* الوصف مخفي على الموبايل: بعرض ~173px يطلع مزنوقًا ويزاحم العنوان
                   والعدّاد، وهما يكفيان لتوضيح البطاقة */}
-              <p className="hidden sm:block text-slate-400 text-sm leading-relaxed mb-3 line-clamp-2">{tile.desc}</p>
-              <span className="inline-flex items-center gap-1.5 sm:gap-2 text-accent font-bold text-xs sm:text-sm">
+              <p className="hidden sm:block text-muted text-sm leading-relaxed mb-3 line-clamp-2">{tile.desc}</p>
+              <span className="inline-flex items-center gap-1.5 sm:gap-2 text-brand font-bold text-xs sm:text-sm">
                 تصفّح الآن
                 <span className="group-hover:translate-x-1 transition-transform">←</span>
               </span>
