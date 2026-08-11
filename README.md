@@ -27,7 +27,7 @@ A modern storefront for PlayStation 4/5 games and PS Plus subscriptions, built f
 - **Scroll Animations** — Smooth reveal animations as you scroll
 - **Mobile-First Design** — Two-column product grid optimized for mobile users
 - **Full RTL Support** — Native Arabic right-to-left layout
-- **Dark Theme** — Gaming-inspired UI based on the Billy Store brand colors
+- **Spatial UI Light** — Light theme with floating white cards, a blue/lavender gradient background, and a self-hosted Arabic font (STC)
 
 ---
 
