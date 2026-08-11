@@ -35,29 +35,29 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-dark flex items-center justify-center px-4 grid-bg">
-      <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-1/3 left-1/4 w-48 h-48 bg-accent/5 rounded-full blur-3xl pointer-events-none"></div>
+    <div className="min-h-screen flex items-center justify-center px-4 grid-bg relative overflow-hidden">
+      <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-brand/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div className="absolute bottom-1/3 left-1/4 w-48 h-48 bg-brand-ink/10 rounded-full blur-3xl pointer-events-none"></div>
 
       <div className="w-full max-w-md relative z-10">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-primary/20 border-2 border-primary/40 flex items-center justify-center mb-4">
-            <span className="text-accent font-black text-xl">BS</span>
+          <div className="w-16 h-16 mx-auto rounded-2xl bg-brand/10 border-2 border-brand/30 flex items-center justify-center mb-4">
+            <span className="text-brand font-black text-xl">BS</span>
           </div>
-          <h1 className="text-3xl font-black text-white">لوحة التحكم</h1>
-          <p className="text-slate-400 mt-2">بيلي ستور - Admin Panel</p>
+          <h1 className="text-3xl font-black text-ink">لوحة التحكم</h1>
+          <p className="text-muted mt-2">بيلي ستور - Admin Panel</p>
         </div>
 
-        <div className="bg-dark-card border border-dark-border rounded-3xl p-8">
+        <div className="bg-surface border-2 border-black/15 rounded-card p-8 shadow-float">
           {error && (
-            <div role="alert" className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-6 text-sm text-center">
+            <div role="alert" className="bg-red-50 border border-red-300 text-red-700 rounded-xl px-4 py-3 mb-6 text-sm text-center">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="login-username" className="block text-slate-400 text-sm font-semibold mb-2">اسم المستخدم</label>
+              <label htmlFor="login-username" className="block text-ink text-sm font-semibold mb-2">اسم المستخدم</label>
               <input
                 id="login-username"
                 type="text"
@@ -65,11 +65,12 @@ export default function AdminLoginPage() {
                 onChange={e => setForm({ ...form, username: e.target.value })}
                 placeholder="admin"
                 required
-                className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
+                autoComplete="username"
+                className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors"
               />
             </div>
             <div>
-              <label htmlFor="login-password" className="block text-slate-400 text-sm font-semibold mb-2">كلمة المرور</label>
+              <label htmlFor="login-password" className="block text-ink text-sm font-semibold mb-2">كلمة المرور</label>
               <div className="relative">
                 <input
                   id="login-password"
@@ -78,17 +79,18 @@ export default function AdminLoginPage() {
                   onChange={e => setForm({ ...form, password: e.target.value })}
                   placeholder="••••••••"
                   required
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 pl-12 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors"
+                  autoComplete="current-password"
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 pl-12 text-ink placeholder-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors"
                 />
                 <button type="button" onClick={() => setShowPassword(s => !s)}
                   aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}
-                  className="absolute left-1 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center text-slate-400 hover:text-white transition-colors">
+                  className="absolute left-1 top-1/2 -translate-y-1/2 min-w-11 min-h-11 flex items-center justify-center text-muted hover:text-ink transition-colors">
                   {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                 </button>
               </div>
             </div>
             <button type="submit" disabled={loading}
-              className="w-full bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-black py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-primary/30 text-lg">
+              className="w-full min-h-11 bg-brand hover:bg-brand-ink disabled:opacity-50 text-white font-black py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand/30 text-lg">
               {loading ? 'جاري التحقق...' : 'دخول'}
             </button>
           </form>

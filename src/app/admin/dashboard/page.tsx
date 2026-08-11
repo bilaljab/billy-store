@@ -531,26 +531,26 @@ export default function AdminDashboard() {
   useEffect(() => { if (page > totalPages) setPage(totalPages); }, [totalPages, page]);
 
   return (
-    <div className="min-h-screen bg-dark">
+    <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-dark-card border-b border-dark-border px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+      <header className="bg-surface border-b border-chip px-6 py-4 flex items-center justify-between sticky top-0 z-40">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center">
-            <span className="text-accent font-black text-xs">BS</span>
+          <div className="w-9 h-9 rounded-lg bg-brand/20 border border-brand/40 flex items-center justify-center">
+            <span className="text-brand font-black text-xs">BS</span>
           </div>
           <div>
-            <h1 className="font-black text-white text-sm" aria-label="لوحة تحكم Billy Store">Billy Store</h1>
+            <h1 className="font-black text-ink text-sm" aria-label="لوحة تحكم Billy Store">Billy Store</h1>
             <p className="text-muted text-xs">لوحة التحكم</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/admin/assistant" className="text-slate-400 hover:text-accent text-sm transition-colors">
+          <Link href="/admin/assistant" className="text-muted hover:text-brand text-sm transition-colors">
             المساعد الذكي
           </Link>
-          <a href="/" target="_blank" className="text-slate-400 hover:text-accent text-sm transition-colors">
+          <a href="/" target="_blank" className="text-muted hover:text-brand text-sm transition-colors">
             عرض الموقع ↗
           </a>
-          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
+          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
             تسجيل خروج
           </button>
         </div>
@@ -560,30 +560,30 @@ export default function AdminDashboard() {
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
           {[
-            { label: 'إجمالي المنتجات', value: products.length, icon: <Package size={30} className="text-primary" />, color: 'primary' },
-            { label: 'ألعاب', value: products.filter(p => p.category === 'games').length, icon: <Gamepad2 size={30} className="text-blue-400" />, color: 'blue' },
-            { label: 'اشتراكات', value: products.filter(p => p.category === 'subscription').length, icon: <Star size={30} className="text-accent" />, color: 'accent' },
-            { label: 'منتجات مميزة', value: products.filter(p => p.featured).length, icon: <Trophy size={30} className="text-amber-400" />, color: 'amber' },
+            { label: 'إجمالي المنتجات', value: products.length, icon: <Package size={30} className="text-brand" />, color: 'primary' },
+            { label: 'ألعاب', value: products.filter(p => p.category === 'games').length, icon: <Gamepad2 size={30} className="text-blue-600" />, color: 'blue' },
+            { label: 'اشتراكات', value: products.filter(p => p.category === 'subscription').length, icon: <Star size={30} className="text-brand-ink" />, color: 'accent' },
+            { label: 'منتجات مميزة', value: products.filter(p => p.featured).length, icon: <Trophy size={30} className="text-amber-600" />, color: 'amber' },
           ].map(s => (
-            <div key={s.label} className="bg-dark-card border border-dark-border rounded-2xl p-5">
+            <div key={s.label} className="bg-surface border-2 border-black/15 rounded-2xl p-5">
               <div className="text-3xl mb-2">{s.icon}</div>
-              <div className="text-3xl font-black text-white">{s.value}</div>
+              <div className="text-3xl font-black text-ink">{s.value}</div>
               <div className="text-muted text-sm mt-1">{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Discount Banner */}
-        <div className="mb-8 bg-dark-card border border-dark-border rounded-2xl p-5">
+        <div className="mb-8 bg-surface border-2 border-black/15 rounded-2xl p-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-amber-500/20 flex items-center justify-center">
-                <Tag size={20} className="text-amber-400" />
+                <Tag size={20} className="text-amber-600" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-sm">الخصم العالمي على المنتجات</h2>
+                <h2 className="font-bold text-ink text-sm">الخصم العالمي على المنتجات</h2>
                 {discount && discount.active ? (
-                  <p className="text-amber-400 text-xs mt-0.5 flex items-center gap-1">
+                  <p className="text-amber-600 text-xs mt-0.5 flex items-center gap-1">
                     <CheckCircle2 size={16} className="text-current flex-shrink-0" /> خصم <span className="font-black">{discount.percentage}%</span> مفعّل — &quot;{discount.label}&quot;
                   </p>
                 ) : discount && !discount.active ? (
@@ -596,17 +596,17 @@ export default function AdminDashboard() {
             <div className="flex gap-2 flex-wrap">
               {discount && (
                 <button onClick={() => toggleDiscount(!discount.active)}
-                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all inline-flex items-center justify-center gap-1 ${discount.active ? 'bg-slate-700/50 border-slate-600 text-slate-300 hover:bg-slate-700' : 'bg-green-600/20 border-green-600/40 text-green-400 hover:bg-green-600/30'}`}>
+                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all inline-flex items-center justify-center gap-1 ${discount.active ? 'bg-chip/60 border-chip text-muted hover:bg-chip' : 'bg-green-600/20 border-green-600/40 text-green-600 hover:bg-green-600/30'}`}>
                   {discount.active ? <><Pause size={16} className="text-current" /> إيقاف مؤقت</> : <><Play size={16} className="text-current" /> تفعيل</>}
                 </button>
               )}
               <button onClick={() => { setDiscountError(''); setDiscountModal(true); }}
-                className="text-xs font-bold px-4 min-h-11 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-400 hover:bg-amber-500/30 transition-all inline-flex items-center justify-center gap-1">
+                className="text-xs font-bold px-4 min-h-11 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-600 hover:bg-amber-500/30 transition-all inline-flex items-center justify-center gap-1">
                 {discount ? <><Pencil size={16} className="text-current" /> تعديل الخصم</> : '+ إضافة خصم'}
               </button>
               {discount && (
                 <button onClick={() => setDeleteDiscountConfirm(true)}
-                  className="text-xs font-bold px-3 min-h-11 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all inline-flex items-center justify-center gap-1">
+                  className="text-xs font-bold px-3 min-h-11 rounded-lg bg-red-500/10 border border-red-500/30 text-red-600 hover:bg-red-500/20 transition-all inline-flex items-center justify-center gap-1">
                   <Trash2 size={16} className="text-current" /> حذف
                 </button>
               )}
@@ -615,24 +615,24 @@ export default function AdminDashboard() {
         </div>
 
         {/* Targeted Discounts */}
-        <div className="mb-8 bg-dark-card border border-dark-border rounded-2xl p-5">
+        <div className="mb-8 bg-surface border-2 border-black/15 rounded-2xl p-5">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                <Target size={20} className="text-purple-400" />
+                <Target size={20} className="text-purple-600" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-sm">خصومات مستهدفة</h2>
+                <h2 className="font-bold text-ink text-sm">خصومات مستهدفة</h2>
                 <p className="text-muted text-xs mt-0.5">خصم على منتجات محددة أو نطاق سعري معين</p>
               </div>
             </div>
             <button onClick={() => setTargetedModal(true)}
-              className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
+              className="bg-brand/10 hover:bg-brand/20 border border-brand/30 text-brand text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
               + إضافة قاعدة
             </button>
           </div>
           {targetedFetchError ? (
-            <p className="text-red-400 text-xs text-center py-4 flex items-center justify-center gap-1">
+            <p className="text-red-600 text-xs text-center py-4 flex items-center justify-center gap-1">
               <AlertTriangle size={16} className="text-current flex-shrink-0" /> تعذّر تحميل قواعد الخصم — حاول تحديث الصفحة
             </p>
           ) : targetedRules.length === 0 ? (
@@ -640,14 +640,14 @@ export default function AdminDashboard() {
           ) : (
             <div className="space-y-2">
               {targetedRules.map((rule) => (
-                <div key={rule.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${rule.active ? 'bg-primary/5 border-primary/20' : 'bg-dark border-dark-border opacity-90'}`}>
+                <div key={rule.id} className={`flex items-center gap-3 p-3 rounded-xl border transition-all ${rule.active ? 'bg-brand/5 border-brand/20' : 'bg-surface border-chip opacity-90'}`}>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 flex-wrap">
-                      <span className={`text-xs font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${rule.type === 'product' ? 'bg-accent/20 text-accent' : 'bg-purple-500/20 text-purple-400'}`}>
+                      <span className={`text-xs font-black px-2 py-0.5 rounded-full inline-flex items-center gap-1 ${rule.type === 'product' ? 'bg-brand/20 text-brand' : 'bg-purple-500/20 text-purple-600'}`}>
                         {rule.type === 'product' ? '🎮 منتجات محددة' : <><HandCoins size={12} className="text-current" /> نطاق سعري</>}
                       </span>
-                      <span className="text-red-400 font-black text-sm">-{rule.percentage}%</span>
-                      <span className="text-slate-400 text-xs truncate">{rule.label}</span>
+                      <span className="text-red-600 font-black text-sm">-{rule.percentage}%</span>
+                      <span className="text-muted text-xs truncate">{rule.label}</span>
                     </div>
                     <p className="text-muted text-xs mt-1">
                       {rule.type === 'range' && (
@@ -674,17 +674,17 @@ export default function AdminDashboard() {
                         });
                         setTargetedModal(true);
                       }}
-                      className="text-xs px-2 py-1 rounded-lg border border-primary/30 text-primary-light hover:bg-primary/20 transition-all"
+                      className="text-xs px-2 py-1 rounded-lg border border-brand/30 text-brand hover:bg-brand/20 transition-all"
                       aria-label="تعديل القاعدة">
                       <Pencil size={16} className="text-current" />
                     </button>
                     <button onClick={() => toggleTargetedRule(rule)}
-                      className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-slate-700/50 border-slate-600 text-slate-400' : 'bg-green-600/20 border-green-600/40 text-green-400'}`}
+                      className={`text-xs px-2 py-1 rounded-lg border transition-all ${rule.active ? 'bg-chip border-chip text-muted' : 'bg-green-600/20 border-green-600/40 text-green-600'}`}
                       aria-label={rule.active ? 'إيقاف القاعدة' : 'تفعيل القاعدة'}>
                       {rule.active ? <Pause size={16} className="text-current" /> : <Play size={16} className="text-current" />}
                     </button>
                     <button onClick={() => setDeleteTargetedConfirm(rule.id)}
-                      className="text-xs px-2 py-1 rounded-lg border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all"
+                      className="text-xs px-2 py-1 rounded-lg border border-red-500/30 text-red-600 hover:bg-red-500/20 transition-all"
                       aria-label="حذف القاعدة">
                       <X size={16} className="text-current" />
                     </button>
@@ -696,16 +696,16 @@ export default function AdminDashboard() {
         </div>
 
         {/* Announcement Bar */}
-        <div className="mb-8 bg-dark-card border border-dark-border rounded-2xl p-5">
+        <div className="mb-8 bg-surface border-2 border-black/15 rounded-2xl p-5">
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center">
-                <Megaphone size={20} className="text-primary-light" />
+              <div className="w-10 h-10 rounded-xl bg-brand/20 flex items-center justify-center">
+                <Megaphone size={20} className="text-brand" />
               </div>
               <div>
-                <h2 className="font-bold text-white text-sm">الشريط الإعلاني</h2>
+                <h2 className="font-bold text-ink text-sm">الشريط الإعلاني</h2>
                 {announcement && announcement.active ? (
-                  <p className="text-primary-light text-xs mt-0.5 line-clamp-1 flex items-center gap-1">
+                  <p className="text-brand text-xs mt-0.5 line-clamp-1 flex items-center gap-1">
                     <CheckCircle2 size={16} className="text-current flex-shrink-0" /> &quot;{announcement.text}&quot;
                   </p>
                 ) : announcement && !announcement.active ? (
@@ -718,17 +718,17 @@ export default function AdminDashboard() {
             <div className="flex gap-2 flex-wrap">
               {announcement && (
                 <button onClick={() => toggleAnnouncement(!announcement.active)}
-                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all inline-flex items-center justify-center gap-1 ${announcement.active ? 'bg-slate-700/50 border-slate-600 text-slate-300' : 'bg-primary/20 border-primary/40 text-primary-light'}`}>
+                  className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all inline-flex items-center justify-center gap-1 ${announcement.active ? 'bg-chip border-chip text-muted' : 'bg-brand/20 border-brand/40 text-brand'}`}>
                   {announcement.active ? <><Pause size={16} className="text-current" /> إيقاف</> : <><Play size={16} className="text-current" /> تفعيل</>}
                 </button>
               )}
               <button onClick={() => setAnnModal(true)}
-                className="text-xs font-bold px-4 min-h-11 rounded-lg bg-primary/20 border border-primary/40 text-primary-light hover:bg-primary/30 transition-all inline-flex items-center justify-center gap-1">
+                className="text-xs font-bold px-4 min-h-11 rounded-lg bg-brand/20 border border-brand/40 text-brand hover:bg-brand/30 transition-all inline-flex items-center justify-center gap-1">
                 {announcement ? <><Pencil size={16} className="text-current" /> تعديل</> : '+ إضافة إعلان'}
               </button>
               {announcement && (
                 <button onClick={removeAnnouncement}
-                  className="text-xs font-bold px-3 min-h-11 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20 transition-all inline-flex items-center justify-center gap-1">
+                  className="text-xs font-bold px-3 min-h-11 rounded-lg bg-red-500/10 border border-red-500/30 text-red-600 hover:bg-red-500/20 transition-all inline-flex items-center justify-center gap-1">
                   <Trash2 size={16} className="text-current" /> حذف
                 </button>
               )}
@@ -742,49 +742,49 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 {importResult.imported > 0 && (
-                  <p className="text-green-400 font-bold flex items-center gap-1">
+                  <p className="text-green-600 font-bold flex items-center gap-1">
                     <CheckCircle2 size={16} className="text-current flex-shrink-0" /> تم استيراد {importResult.imported} منتج بنجاح
                   </p>
                 )}
                 {importResult.errors.map((e, i) => (
-                  <p key={i} className="text-red-400 text-sm mt-1 flex items-center gap-1">
+                  <p key={i} className="text-red-600 text-sm mt-1 flex items-center gap-1">
                     <AlertTriangle size={16} className="text-current flex-shrink-0" /> {e}
                   </p>
                 ))}
               </div>
-              <button onClick={() => setImportResult(null)} className="text-muted hover:text-white text-xl min-w-11 min-h-11 inline-flex items-center justify-center">×</button>
+              <button onClick={() => setImportResult(null)} className="text-muted hover:text-ink text-xl min-w-11 min-h-11 inline-flex items-center justify-center">×</button>
             </div>
           </div>
         )}
 
         {/* Products Table */}
-        <div className="bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-dark-border">
-            <h2 className="font-black text-white text-lg">إدارة المنتجات</h2>
+        <div className="bg-surface border-2 border-black/15 rounded-2xl overflow-hidden">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 px-6 py-4 border-b border-chip">
+            <h2 className="font-black text-ink text-lg">إدارة المنتجات</h2>
             <div className="flex flex-wrap gap-2">
               <a href="/template.csv" download="billy-store-template.csv"
-                className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-chip/60 hover:bg-chip border border-chip text-muted font-bold py-2 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
                 قالب CSV
               </a>
               <button onClick={handleExport}
-                className="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-400 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-blue-600/20 hover:bg-blue-600/30 border border-blue-600/40 text-blue-600 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                 </svg>
                 تصدير CSV
               </button>
               <button onClick={fetchStats}
-                className="bg-purple-600/20 hover:bg-purple-600/30 border border-purple-600/40 text-purple-400 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-purple-600/20 hover:bg-purple-600/30 border border-purple-600/40 text-purple-600 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
                 الإحصائيات
               </button>
               <button onClick={() => { setPriceModal(true); setPriceResult(null); }}
-                className="bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/40 text-amber-400 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-amber-600/20 hover:bg-amber-600/30 border border-amber-600/40 text-amber-600 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                 </svg>
@@ -792,29 +792,29 @@ export default function AdminDashboard() {
               </button>
               {priceUndoAuditId !== null && (
                 <button onClick={openPriceUndoDialog}
-                  className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                  className="bg-chip/60 hover:bg-chip border border-chip text-muted font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                   تراجع عن آخر تعديل جماعي
                 </button>
               )}
               {importUndoAuditId !== null && (
                 <button onClick={confirmImportUndo} disabled={importUndoing}
-                  className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs disabled:opacity-50">
+                  className="bg-chip/60 hover:bg-chip border border-chip text-muted font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs disabled:opacity-50">
                   {importUndoing ? 'جارٍ التراجع...' : 'تراجع عن آخر استيراد'}
                 </button>
               )}
               <button onClick={toggleTrash}
-                className="bg-slate-700/50 hover:bg-slate-700 border border-slate-600/40 text-slate-300 font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
+                className="bg-chip/60 hover:bg-chip border border-chip text-muted font-bold min-h-11 px-3 rounded-xl transition-all flex items-center gap-1 text-xs">
                 <Trash2 size={14} className="text-current" />
                 المحذوفات
               </button>
-              <label className="bg-green-600/20 hover:bg-green-600/30 border border-green-600/40 text-green-400 font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 text-sm cursor-pointer">
+              <label className="bg-green-600/20 hover:bg-green-600/30 border border-green-600/40 text-green-600 font-bold py-2 px-4 rounded-xl transition-all flex items-center gap-2 text-sm cursor-pointer">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                 </svg>
                 {importing ? 'جاري الاستيراد...' : 'استيراد Excel / CSV'}
                 <input type="file" accept=".xlsx,.xls,.csv" onChange={handleExcelImport} className="hidden" disabled={importing} />
               </label>
-              <button onClick={openAdd} className="bg-primary hover:bg-primary-dark text-white font-bold min-h-11 px-5 rounded-xl transition-all flex items-center gap-2 text-sm">
+              <button onClick={openAdd} className="bg-brand hover:bg-brand-ink text-white font-bold min-h-11 px-5 rounded-xl transition-all flex items-center gap-2 text-sm">
                 <span className="text-lg leading-none">+</span>
                 إضافة منتج
               </button>
@@ -823,7 +823,7 @@ export default function AdminDashboard() {
 
           {/* Search + category filter */}
           {products.length > 0 && (
-            <div className="flex flex-col sm:flex-row gap-3 px-6 py-3 border-b border-dark-border">
+            <div className="flex flex-col sm:flex-row gap-3 px-6 py-3 border-b border-chip">
               <div className="flex-1 relative">
                 <label htmlFor="admin-product-search" className="sr-only">ابحث عن منتج بالاسم أو الوصف</label>
                 <input
@@ -832,13 +832,13 @@ export default function AdminDashboard() {
                   value={search}
                   onChange={e => setSearch(e.target.value)}
                   placeholder="ابحث عن منتج بالاسم أو الوصف..."
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:outline-none focus:border-primary transition-colors text-sm"
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm"
                 />
                 <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </div>
-              <div role="group" aria-label="فلترة حسب الفئة" className="flex gap-2 bg-dark border border-dark-border rounded-xl p-1.5">
+              <div role="group" aria-label="فلترة حسب الفئة" className="flex gap-2 bg-surface border-2 border-black/15 rounded-xl p-1.5">
                 {([
                   { value: 'all' as const, label: 'الكل', icon: <Target size={16} className="text-current" /> },
                   { value: 'games' as const, label: 'الألعاب', icon: <Gamepad2 size={16} className="text-current" /> },
@@ -848,8 +848,8 @@ export default function AdminDashboard() {
                     aria-pressed={categoryFilter === cat.value}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold text-sm transition-all duration-300 ${
                       categoryFilter === cat.value
-                        ? 'bg-primary text-white shadow-lg shadow-primary/30'
-                        : 'text-slate-400 hover:text-white'
+                        ? 'bg-brand text-white shadow-lg shadow-primary/30'
+                        : 'text-muted hover:text-ink'
                     }`}>
                     {cat.icon}
                     {cat.label}
@@ -862,14 +862,14 @@ export default function AdminDashboard() {
           {/* Bulk action bar */}
           {selectedIds.size > 0 && (
             <div className="flex items-center gap-3 mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl">
-              <span className="text-red-400 text-sm font-bold">
+              <span className="text-red-600 text-sm font-bold">
                 {selectedPageSet.size > 1
                   ? `تم تحديد ${selectedIds.size} منتج عبر ${selectedPageSet.size} صفحات`
                   : `تم تحديد ${selectedIds.size} منتج`}
               </span>
               <div className="flex gap-2 mr-auto">
                 <button onClick={() => setSelectedIds(new Set())}
-                  className="text-slate-400 hover:text-white text-xs px-3 min-h-11 rounded-lg border border-dark-border transition-all">
+                  className="text-muted hover:text-ink text-xs px-3 min-h-11 rounded-lg border border-chip transition-all">
                   إلغاء التحديد
                 </button>
                 <button onClick={handleDeleteSelected} disabled={deletingSelected}
@@ -885,26 +885,26 @@ export default function AdminDashboard() {
           ) : products.length === 0 ? (
             <div className="text-center py-16">
               <div className="mb-3 flex items-center justify-center"><Package size={48} className="text-muted" /></div>
-              <p className="text-slate-400">لا توجد منتجات بعد</p>
+              <p className="text-muted">لا توجد منتجات بعد</p>
               <button onClick={openAdd} className="mt-4 ps-btn text-sm">أضف أول منتج</button>
             </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-16">
               <div className="mb-3 flex items-center justify-center"><Package size={48} className="text-muted" /></div>
-              <p className="text-slate-400">لا توجد نتائج مطابقة للبحث/الفلتر</p>
+              <p className="text-muted">لا توجد نتائج مطابقة للبحث/الفلتر</p>
               <button onClick={() => { setSearch(''); setCategoryFilter('all'); }} className="mt-4 ps-btn text-sm">مسح الفلاتر</button>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead>
-                  <tr className="border-b border-dark-border">
+                  <tr className="border-b border-chip">
                     <th className="px-4 py-3 w-10">
                       <input type="checkbox"
                         checked={filteredProducts.length > 0 && filteredProducts.every(p => selectedIds.has(p.id))}
                         onChange={toggleSelectAll}
                         aria-label="تحديد كل المنتجات"
-                        className="w-5 h-5 accent-primary cursor-pointer" />
+                        className="w-5 h-5 accent-brand cursor-pointer" />
                     </th>
                     <th className="text-right text-muted text-sm font-semibold px-6 py-3">المنتج</th>
                     <th className="hidden sm:table-cell text-right text-muted text-sm font-semibold px-4 py-3">الفئة</th>
@@ -915,17 +915,17 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {pagedProducts.map(product => (
-                    <tr key={product.id} className={`border-b border-dark-border/50 hover:bg-dark/30 transition-colors ${selectedIds.has(product.id) ? 'bg-primary/5' : ''}`}>
+                    <tr key={product.id} className={`border-b border-chip/50 hover:bg-chip transition-colors ${selectedIds.has(product.id) ? 'bg-brand/5' : ''}`}>
                       <td className="px-4 py-4">
                         <input type="checkbox"
                           checked={selectedIds.has(product.id)}
                           onChange={() => toggleSelect(product.id)}
                           aria-label={`تحديد ${product.name}`}
-                          className="w-5 h-5 accent-primary cursor-pointer" />
+                          className="w-5 h-5 accent-brand cursor-pointer" />
                       </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 rounded-lg bg-dark border border-dark-border overflow-hidden flex-shrink-0">
+                          <div className="w-12 h-12 rounded-lg bg-surface border-2 border-black/15 overflow-hidden flex-shrink-0">
                             {product.image ? (
                               <Image src={product.image} alt={product.name} width={48} height={48} className="object-cover w-full h-full" />
                             ) : (
@@ -935,23 +935,23 @@ export default function AdminDashboard() {
                             )}
                           </div>
                           <div>
-                            <p className="text-white font-semibold text-sm">{product.name}</p>
+                            <p className="text-ink font-semibold text-sm">{product.name}</p>
                             <p className="text-muted text-xs mt-0.5 line-clamp-1 max-w-[200px]">{product.description}</p>
                           </div>
                         </div>
                       </td>
                       <td className="hidden sm:table-cell px-4 py-4">
-                        <span className={`text-xs font-bold px-2 py-1 rounded-full ${product.category === 'subscription' ? 'bg-accent/10 text-accent border border-accent/20' : 'bg-primary/10 text-primary-light border border-primary/20'}`}>
+                        <span className={`text-xs font-bold px-2 py-1 rounded-full ${product.category === 'subscription' ? 'bg-gold text-brand-ink border border-gold' : 'bg-chip text-brand border border-chip'}`}>
                           {product.category === 'subscription' ? 'اشتراك' : 'لعبة'}
                         </span>
                       </td>
                       <td className="px-4 py-4">
-                        <span className="text-accent font-black">{product.price}</span>
+                        <span className="text-brand font-black">{product.price}</span>
                         <span className="text-muted text-xs mr-1">ر.س</span>
                       </td>
                       <td className="hidden sm:table-cell px-4 py-4">
                         {product.featured ? (
-                          <span className="text-amber-400 text-sm">⭐ نعم</span>
+                          <span className="text-amber-600 text-sm">⭐ نعم</span>
                         ) : (
                           <span className="text-muted text-sm">—</span>
                         )}
@@ -959,11 +959,11 @@ export default function AdminDashboard() {
                       <td className="px-6 py-4">
                         <div className="flex gap-2">
                           <button onClick={() => openEdit(product)}
-                            className="bg-primary/10 hover:bg-primary/20 border border-primary/30 text-primary-light text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
+                            className="bg-brand/10 hover:bg-brand/20 border border-brand/30 text-brand text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
                             تعديل
                           </button>
                           <button onClick={() => setDeleteConfirm(product.id)}
-                            className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
+                            className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 text-xs font-bold px-3 min-h-11 rounded-lg transition-all">
                             حذف
                           </button>
                         </div>
@@ -976,18 +976,18 @@ export default function AdminDashboard() {
           )}
 
           {filteredProducts.length > 0 && totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-dark-border">
+            <div className="flex items-center justify-between px-6 py-4 border-t border-chip">
               <p className="text-muted text-sm" aria-live="polite">
                 عرض {(page - 1) * PRODUCTS_PAGE_SIZE + 1}–{Math.min(page * PRODUCTS_PAGE_SIZE, filteredProducts.length)} من {filteredProducts.length}
               </p>
               <div className="flex gap-2">
                 <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                  className="text-slate-400 hover:text-white text-xs font-bold px-3 min-h-11 rounded-lg border border-dark-border transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                  className="text-muted hover:text-ink text-xs font-bold px-3 min-h-11 rounded-lg border border-chip transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                   السابق
                 </button>
                 <span className="text-muted text-xs self-center px-1">صفحة {page} من {totalPages}</span>
                 <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                  className="text-slate-400 hover:text-white text-xs font-bold px-3 min-h-11 rounded-lg border border-dark-border transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                  className="text-muted hover:text-ink text-xs font-bold px-3 min-h-11 rounded-lg border border-chip transition-all disabled:opacity-40 disabled:cursor-not-allowed">
                   التالي
                 </button>
               </div>
@@ -997,9 +997,9 @@ export default function AdminDashboard() {
 
         {/* Trash section */}
         {trashOpen && (
-          <div className="mt-8 bg-dark-card border border-dark-border rounded-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-dark-border">
-              <h2 className="font-black text-white text-lg">المحذوفات</h2>
+          <div className="mt-8 bg-surface border-2 border-black/15 rounded-2xl overflow-hidden">
+            <div className="px-6 py-4 border-b border-chip">
+              <h2 className="font-black text-ink text-lg">المحذوفات</h2>
               <p className="text-muted text-sm mt-1">منتجات محذوفة جماعياً — قابلة للاسترجاع خلال 7 أيام من الحذف.</p>
             </div>
             {trashLoading ? (
@@ -1007,25 +1007,25 @@ export default function AdminDashboard() {
             ) : trashItems.length === 0 ? (
               <div className="px-6 py-8 text-center text-muted">لا توجد منتجات محذوفة حالياً.</div>
             ) : (
-              <div className="divide-y divide-dark-border">
+              <div className="divide-y divide-chip">
                 {trashItems.map(item => (
                   <div key={item.id} className="flex items-center justify-between gap-3 px-6 py-4">
                     <div>
-                      <p className="text-slate-200 font-semibold">{item.name}</p>
+                      <p className="text-ink font-semibold">{item.name}</p>
                       <p className="text-muted text-xs mt-1">{item.daysRemaining} يوم متبقٍ قبل انتهاء فترة الاسترجاع</p>
                     </div>
                     <div className="flex gap-2 flex-shrink-0">
                       <button
                         onClick={() => restoreFromTrash(item.id)}
                         disabled={restoringIds.has(item.id) || permanentDeletingIds.has(item.id)}
-                        className="bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
+                        className="bg-brand hover:bg-brand-ink disabled:opacity-50 text-white font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
                       >
                         {restoringIds.has(item.id) ? 'جارٍ الاسترجاع...' : 'استرجاع'}
                       </button>
                       <button
                         onClick={() => setPermanentDeleteConfirm(item.id)}
                         disabled={restoringIds.has(item.id) || permanentDeletingIds.has(item.id)}
-                        className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 disabled:opacity-50 font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
+                        className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 disabled:opacity-50 font-bold min-h-11 px-4 rounded-xl transition-all text-sm"
                       >
                         {permanentDeletingIds.has(item.id) ? 'جارٍ الحذف...' : 'حذف نهائي'}
                       </button>
@@ -1091,42 +1091,42 @@ export default function AdminDashboard() {
       {annModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setAnnModal(false)}></div>
-          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-md">
-            <h3 className="text-xl font-black text-white mb-2 flex items-center gap-2"><Megaphone size={20} className="text-current" /> الشريط الإعلاني</h3>
-            <p className="text-slate-400 text-sm mb-6">يظهر في أعلى الموقع لجميع الزوار</p>
+          <div className="relative bg-surface border-2 border-black/15 rounded-3xl p-8 w-full max-w-md">
+            <h3 className="text-xl font-black text-ink mb-2 flex items-center gap-2"><Megaphone size={20} className="text-current" /> الشريط الإعلاني</h3>
+            <p className="text-muted text-sm mb-6">يظهر في أعلى الموقع لجميع الزوار</p>
             <div className="space-y-4">
               <div>
-                <label htmlFor="announcement-text" className="block text-slate-400 text-sm font-semibold mb-2">نص الإعلان</label>
+                <label htmlFor="announcement-text" className="block text-muted text-sm font-semibold mb-2">نص الإعلان</label>
                 <input id="announcement-text" type="text" value={annForm.text}
                   onChange={e => setAnnForm({...annForm, text: e.target.value})}
                   placeholder="مثال: 🔥 تسليم فوري خلال دقائق — تواصل معنا الآن!"
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm" />
               </div>
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setAnnForm({...annForm, active: !annForm.active})}
                   aria-label={annForm.active ? 'إيقاف الإعلان' : 'تفعيل الإعلان'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
-                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${annForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${annForm.active ? 'bg-brand' : 'bg-chip'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${annForm.active ? 'right-1' : 'left-1'}`}></span>
                   </span>
                 </button>
-                <span className="text-slate-300 text-sm font-semibold flex items-center gap-1">
+                <span className="text-muted text-sm font-semibold flex items-center gap-1">
                   {annForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل — يظهر للزوار</> : <><Pause size={16} className="text-current" /> موقوف</>}
                 </span>
               </div>
               {annForm.text && (
-                <div className="bg-gradient-to-l from-primary to-accent rounded-xl p-3 text-center text-white text-sm font-bold">
+                <div className="bg-gradient-to-l from-brand to-brand-ink rounded-xl p-3 text-center text-ink text-sm font-bold">
                   معاينة: {annForm.text}
                 </div>
               )}
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={saveAnnouncement} disabled={savingAnn || !annForm.text}
-                className="flex-1 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
+                className="flex-1 bg-brand hover:bg-brand-ink disabled:opacity-50 text-ink font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
                 {savingAnn ? 'جاري الحفظ...' : <><Save size={16} className="text-current" /> حفظ</>}
               </button>
               <button onClick={() => setAnnModal(false)}
-                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
+                className="bg-surface border-2 border-black/15 text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50">
                 إلغاء
               </button>
             </div>
@@ -1138,32 +1138,32 @@ export default function AdminDashboard() {
       {showStats && stats && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowStats(false)}></div>
-          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-6 w-full max-w-2xl max-h-[85vh] flex flex-col">
+          <div className="relative bg-surface border-2 border-black/15 rounded-3xl p-6 w-full max-w-2xl max-h-[85vh] flex flex-col">
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-xl font-black text-white flex items-center gap-2"><BarChart3 size={20} className="text-current" /> إحصائيات الموقع</h3>
-              <button onClick={() => setShowStats(false)} className="text-muted hover:text-white text-2xl leading-none min-w-11 min-h-11 inline-flex items-center justify-center">×</button>
+              <h3 className="text-xl font-black text-ink flex items-center gap-2"><BarChart3 size={20} className="text-current" /> إحصائيات الموقع</h3>
+              <button onClick={() => setShowStats(false)} className="text-muted hover:text-ink text-2xl leading-none min-w-11 min-h-11 inline-flex items-center justify-center">×</button>
             </div>
 
             {/* Visit counters */}
             <div className="grid grid-cols-2 gap-3 mb-5">
-              <div className="bg-dark border border-dark-border rounded-2xl p-4 text-center">
-                <p className="text-3xl font-black text-accent">{stats.totalVisits.toLocaleString()}</p>
-                <p className="text-slate-400 text-xs mt-1">إجمالي الزيارات</p>
+              <div className="bg-surface border-2 border-black/15 rounded-2xl p-4 text-center">
+                <p className="text-3xl font-black text-brand">{stats.totalVisits.toLocaleString()}</p>
+                <p className="text-muted text-xs mt-1">إجمالي الزيارات</p>
               </div>
-              <div className="bg-dark border border-dark-border rounded-2xl p-4 text-center">
-                <p className="text-3xl font-black text-green-400">{stats.todayVisits.toLocaleString()}</p>
-                <p className="text-slate-400 text-xs mt-1">زيارات اليوم</p>
+              <div className="bg-surface border-2 border-black/15 rounded-2xl p-4 text-center">
+                <p className="text-3xl font-black text-green-600">{stats.todayVisits.toLocaleString()}</p>
+                <p className="text-muted text-xs mt-1">زيارات اليوم</p>
               </div>
             </div>
 
             {/* Sort tabs */}
             <div className="flex gap-2 mb-3">
               <button onClick={() => setStatsSort('views')}
-                className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'views' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'views' ? 'bg-brand/20 border-brand/40 text-brand' : 'bg-surface border-chip text-muted'}`}>
                 ترتيب حسب المشاهدات
               </button>
               <button onClick={() => setStatsSort('price')}
-                className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'price' ? 'bg-primary/20 border-primary/40 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'price' ? 'bg-brand/20 border-brand/40 text-brand' : 'bg-surface border-chip text-muted'}`}>
                 ترتيب حسب السعر
               </button>
             </div>
@@ -1171,8 +1171,8 @@ export default function AdminDashboard() {
             {/* Products table */}
             <div className="overflow-y-auto flex-1">
               <table className="w-full text-sm">
-                <thead className="sticky top-0 bg-dark-card">
-                  <tr className="border-b border-dark-border">
+                <thead className="sticky top-0 bg-surface">
+                  <tr className="border-b border-chip">
                     <th className="text-right text-muted text-xs font-semibold py-2 px-3">#</th>
                     <th className="text-right text-muted text-xs font-semibold py-2 px-3">المنتج</th>
                     <th className="text-right text-muted text-xs font-semibold py-2 px-3">السعر</th>
@@ -1183,28 +1183,28 @@ export default function AdminDashboard() {
                   {[...stats.productViews]
                     .sort((a, b) => statsSort === 'views' ? b.views - a.views : b.price - a.price)
                     .map((p, i) => (
-                    <tr key={p.id} className="border-b border-dark-border/40 hover:bg-dark/40 transition-colors">
+                    <tr key={p.id} className="border-b border-chip/40 hover:bg-chip transition-colors">
                       <td className="py-2.5 px-3 text-muted text-xs">{i + 1}</td>
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2">
                           {p.image ? (
                             <Image src={p.image} alt={p.name} width={32} height={32} loading="lazy" className="w-8 h-8 rounded-lg object-cover flex-shrink-0" />
                           ) : (
-                            <div className="w-8 h-8 rounded-lg bg-dark-border flex items-center justify-center flex-shrink-0 text-sm">
+                            <div className="w-8 h-8 rounded-lg bg-chip flex items-center justify-center flex-shrink-0 text-sm">
                               {p.category === 'subscription' ? '⭐' : '🎮'}
                             </div>
                           )}
-                          <span className="text-white text-xs font-semibold line-clamp-1">{p.name}</span>
+                          <span className="text-ink text-xs font-semibold line-clamp-1">{p.name}</span>
                         </div>
                       </td>
-                      <td className="py-2.5 px-3 text-accent font-bold text-xs">{p.price} ر.س</td>
+                      <td className="py-2.5 px-3 text-brand font-bold text-xs">{p.price} ر.س</td>
                       <td className="py-2.5 px-3">
                         <div className="flex items-center gap-2">
-                          <div className="flex-1 bg-dark-border rounded-full h-1.5 max-w-16">
-                            <div className="bg-primary rounded-full h-1.5 transition-all"
+                          <div className="flex-1 bg-chip rounded-full h-1.5 max-w-16">
+                            <div className="bg-brand rounded-full h-1.5 transition-all"
                               style={{ width: `${stats.productViews[0]?.views > 0 ? (p.views / stats.productViews[0].views) * 100 : 0}%` }}></div>
                           </div>
-                          <span className={`font-black text-xs ${p.views > 0 ? 'text-primary-light' : 'text-muted'}`}>
+                          <span className={`font-black text-xs ${p.views > 0 ? 'text-brand' : 'text-muted'}`}>
                             {p.views > 0 ? p.views.toLocaleString() : '—'}
                           </span>
                         </div>
@@ -1222,21 +1222,21 @@ export default function AdminDashboard() {
       {priceModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setPriceModal(false)}></div>
-          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-md">
-            <h3 className="text-xl font-black text-white mb-1 flex items-center gap-2"><HandCoins size={20} className="text-current" /> تعديل الأسعار بالجملة</h3>
-            <p className="text-slate-400 text-sm mb-6">هذا الإجراء يعدّل الأسعار الفعلية في قاعدة البيانات بشكل دائم</p>
+          <div className="relative bg-surface border-2 border-black/15 rounded-3xl p-8 w-full max-w-md">
+            <h3 className="text-xl font-black text-ink mb-1 flex items-center gap-2"><HandCoins size={20} className="text-current" /> تعديل الأسعار بالجملة</h3>
+            <p className="text-muted text-sm mb-6">هذا الإجراء يعدّل الأسعار الفعلية في قاعدة البيانات بشكل دائم</p>
 
             <div className="space-y-4">
               {/* Direction */}
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">الاتجاه</label>
+                <label className="block text-muted text-sm font-semibold mb-2">الاتجاه</label>
                 <div className="flex gap-2">
                   <button onClick={() => setPriceForm({...priceForm, direction: 'increase'})}
-                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all inline-flex items-center justify-center gap-1 ${priceForm.direction === 'increase' ? 'bg-green-500/20 border-green-500/50 text-green-400' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all inline-flex items-center justify-center gap-1 ${priceForm.direction === 'increase' ? 'bg-green-500/20 border-green-500/50 text-green-600' : 'bg-surface border-chip text-muted'}`}>
                     <TrendingUp size={16} className="text-current" /> رفع السعر
                   </button>
                   <button onClick={() => setPriceForm({...priceForm, direction: 'decrease'})}
-                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all inline-flex items-center justify-center gap-1 ${priceForm.direction === 'decrease' ? 'bg-red-500/20 border-red-500/50 text-red-400' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all inline-flex items-center justify-center gap-1 ${priceForm.direction === 'decrease' ? 'bg-red-500/20 border-red-500/50 text-red-600' : 'bg-surface border-chip text-muted'}`}>
                     <TrendingDown size={16} className="text-current" /> تخفيض السعر
                   </button>
                 </div>
@@ -1244,14 +1244,14 @@ export default function AdminDashboard() {
 
               {/* Mode */}
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">نوع التعديل</label>
+                <label className="block text-muted text-sm font-semibold mb-2">نوع التعديل</label>
                 <div className="flex gap-2">
                   <button onClick={() => setPriceForm({...priceForm, mode: 'percentage'})}
-                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'percentage' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'percentage' ? 'bg-brand/20 border-brand/50 text-brand' : 'bg-surface border-chip text-muted'}`}>
                     % نسبة مئوية
                   </button>
                   <button onClick={() => setPriceForm({...priceForm, mode: 'fixed'})}
-                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'fixed' ? 'bg-primary/20 border-primary/50 text-primary-light' : 'bg-dark border-dark-border text-slate-400'}`}>
+                    className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${priceForm.mode === 'fixed' ? 'bg-brand/20 border-brand/50 text-brand' : 'bg-surface border-chip text-muted'}`}>
                     ر.س مبلغ ثابت
                   </button>
                 </div>
@@ -1259,15 +1259,15 @@ export default function AdminDashboard() {
 
               {/* Value */}
               <div>
-                <label htmlFor="bulk-price-value" className="block text-slate-400 text-sm font-semibold mb-2">
+                <label htmlFor="bulk-price-value" className="block text-muted text-sm font-semibold mb-2">
                   {priceForm.mode === 'percentage' ? 'النسبة (%)' : 'المبلغ (ريال)'}
                 </label>
                 <div className="relative">
                   <input id="bulk-price-value" type="number" min="1" value={priceForm.value}
                     onChange={e => setPriceForm({...priceForm, value: e.target.value})}
                     placeholder={priceForm.mode === 'percentage' ? 'مثال: 20' : 'مثال: 30'}
-                    className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-amber-500 transition-colors" />
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-400 text-lg font-black">
+                    className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink text-2xl font-black focus:outline-none focus:border-amber-500 transition-colors" />
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-600 text-lg font-black">
                     {priceForm.mode === 'percentage' ? '%' : 'ر.س'}
                   </span>
                 </div>
@@ -1275,11 +1275,11 @@ export default function AdminDashboard() {
 
               {/* Category */}
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">تطبيق على</label>
+                <label className="block text-muted text-sm font-semibold mb-2">تطبيق على</label>
                 <div className="flex gap-2">
                   {[['all','كل المنتجات'],['games','الألعاب فقط'],['subscription','الاشتراكات فقط']].map(([val, label]) => (
                     <button key={val} onClick={() => setPriceForm({...priceForm, category: val})}
-                      className={`flex-1 min-h-11 rounded-xl text-xs font-bold border transition-all ${priceForm.category === val ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400'}`}>
+                      className={`flex-1 min-h-11 rounded-xl text-xs font-bold border transition-all ${priceForm.category === val ? 'bg-brand/20 border-brand/50 text-brand' : 'bg-surface border-chip text-muted'}`}>
                       {label}
                     </button>
                   ))}
@@ -1289,10 +1289,10 @@ export default function AdminDashboard() {
               {/* Preview */}
               {priceForm.value && (
                 <div className={`rounded-xl p-3 text-sm border ${priceForm.direction === 'increase' ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30'}`}>
-                  <p className={`font-bold mb-1 ${priceForm.direction === 'increase' ? 'text-green-400' : 'text-red-400'}`}>معاينة:</p>
-                  <p className="text-slate-300">
+                  <p className={`font-bold mb-1 ${priceForm.direction === 'increase' ? 'text-green-600' : 'text-red-600'}`}>معاينة:</p>
+                  <p className="text-muted">
                     سعر 100 ر.س →{' '}
-                    <span className={`font-black ${priceForm.direction === 'increase' ? 'text-green-400' : 'text-red-400'}`}>
+                    <span className={`font-black ${priceForm.direction === 'increase' ? 'text-green-600' : 'text-red-600'}`}>
                       {priceForm.mode === 'percentage'
                         ? Math.max(1, Math.round(priceForm.direction === 'increase'
                             ? 100 * (1 + parseFloat(priceForm.value || '0') / 100)
@@ -1306,7 +1306,7 @@ export default function AdminDashboard() {
               )}
 
               {priceResult && (
-                <div className={`rounded-xl p-3 text-sm font-bold flex items-center gap-1 ${priceResult.startsWith('✅') ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
+                <div className={`rounded-xl p-3 text-sm font-bold flex items-center gap-1 ${priceResult.startsWith('✅') ? 'bg-green-500/10 text-green-600' : 'bg-red-500/10 text-red-600'}`}>
                   {priceResult.startsWith('✅')
                     ? <CheckCircle2 size={16} className="text-current flex-shrink-0" />
                     : <XCircle size={16} className="text-current flex-shrink-0" />}
@@ -1321,7 +1321,7 @@ export default function AdminDashboard() {
                 {savingPrice ? 'جاري التعديل...' : priceForm.direction === 'increase' ? <><TrendingUp size={16} className="text-current" /> رفع الأسعار</> : <><TrendingDown size={16} className="text-current" /> تخفيض الأسعار</>}
               </button>
               <button onClick={() => setPriceModal(false)}
-                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl">
+                className="bg-surface border-2 border-black/15 text-muted font-semibold py-3 px-5 rounded-xl">
                 إغلاق
               </button>
             </div>
@@ -1333,20 +1333,20 @@ export default function AdminDashboard() {
       {targetedModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => { setTargetedModal(false); setEditingRule(null); setTargetedForm({ type: 'range', label: '', percentage: '15', active: true, productIds: [], minPrice: '', maxPrice: '' }); }}></div>
-          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-black text-white mb-2 flex items-center gap-2">
+          <div className="relative bg-surface border-2 border-black/15 rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-black text-ink mb-2 flex items-center gap-2">
               {editingRule ? <><Pencil size={20} className="text-current" /> تعديل الخصم المستهدف</> : <><Target size={20} className="text-current" /> خصم مستهدف جديد</>}
             </h3>
-            <p className="text-slate-400 text-sm mb-6">خصم على منتجات محددة أو نطاق سعري معين</p>
+            <p className="text-muted text-sm mb-6">خصم على منتجات محددة أو نطاق سعري معين</p>
 
             {/* Type selector */}
             <div className="flex gap-2 mb-5">
               <button onClick={() => setTargetedForm({...targetedForm, type: 'range', productIds: []})}
-                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all inline-flex items-center justify-center gap-1 ${targetedForm.type === 'range' ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
+                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all inline-flex items-center justify-center gap-1 ${targetedForm.type === 'range' ? 'bg-purple-500/20 border-purple-500/50 text-purple-300' : 'bg-surface border-chip text-muted hover:border-brand/50'}`}>
                 <HandCoins size={16} className="text-current" /> نطاق سعري
               </button>
               <button onClick={() => setTargetedForm({...targetedForm, type: 'product', minPrice: '', maxPrice: ''})}
-                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'product' ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-dark border-dark-border text-slate-400 hover:border-slate-500'}`}>
+                className={`flex-1 min-h-11 rounded-xl text-sm font-bold border transition-all ${targetedForm.type === 'product' ? 'bg-brand/20 border-brand/50 text-brand' : 'bg-surface border-chip text-muted hover:border-brand/50'}`}>
                 🎮 منتجات محددة
               </button>
             </div>
@@ -1354,22 +1354,22 @@ export default function AdminDashboard() {
             <div className="space-y-4">
               {/* Label */}
               <div>
-                <label htmlFor="targeted-label" className="block text-slate-400 text-sm font-semibold mb-2">اسم العرض</label>
+                <label htmlFor="targeted-label" className="block text-muted text-sm font-semibold mb-2">اسم العرض</label>
                 <input id="targeted-label" type="text" value={targetedForm.label}
                   onChange={e => setTargetedForm({...targetedForm, label: e.target.value})}
                   placeholder="مثال: عرض الألعاب الغالية"
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm" />
               </div>
 
               {/* Percentage */}
               <div>
-                <label htmlFor="targeted-percentage" className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
+                <label htmlFor="targeted-percentage" className="block text-muted text-sm font-semibold mb-2">نسبة الخصم (%)</label>
                 <div className="relative">
                   <input id="targeted-percentage" type="number" min="1" max="90" value={targetedForm.percentage}
                     onChange={e => setTargetedForm({...targetedForm, percentage: e.target.value})}
-                    className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-primary transition-colors"
+                    className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink text-2xl font-black focus:outline-none focus:border-brand transition-colors"
                     placeholder="15" />
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-primary-light text-2xl font-black">%</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-brand text-2xl font-black">%</span>
                 </div>
               </div>
 
@@ -1377,18 +1377,18 @@ export default function AdminDashboard() {
               {targetedForm.type === 'range' && (
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label htmlFor="targeted-min-price" className="block text-slate-400 text-sm font-semibold mb-2">السعر من (ر.س)</label>
+                    <label htmlFor="targeted-min-price" className="block text-muted text-sm font-semibold mb-2">السعر من (ر.س)</label>
                     <input id="targeted-min-price" type="number" value={targetedForm.minPrice}
                       onChange={e => setTargetedForm({...targetedForm, minPrice: e.target.value})}
                       placeholder="0 (بدون حد أدنى)"
-                      className="w-full bg-dark border border-dark-border rounded-xl px-3 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                      className="w-full bg-surface border-2 border-black/15 rounded-xl px-3 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm" />
                   </div>
                   <div>
-                    <label htmlFor="targeted-max-price" className="block text-slate-400 text-sm font-semibold mb-2">السعر إلى (ر.س)</label>
+                    <label htmlFor="targeted-max-price" className="block text-muted text-sm font-semibold mb-2">السعر إلى (ر.س)</label>
                     <input id="targeted-max-price" type="number" value={targetedForm.maxPrice}
                       onChange={e => setTargetedForm({...targetedForm, maxPrice: e.target.value})}
                       placeholder="∞ (بدون حد أعلى)"
-                      className="w-full bg-dark border border-dark-border rounded-xl px-3 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                      className="w-full bg-surface border-2 border-black/15 rounded-xl px-3 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm" />
                   </div>
                   <div className="col-span-2">
                     <p className="text-muted text-xs">
@@ -1403,10 +1403,10 @@ export default function AdminDashboard() {
               {/* Product selector */}
               {targetedForm.type === 'product' && (
                 <div>
-                  <label className="block text-slate-400 text-sm font-semibold mb-2">اختر المنتجات</label>
-                  <div className="max-h-48 overflow-y-auto space-y-1 bg-dark rounded-xl border border-dark-border p-2">
+                  <label className="block text-muted text-sm font-semibold mb-2">اختر المنتجات</label>
+                  <div className="max-h-48 overflow-y-auto space-y-1 bg-canvas-a rounded-xl border border-chip p-2">
                     {products.map(p => (
-                      <label key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-dark-card cursor-pointer">
+                      <label key={p.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-surface cursor-pointer">
                         <input type="checkbox"
                           checked={targetedForm.productIds.includes(p.id)}
                           onChange={() => {
@@ -1415,23 +1415,23 @@ export default function AdminDashboard() {
                               : [...targetedForm.productIds, p.id];
                             setTargetedForm({...targetedForm, productIds: ids});
                           }}
-                          className="w-4 h-4 accent-primary" />
-                        <span className="text-white text-sm">{p.name}</span>
+                          className="w-4 h-4 accent-brand" />
+                        <span className="text-ink text-sm">{p.name}</span>
                         <span className="text-muted text-xs mr-auto">{p.price} ر.س</span>
                       </label>
                     ))}
                   </div>
                   {targetedForm.productIds.length > 0 && (
-                    <p className="text-primary-light text-xs mt-1">تم تحديد {targetedForm.productIds.length} منتج</p>
+                    <p className="text-brand text-xs mt-1">تم تحديد {targetedForm.productIds.length} منتج</p>
                   )}
                 </div>
               )}
 
               {/* Preview */}
               {targetedForm.percentage && (
-                <div className="bg-primary/10 border border-primary/30 rounded-xl p-3 text-sm">
-                  <p className="text-primary-light font-bold mb-1">معاينة:</p>
-                  <p className="text-slate-300">سعر 100 ر.س → <span className="text-red-400 font-black">{(100 * (1 - parseFloat(targetedForm.percentage || '0') / 100)).toFixed(0)} ر.س</span></p>
+                <div className="bg-brand/10 border border-brand/30 rounded-xl p-3 text-sm">
+                  <p className="text-brand font-bold mb-1">معاينة:</p>
+                  <p className="text-muted">سعر 100 ر.س → <span className="text-red-600 font-black">{(100 * (1 - parseFloat(targetedForm.percentage || '0') / 100)).toFixed(0)} ر.س</span></p>
                 </div>
               )}
 
@@ -1440,21 +1440,21 @@ export default function AdminDashboard() {
                 <button type="button" onClick={() => setTargetedForm({...targetedForm, active: !targetedForm.active})}
                   aria-label={targetedForm.active ? 'إيقاف القاعدة' : 'تفعيل القاعدة'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
-                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${targetedForm.active ? 'bg-primary' : 'bg-dark-border'}`}>
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${targetedForm.active ? 'bg-brand' : 'bg-chip'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${targetedForm.active ? 'right-1' : 'left-1'}`}></span>
                   </span>
                 </button>
-                <span className="text-slate-300 text-sm flex items-center gap-1">{targetedForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل</> : <><Pause size={16} className="text-current" /> موقوف</>}</span>
+                <span className="text-muted text-sm flex items-center gap-1">{targetedForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل</> : <><Pause size={16} className="text-current" /> موقوف</>}</span>
               </div>
             </div>
 
             <div className="flex gap-3 mt-6">
               <button onClick={saveTargetedRule} disabled={savingTargeted}
-                className="flex-1 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
+                className="flex-1 bg-brand hover:bg-brand-ink disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
                 {savingTargeted ? 'جاري الحفظ...' : <><Save size={16} className="text-current" /> {editingRule ? 'حفظ التعديل' : 'إضافة القاعدة'}</>}
               </button>
               <button onClick={() => { setTargetedModal(false); setEditingRule(null); setTargetedForm({ type: 'range', label: '', percentage: '15', active: true, productIds: [], minPrice: '', maxPrice: '' }); }}
-                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl">
+                className="bg-surface border-2 border-black/15 text-muted font-semibold py-3 px-5 rounded-xl">
                 إلغاء
               </button>
             </div>
@@ -1466,58 +1466,58 @@ export default function AdminDashboard() {
       {discountModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => { setDiscountModal(false); setDiscountError(''); }}></div>
-          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-md">
-            <h3 className="text-xl font-black text-white mb-6 flex items-center gap-2"><Tag size={20} className="text-current" /> إعداد الخصم العالمي</h3>
-            <p className="text-slate-400 text-sm mb-6">سيُطبق هذا الخصم تلقائياً على جميع المنتجات دون تعديل الأسعار الأصلية</p>
+          <div className="relative bg-surface border-2 border-black/15 rounded-3xl p-8 w-full max-w-md">
+            <h3 className="text-xl font-black text-ink mb-6 flex items-center gap-2"><Tag size={20} className="text-current" /> إعداد الخصم العالمي</h3>
+            <p className="text-muted text-sm mb-6">سيُطبق هذا الخصم تلقائياً على جميع المنتجات دون تعديل الأسعار الأصلية</p>
             {discountError && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-5 text-sm">
+              <div className="bg-red-500/10 border border-red-500/30 text-red-600 rounded-xl px-4 py-3 mb-5 text-sm">
                 {discountError}
               </div>
             )}
             <div className="space-y-4">
               <div>
-                <label htmlFor="global-discount-percentage" className="block text-slate-400 text-sm font-semibold mb-2">نسبة الخصم (%)</label>
+                <label htmlFor="global-discount-percentage" className="block text-muted text-sm font-semibold mb-2">نسبة الخصم (%)</label>
                 <div className="relative">
                   <input id="global-discount-percentage" type="number" min="1" max="90" value={discountForm.percentage}
                     onChange={e => setDiscountForm({...discountForm, percentage: e.target.value})}
-                    className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white text-2xl font-black focus:outline-none focus:border-amber-500 transition-colors"
+                    className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink text-2xl font-black focus:outline-none focus:border-amber-500 transition-colors"
                     placeholder="20" />
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-400 text-2xl font-black">%</span>
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-amber-600 text-2xl font-black">%</span>
                 </div>
               </div>
               <div>
-                <label htmlFor="global-discount-label" className="block text-slate-400 text-sm font-semibold mb-2">اسم العرض (يظهر للزوار)</label>
+                <label htmlFor="global-discount-label" className="block text-muted text-sm font-semibold mb-2">اسم العرض (يظهر للزوار)</label>
                 <input id="global-discount-label" type="text" value={discountForm.label}
                   onChange={e => setDiscountForm({...discountForm, label: e.target.value})}
                   placeholder="مثال: عرض رمضان، تخفيضات الصيف..."
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition-colors text-sm" />
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-amber-500 transition-colors text-sm" />
               </div>
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setDiscountForm({...discountForm, active: !discountForm.active})}
                   aria-label={discountForm.active ? 'إيقاف الخصم' : 'تفعيل الخصم'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
-                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${discountForm.active ? 'bg-amber-500' : 'bg-dark-border'}`}>
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${discountForm.active ? 'bg-amber-500' : 'bg-chip'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${discountForm.active ? 'right-1' : 'left-1'}`}></span>
                   </span>
                 </button>
-                <span className="text-slate-300 text-sm font-semibold flex items-center gap-1">
+                <span className="text-muted text-sm font-semibold flex items-center gap-1">
                   {discountForm.active ? <><CheckCircle2 size={16} className="text-current" /> مفعّل — سيظهر للزوار فوراً</> : <><Pause size={16} className="text-current" /> موقوف — لن يظهر للزوار</>}
                 </span>
               </div>
               {discountForm.percentage && (
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-sm">
-                  <p className="text-amber-400 font-bold mb-1">معاينة التأثير:</p>
-                  <p className="text-slate-300">منتج بسعر <span className="line-through text-muted">100 ر.س</span> → <span className="text-amber-400 font-black">{(100 * (1 - parseFloat(discountForm.percentage || '0') / 100)).toFixed(0)} ر.س</span></p>
+                  <p className="text-amber-600 font-bold mb-1">معاينة التأثير:</p>
+                  <p className="text-muted">منتج بسعر <span className="line-through text-muted">100 ر.س</span> → <span className="text-amber-600 font-black">{(100 * (1 - parseFloat(discountForm.percentage || '0') / 100)).toFixed(0)} ر.س</span></p>
                 </div>
               )}
             </div>
             <div className="flex gap-3 mt-6">
               <button onClick={saveDiscount} disabled={savingDiscount}
-                className="flex-1 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-dark font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
+                className="flex-1 bg-amber-500 hover:bg-amber-400 disabled:opacity-50 text-brand-ink font-black py-3 rounded-xl transition-all inline-flex items-center justify-center gap-1">
                 {savingDiscount ? 'جاري الحفظ...' : <><Save size={16} className="text-current" /> حفظ الخصم</>}
               </button>
               <button onClick={() => { setDiscountModal(false); setDiscountError(''); }}
-                className="bg-dark border border-dark-border text-slate-400 font-semibold py-3 px-5 rounded-xl transition-all hover:border-slate-500">
+                className="bg-surface border-2 border-black/15 text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50">
                 إلغاء
               </button>
             </div>
@@ -1529,44 +1529,44 @@ export default function AdminDashboard() {
       {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setModalOpen(false)}></div>
-          <div className="relative bg-dark-card border border-dark-border rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-black text-white mb-6">
+          <div className="relative bg-surface border-2 border-black/15 rounded-3xl p-8 w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-black text-ink mb-6">
               {editProduct ? 'تعديل المنتج' : 'إضافة منتج جديد'}
             </h3>
 
             {error && (
-              <div className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 mb-5 text-sm">
+              <div className="bg-red-500/10 border border-red-500/30 text-red-600 rounded-xl px-4 py-3 mb-5 text-sm">
                 {error}
               </div>
             )}
 
             <div className="space-y-4">
               <div>
-                <label htmlFor="product-name" className="block text-slate-400 text-sm font-semibold mb-2">اسم المنتج *</label>
+                <label htmlFor="product-name" className="block text-muted text-sm font-semibold mb-2">اسم المنتج *</label>
                 <input id="product-name" value={form.name} onChange={e => setForm({...form, name: e.target.value})}
                   placeholder="مثال: God of War Ragnarök"
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm" />
               </div>
 
               <div>
-                <label htmlFor="product-description" className="block text-slate-400 text-sm font-semibold mb-2">الوصف</label>
+                <label htmlFor="product-description" className="block text-muted text-sm font-semibold mb-2">الوصف</label>
                 <textarea id="product-description" value={form.description} onChange={e => setForm({...form, description: e.target.value})}
                   placeholder="وصف مختصر للمنتج..."
                   rows={3}
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm resize-none" />
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm resize-none" />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor="product-price" className="block text-slate-400 text-sm font-semibold mb-2">السعر (ريال) *</label>
+                  <label htmlFor="product-price" className="block text-muted text-sm font-semibold mb-2">السعر (ريال) *</label>
                   <input id="product-price" type="number" value={form.price} onChange={e => setForm({...form, price: e.target.value})}
                     placeholder="0"
-                    className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-sm" />
+                    className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-sm" />
                 </div>
                 <div>
-                  <label htmlFor="product-category" className="block text-slate-400 text-sm font-semibold mb-2">الفئة</label>
+                  <label htmlFor="product-category" className="block text-muted text-sm font-semibold mb-2">الفئة</label>
                   <select id="product-category" value={form.category} onChange={e => setForm({...form, category: e.target.value})}
-                    className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors text-sm">
+                    className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink focus:outline-none focus:border-brand transition-colors text-sm">
                     <option value="games">🎮 لعبة</option>
                     <option value="subscription">⭐ اشتراك PS Plus</option>
                   </select>
@@ -1574,9 +1574,9 @@ export default function AdminDashboard() {
               </div>
 
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-2">صورة المنتج</label>
+                <label className="block text-muted text-sm font-semibold mb-2">صورة المنتج</label>
                 <div className="flex gap-3">
-                  <label className="flex-1 flex items-center justify-center gap-2 bg-dark border border-dark-border border-dashed rounded-xl px-4 py-3 text-muted hover:border-primary hover:text-primary-light transition-all cursor-pointer text-sm">
+                  <label className="flex-1 flex items-center justify-center gap-2 bg-surface border-2 border-black/15 border-dashed rounded-xl px-4 py-3 text-muted hover:border-brand hover:text-brand transition-all cursor-pointer text-sm">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -1584,42 +1584,42 @@ export default function AdminDashboard() {
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                   </label>
                   {form.image && (
-                    <div className="w-14 h-14 rounded-xl overflow-hidden border border-dark-border flex-shrink-0">
+                    <div className="w-14 h-14 rounded-xl overflow-hidden border border-chip flex-shrink-0">
                       <Image src={form.image} alt="preview" width={56} height={56} className="object-cover w-full h-full" />
                     </div>
                   )}
                 </div>
                 <input value={form.image} onChange={e => setForm({...form, image: e.target.value})}
                   placeholder="أو أدخل رابط الصورة مباشرة"
-                  className="w-full mt-2 bg-dark border border-dark-border rounded-xl px-4 py-2 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors text-xs" />
+                  className="w-full mt-2 bg-surface border-2 border-black/15 rounded-xl px-4 py-2 text-ink placeholder-muted/60 focus:outline-none focus:border-brand transition-colors text-xs" />
               </div>
 
               <div className="flex items-center gap-3">
                 <button type="button" onClick={() => setForm({...form, featured: !form.featured})}
                   aria-label={form.featured ? 'إلغاء تمييز المنتج' : 'تمييز المنتج'}
                   className="min-w-11 min-h-11 flex-shrink-0 inline-flex items-center justify-center">
-                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${form.featured ? 'bg-amber-500' : 'bg-dark-border'}`}>
+                  <span className={`w-12 h-6 rounded-full transition-all duration-300 relative inline-block ${form.featured ? 'bg-amber-500' : 'bg-chip'}`}>
                     <span className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300 ${form.featured ? 'right-1' : 'left-1'}`}></span>
                   </span>
                 </button>
-                <span className="text-slate-300 text-sm font-semibold">منتج مميز (يظهر في الصفحة الرئيسية)</span>
+                <span className="text-muted text-sm font-semibold">منتج مميز (يظهر في الصفحة الرئيسية)</span>
               </div>
 
               <div>
-                <label htmlFor="product-release-date" className="block text-slate-400 text-sm font-semibold mb-2">تاريخ الإصدار (اختياري)</label>
+                <label htmlFor="product-release-date" className="block text-muted text-sm font-semibold mb-2">تاريخ الإصدار (اختياري)</label>
                 <input id="product-release-date" type="date" value={form.release_date || ''} onChange={e => setForm({...form, release_date: e.target.value})}
-                  className="w-full bg-dark border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors text-sm" />
+                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink focus:outline-none focus:border-brand transition-colors text-sm" />
                 <p className="text-muted text-xs mt-1">يُستخدم لترتيب المنتجات حسب الأحدث</p>
               </div>
             </div>
 
             <div className="flex gap-3 mt-8">
               <button onClick={handleSave} disabled={saving}
-                className="flex-1 bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-black py-3 rounded-xl transition-all">
+                className="flex-1 bg-brand hover:bg-brand-ink disabled:opacity-50 text-ink font-black py-3 rounded-xl transition-all">
                 {saving ? 'جاري الحفظ...' : editProduct ? 'حفظ التعديلات' : 'إضافة المنتج'}
               </button>
               <button onClick={() => setModalOpen(false)}
-                className="bg-dark border border-dark-border hover:border-slate-500 text-slate-400 font-semibold py-3 px-6 rounded-xl transition-all">
+                className="bg-surface border-2 border-black/15 hover:border-brand/50 text-muted font-semibold py-3 px-6 rounded-xl transition-all">
                 إلغاء
               </button>
             </div>

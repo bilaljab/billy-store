@@ -143,22 +143,22 @@ export default function AssistantPage() {
   const showImageControls = pendingConfirm?.toolName === 'createProduct' || pendingConfirm?.toolName === 'updateProduct';
 
   return (
-    <div className="min-h-screen bg-dark flex flex-col">
-      <header className="bg-dark-card border-b border-dark-border px-6 py-4 flex items-center justify-between sticky top-0 z-40">
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-surface border-b border-chip px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-soft">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center">
-            <Bot size={18} className="text-accent" />
+          <div className="w-9 h-9 rounded-lg bg-brand/10 border border-brand/30 flex items-center justify-center">
+            <Bot size={18} className="text-brand" />
           </div>
           <div>
-            <h1 className="font-black text-white text-sm">المساعد الذكي</h1>
+            <h1 className="font-black text-ink text-sm">المساعد الذكي</h1>
             <p className="text-muted text-xs">لوحة التحكم</p>
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/admin/dashboard" className="text-slate-400 hover:text-accent text-sm transition-colors">
+          <Link href="/admin/dashboard" className="text-muted hover:text-brand text-sm transition-colors">
             ← الداشبورد
           </Link>
-          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
+          <button onClick={handleLogout} className="bg-red-50 hover:bg-red-100 border border-red-300 text-red-700 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
             تسجيل خروج
           </button>
         </div>
@@ -168,7 +168,7 @@ export default function AssistantPage() {
           never overlaps or intercepts clicks on the send button below */}
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 pt-8 pb-24 flex flex-col gap-4">
         {error && (
-          <div role="alert" className="bg-red-500/10 border border-red-500/30 text-red-400 rounded-xl px-4 py-3 text-sm text-center">
+          <div role="alert" className="bg-red-50 border border-red-300 text-red-700 rounded-xl px-4 py-3 text-sm text-center">
             {error}
           </div>
         )}
@@ -185,8 +185,8 @@ export default function AssistantPage() {
               <div
                 className={
                   m.role === 'user'
-                    ? 'bg-primary/10 border border-primary/30 rounded-2xl p-4 max-w-[85%] text-slate-100'
-                    : 'bg-dark-card border border-dark-border rounded-2xl p-5 max-w-[85%] text-slate-200'
+                    ? 'bg-brand/10 border border-brand/30 rounded-2xl p-4 max-w-[85%] text-ink'
+                    : 'bg-surface border-2 border-black/15 rounded-2xl p-5 max-w-[85%] text-ink shadow-soft'
                 }
               >
                 <p className="whitespace-pre-line leading-relaxed">{m.text}</p>
@@ -219,12 +219,12 @@ export default function AssistantPage() {
             onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
             disabled={sending || !!pendingConfirm}
             placeholder="اكتب أمرك هنا..."
-            className="flex-1 bg-dark-card border border-dark-border rounded-xl px-4 py-3 text-white placeholder-slate-600 focus:outline-none focus:border-primary transition-colors disabled:opacity-50"
+            className="flex-1 bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors disabled:opacity-50"
           />
           <button
             onClick={handleSend}
             disabled={sending || !input.trim() || !!pendingConfirm}
-            className="bg-primary hover:bg-primary-dark disabled:opacity-50 text-white font-bold px-5 rounded-xl transition-all flex items-center gap-2"
+            className="min-h-11 bg-brand hover:bg-brand-ink disabled:opacity-50 text-white font-bold px-5 rounded-xl transition-all flex items-center gap-2"
           >
             <Send size={18} className="text-current" />
             {sending ? 'جارٍ الإرسال...' : 'إرسال'}
