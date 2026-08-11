@@ -6,7 +6,7 @@ export async function middleware(req: NextRequest) {
 
   // Redirect favicon requests to logo - prevents 404 errors inflating error rate
   if (pathname === '/favicon.ico' || pathname === '/favicon.png') {
-    return NextResponse.redirect(new URL('/logo.jpg', req.url));
+    return NextResponse.redirect(new URL('/logos/billy-store-icon.png', req.url));
   }
 
   const res = NextResponse.next();
@@ -23,8 +23,8 @@ export async function middleware(req: NextRequest) {
     [
       "default-src 'self'",
       `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`, // unsafe-eval only in dev (webpack HMR)
-      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-      "font-src 'self' https://fonts.gstatic.com",
+      "style-src 'self' 'unsafe-inline'",
+      "font-src 'self'",
       "img-src 'self' data: blob: https:",
       "connect-src 'self'",
       "frame-ancestors 'none'",
