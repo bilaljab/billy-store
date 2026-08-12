@@ -50,7 +50,7 @@ export default function Button({
   title,
 }: ButtonProps) {
   const classes = cn(
-    'inline-flex items-center justify-center rounded-pill font-bold transition-all duration-300',
+    'inline-flex items-center justify-center rounded-pill font-bold transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
     fullWidth && 'w-full',

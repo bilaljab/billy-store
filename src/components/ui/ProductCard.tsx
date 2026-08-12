@@ -96,7 +96,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }: { p
 
   return (
     <Tilt rotationFactor={reduceMotion ? 0 : 6} className="h-full">
-      <Link href={`/products/${product.id}`} className="block h-full">
+      <Link href={`/products/${product.id}`} className="block h-full active:scale-[0.98] transition-transform focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 rounded-xl sm:rounded-2xl">
         <div className="group bg-surface border-2 border-black/15 rounded-xl sm:rounded-2xl overflow-hidden card-hover cursor-pointer h-full flex flex-col">
           <div className="relative aspect-square sm:aspect-[4/3] bg-gradient-to-br from-chip to-surface overflow-hidden">
             {product.image ? (

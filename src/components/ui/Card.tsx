@@ -12,7 +12,7 @@ interface CardProps {
 
 const VARIANT_CLASSES: Record<NonNullable<CardProps['variant']>, string> = {
   surface: 'bg-surface border-2 border-black/15 hover:border-brand/40 rounded-card shadow-float card-hover transition-colors',
-  interactive: 'bg-surface border-2 border-black/15 hover:border-brand/40 rounded-card shadow-float card-hover transition-colors cursor-pointer active:scale-[0.98]',
+  interactive: 'bg-surface border-2 border-black/15 hover:border-brand/40 rounded-card shadow-float card-hover transition-colors cursor-pointer active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
 };
 
 export default function Card({ variant = 'surface', href, className = '', children }: CardProps) {
