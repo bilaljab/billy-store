@@ -91,10 +91,10 @@ export default async function HomePage() {
             className="mt-16 sm:mt-4 mb-5 sm:mb-8 animate-fade-in">
             متجر موثوق منذ 2017
           </Badge>
-          <h1 className="text-4xl/tight sm:text-6xl/tight md:text-7xl/tight font-bold font-display text-ink mb-4 animate-fade-in">
+          <h1 className="text-4xl/tight sm:text-6xl/tight md:text-7xl/tight tracking-tight font-bold font-display text-ink mb-4 animate-fade-in">
             نفس المتعة، نفس اللعبة
           </h1>
-          <p className="text-2xl/relaxed sm:text-4xl/relaxed md:text-5xl/relaxed font-bold mb-4 py-1 text-brand animate-slide-up animation-delay-200">
+          <p className="text-2xl/relaxed sm:text-4xl/relaxed md:text-5xl/relaxed tracking-tight font-bold mb-4 py-1 text-brand animate-slide-up animation-delay-200">
             بسعر أقل من المتجر الرسمي بكثير
           </p>
           <p className="text-muted mb-12 max-w-xl mx-auto leading-relaxed animate-slide-up animation-delay-400">
@@ -139,7 +139,7 @@ export default async function HomePage() {
           <ScrollReveal direction="up">
             <div className="text-center mb-10">
               <span className="text-brand font-bold text-sm uppercase tracking-wider">وش تدور عليه؟</span>
-              <h2 className="text-3xl sm:text-4xl font-bold font-display text-ink mt-2">اختر من وين تبدأ</h2>
+              <h2 className="text-3xl sm:text-4xl tracking-tight font-bold font-display text-ink mt-2">اختر من وين تبدأ</h2>
             </div>
           </ScrollReveal>
           <CategoryTiles tiles={tiles} />
@@ -152,7 +152,7 @@ export default async function HomePage() {
           <div>
             <ScrollReveal direction="right">
               <span className="text-brand font-bold text-sm uppercase tracking-wider">من نحن</span>
-              <h2 className="text-4xl font-bold font-display text-ink mt-2 mb-6">
+              <h2 className="text-4xl tracking-tight font-bold font-display text-ink mt-2 mb-6">
                 أكثر من مجرد متجر —<br />
                 <span className="text-brand">نحن لاعبون نخدم لاعبين</span>
               </h2>
@@ -187,7 +187,7 @@ export default async function HomePage() {
             <div className="flex items-center justify-between mb-12">
               <div>
                 <span className="text-brand font-bold text-sm uppercase tracking-wider">أبرز المنتجات</span>
-                <h2 className="text-4xl font-bold font-display text-ink mt-2">العروض المميزة</h2>
+                <h2 className="text-4xl tracking-tight font-bold font-display text-ink mt-2">العروض المميزة</h2>
               </div>
               <Link href="/products" className="hidden sm:flex items-center gap-2 text-brand hover:text-brand-ink font-bold transition-colors group">
                 عرض الكل <span className="group-hover:translate-x-1 transition-transform">←</span>
@@ -220,7 +220,7 @@ export default async function HomePage() {
         <ScrollReveal direction="up">
           <div className="text-center mb-14">
             <span className="text-brand font-bold text-sm uppercase tracking-wider">لماذا نحن؟</span>
-            <h2 className="text-4xl font-bold font-display text-ink mt-2">لماذا تختار بيلي ستور؟</h2>
+            <h2 className="text-4xl tracking-tight font-bold font-display text-ink mt-2">لماذا تختار بيلي ستور؟</h2>
           </div>
         </ScrollReveal>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -243,7 +243,7 @@ export default async function HomePage() {
           <div className="max-w-4xl mx-auto text-center bg-gradient-to-l from-brand/10 via-surface to-gold/20 border border-chip rounded-card p-12 relative overflow-hidden shadow-soft">
             <div className="absolute inset-0 grid-bg opacity-30"></div>
             <div className="relative z-10">
-              <h2 className="text-4xl font-bold font-display text-ink mb-4">جاهز تبدأ تلعب؟</h2>
+              <h2 className="text-4xl tracking-tight font-bold font-display text-ink mb-4">جاهز تبدأ تلعب؟</h2>
               <p className="text-muted mb-8 text-lg">تواصل معنا الآن واحصل على أفضل صفقة</p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button href="https://wa.me/966508949041?text=مرحباً، أريد الاستفسار عن المنتجات" external size="lg"

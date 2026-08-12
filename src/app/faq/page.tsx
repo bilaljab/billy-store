@@ -19,7 +19,7 @@ export default function FAQPage() {
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <ScrollReveal direction="up">
             <span className="text-brand font-bold text-sm uppercase tracking-wider">مساعدة</span>
-            <h1 className="text-4xl sm:text-5xl font-bold font-display text-ink mt-2 mb-4">الأسئلة <span className="text-brand">الشائعة</span></h1>
+            <h1 className="text-4xl sm:text-5xl tracking-tight font-bold font-display text-ink mt-2 mb-4">الأسئلة <span className="text-brand">الشائعة</span></h1>
             <p className="text-muted text-lg">كل ما تحتاج معرفته قبل الشراء</p>
           </ScrollReveal>
         </div>

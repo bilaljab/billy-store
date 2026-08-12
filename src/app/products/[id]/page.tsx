@@ -207,7 +207,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
               )}
             </div>
 
-            <h1 className="text-3xl sm:text-4xl font-bold font-display text-ink leading-tight">{product.name}</h1>
+            <h1 className="text-3xl sm:text-4xl tracking-tight font-bold font-display text-ink leading-tight">{product.name}</h1>
 
             <div className="bg-surface border-2 border-black/15 rounded-card p-5 shadow-soft">
               <h2 className="text-muted text-sm font-bold mb-3">الوصف</h2>

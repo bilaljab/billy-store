@@ -18,7 +18,7 @@ export default function AboutPage() {
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <ScrollReveal direction="up">
             <span className="text-brand font-bold text-sm uppercase tracking-wider">من نحن</span>
-            <h1 className="text-5xl sm:text-6xl font-bold font-display text-ink mt-2 mb-6">
+            <h1 className="text-5xl sm:text-6xl tracking-tight font-bold font-display text-ink mt-2 mb-6">
               قصة <span className="text-brand">بيلي ستور</span>
             </h1>
             <p className="text-muted text-xl leading-relaxed max-w-2xl mx-auto">

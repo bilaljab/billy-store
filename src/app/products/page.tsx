@@ -89,7 +89,7 @@ export default async function ProductsPage() {
         <PsGlyphField layout="scatter" density="sparse" />
         <div className="relative z-10 max-w-7xl mx-auto">
           <span className="text-brand font-bold text-sm uppercase tracking-wider">المتجر</span>
-          <h1 className="text-5xl font-bold font-display text-ink mt-2 mb-4">
+          <h1 className="text-5xl tracking-tight font-bold font-display text-ink mt-2 mb-4">
             جميع <span className="text-brand">المنتجات</span>
           </h1>
           <p className="text-muted max-w-xl text-lg">
