@@ -89,6 +89,8 @@ npx tsc --noEmit  # فحص الأنواع فقط — لا يوجد سكربت np
 | `ADMIN_PASSWORD` | ✅ دائماً | يُستخدم لعمل seed لحساب الأدمن الأول فقط عند عدم وجوده بقاعدة البيانات |
 | `TURSO_URL` / `TURSO_AUTH_TOKEN` | اختياري محلياً، مطلوب بالإنتاج (Vercel) | لو فاضية بيستخدم SQLite محلي في `data/billy.db` تلقائياً |
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_UPLOAD_PRESET` | ✅ لميزة رفع الصور | بدونها `/api/upload` يرجع 500 |
+| `NVIDIA_NIM_API_KEY` | ✅ لمساعد الأدمن (`/admin/assistant`) | مزوّد الذكاء الاصطناعي الأساسي لمحادثة/tool-calling المساعد (Gotcha #30) |
+| `GROQ_API_KEY` | ✅ لمساعد الأدمن | fallback لو فشل NIM (timeout/انقطاع شبكة) — بدونه فشل NIM يرجع خطأ مباشر بدل التحويل التلقائي |
 
 ## ملاحظات وأشياء تحتاج انتباه (Gotchas)
 
