@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center mb-4">
-              <Image src="/logos/billy-store-logo.png" alt="Billy Store" width={1097} height={723} className="h-12 w-auto" />
+              <Image src="/logos/billy-store-logo.png" alt="Billy Store" width={1097} height={723} sizes="150px" className="h-12 w-auto" />
             </div>
             <p className="text-muted text-sm leading-relaxed">
               متجرك الموثوق لألعاب PlayStation 4 و 5 واشتراكات PS Plus منذ عام 2017. أسعار أرخص من السوق، ودعم عملاء على مدار الساعة.
