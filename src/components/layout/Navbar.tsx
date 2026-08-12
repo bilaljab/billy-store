@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -26,6 +26,20 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [topOffset, setTopOffset] = useState(0);
   const pathname = usePathname();
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Escape closes the mobile menu and returns focus to the button that opened it
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [menuOpen]);
 
   useEffect(() => {
     let lastY = window.scrollY;
@@ -76,7 +90,7 @@ export default function Navbar() {
   return (
     <nav
       style={{ top: visible ? `${topOffset}px` : `-80px` }}
-      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'bg-surface/90 backdrop-blur-md border-b border-chip shadow-soft' : 'bg-transparent'}`}
+      className={`fixed w-full z-50 transition-all duration-300 ${scrolled ? 'navbar-glass bg-surface/90 backdrop-blur-md border-b border-chip shadow-soft' : 'bg-transparent'}`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
@@ -87,57 +101,61 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-6">
             {links.map(link => (
               <Link key={link.href} href={link.href}
-                className={`font-bold transition-all duration-200 hover:text-brand relative after:absolute after:bottom-0 after:right-0 after:h-0.5 after:bg-brand after:transition-all after:duration-300 ${pathname === link.href ? 'text-brand after:w-full' : 'text-muted after:w-0 hover:after:w-full'}`}>
+                className={`font-bold transition-all duration-200 hover:text-brand relative rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2 after:absolute after:bottom-0 after:right-0 after:h-0.5 after:bg-brand after:transition-all after:duration-300 ${pathname === link.href ? 'text-brand after:w-full' : 'text-muted after:w-0 hover:after:w-full'}`}>
                 {link.label}
               </Link>
             ))}
             <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
-              className="w-11 h-11 bg-green-700 hover:bg-green-600 text-white rounded-lg transition-all flex items-center justify-center" aria-label="واتساب">
+              className="w-11 h-11 bg-green-700 hover:bg-green-600 text-white rounded-lg transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2" aria-label="واتساب">
               <WaIcon />
             </a>
             <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
-              className="w-11 h-11 bg-gradient-to-l from-purple-600 to-pink-600 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center" aria-label="إنستقرام">
+              className="w-11 h-11 bg-gradient-to-l from-purple-600 to-pink-600 hover:opacity-90 text-white rounded-lg transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2" aria-label="إنستقرام">
               <IgIcon />
             </a>
             <a href="https://t.me/BillyStore1" target="_blank" rel="noopener noreferrer"
-              className="w-11 h-11 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all flex items-center justify-center" aria-label="تيليجرام">
+              className="w-11 h-11 bg-blue-600 hover:bg-blue-500 text-white rounded-lg transition-all flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2" aria-label="تيليجرام">
               <TgIcon />
             </a>
           </div>
 
-          <button onClick={() => setMenuOpen(!menuOpen)} className="md:hidden text-ink min-w-11 min-h-11 flex flex-col items-center justify-center"
+          <button ref={menuButtonRef} onClick={() => setMenuOpen(!menuOpen)} id="mobile-menu-button" aria-controls="mobile-menu"
+            className="md:hidden text-ink min-w-11 min-h-11 flex flex-col items-center justify-center rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50"
             aria-label={menuOpen ? 'إغلاق القائمة' : 'فتح القائمة'} aria-expanded={menuOpen}>
             <div className={`w-6 h-0.5 bg-ink transition-all duration-300 ${menuOpen ? 'rotate-45 translate-y-1.5' : ''}`}></div>
-            <div className={`w-6 h-0.5 bg-ink my-1 transition-all ${menuOpen ? 'opacity-0' : ''}`}></div>
+            <div className={`w-6 h-0.5 bg-ink my-1 transition-all duration-300 ${menuOpen ? 'opacity-0' : ''}`}></div>
             <div className={`w-6 h-0.5 bg-ink transition-all duration-300 ${menuOpen ? '-rotate-45 -translate-y-1.5' : ''}`}></div>
           </button>
         </div>
       </div>
 
-      {menuOpen && (
-        <div className="md:hidden bg-surface border-b border-chip shadow-soft px-4 pb-4">
-          {links.map(link => (
-            <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
-              className={`block py-3 font-bold border-b border-chip/50 ${pathname === link.href ? 'text-brand' : 'text-muted'}`}>
-              {link.label}
-            </Link>
-          ))}
-          <div className="flex gap-2 mt-3">
-            <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-green-700 text-white font-bold py-2.5 rounded-lg text-sm">
-              <WaIcon /> واتساب
-            </a>
-            <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-gradient-to-l from-purple-600 to-pink-600 text-white font-bold py-2.5 rounded-lg text-sm">
-              <IgIcon /> إنستقرام
-            </a>
-            <a href="https://t.me/BillyStore1" target="_blank" rel="noopener noreferrer"
-              className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-sm">
-              <TgIcon /> تيليجرام
-            </a>
+      <div id="mobile-menu" role="region" aria-label="القائمة" inert={!menuOpen}
+        className={`md:hidden grid collapse-grid ${menuOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+        <div className="overflow-hidden">
+          <div className="bg-surface border-b border-chip shadow-soft px-4 pb-4">
+            {links.map(link => (
+              <Link key={link.href} href={link.href} onClick={() => setMenuOpen(false)}
+                className={`block py-3 font-bold border-b border-chip/50 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 ${pathname === link.href ? 'text-brand' : 'text-muted'}`}>
+                {link.label}
+              </Link>
+            ))}
+            <div className="flex gap-2 mt-3">
+              <a href="https://wa.me/966508949041" target="_blank" rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-green-700 text-white font-bold py-2.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
+                <WaIcon /> واتساب
+              </a>
+              <a href="https://ig.me/m/Billy_Store3" target="_blank" rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-gradient-to-l from-purple-600 to-pink-600 text-white font-bold py-2.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
+                <IgIcon /> إنستقرام
+              </a>
+              <a href="https://t.me/BillyStore1" target="_blank" rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 min-h-11 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2.5 rounded-lg text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
+                <TgIcon /> تيليجرام
+              </a>
+            </div>
           </div>
         </div>
-      )}
+      </div>
     </nav>
   );
 }

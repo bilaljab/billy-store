@@ -72,10 +72,6 @@
   background-size: 24px 24px;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
 @keyframes slideUp {
   from { opacity: 0; transform: translateY(30px); }
   to { opacity: 1; transform: translateY(0); }
@@ -93,7 +89,6 @@
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-.animate-float { animation: float 6s ease-in-out infinite; }
 .animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
 .animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
 .animation-delay-200 { animation-delay: 200ms; }
@@ -106,12 +101,12 @@
   animation-iteration-count: infinite;
 }
 
-.faq-answer-grid { transition: grid-template-rows 0.3s ease-in-out; }
+.collapse-grid { transition: grid-template-rows 0.3s ease-in-out; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .animate-float, .animate-slide-up, .animate-fade-in,
-  .ps-btn, .card-hover, .animate-psglyph-drift, .faq-answer-grid {
+  .animate-slide-up, .animate-fade-in, .ps-btn,
+  .card-hover, .animate-psglyph-drift, .collapse-grid {
     animation: none !important;
     transition: none !important;
   }
@@ -123,4 +118,11 @@
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* The app's only two translucent surfaces (Navbar when scrolled, modal backdrop)
+   fall back to solid, blur-free backgrounds for both preferences. */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  .navbar-glass { backdrop-filter: none; background: var(--surface); }
+  .modal-scrim { backdrop-filter: none; background: rgba(0, 0, 0, 0.85); }
 }

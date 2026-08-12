@@ -25,7 +25,7 @@ export default function FaqAccordion() {
             <span className="flex-1 font-bold text-ink text-base text-right">{faq.q}</span>
             <span className={`text-brand text-xl transition-transform duration-300 flex-shrink-0 ${open === i ? 'rotate-45' : ''}`}>+</span>
           </button>
-          <div className={`grid faq-answer-grid ${open === i ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={open !== i}>
+          <div className={`grid collapse-grid ${open === i ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={open !== i}>
             <div className="overflow-hidden">
               <p className="px-5 pb-5 pr-16 text-ink leading-loose text-sm">{faq.a}</p>
             </div>
