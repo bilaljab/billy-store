@@ -1,47 +1,18 @@
-// Thin transport layer for Google Gemini's function-calling REST API.
-// No knowledge of admin routes, DB, or auth — see src/lib/assistant-tools.ts for the tool registry
-// and src/app/api/admin/assistant/**/route.ts for how results get wired back into the DB.
+// Thin transport layer for Google Gemini's plain-text completion REST API.
+// Scope note (2026-08-09 provider migration): the admin assistant's chat/function-calling
+// entry point (formerly callAI here) moved to src/lib/ai/ (NVIDIA NIM primary, Groq fallback —
+// see src/lib/ai/index.ts). This file now only holds the three one-shot text-completion helpers
+// that stayed on Gemini by explicit decision (out of scope for that migration): they're simple
+// prompt-in/text-out calls unrelated to the admin chat loop's tool-calling reliability problem
+// the migration was solving. AIApiError stays the error type these three functions throw.
 
 // Pinned explicitly to gemini-3.1-flash-lite (not an alias like "-latest") — decision documented
 // in full in CLAUDE.md, including the confirmed real quota (>=140 req/day, 15 req/min on this
 // key) and why every other candidate (2.5 generation, 2.0 generation, 3.5/3.6, Groq) was ruled out.
 const MODEL = 'gemini-3.1-flash-lite';
 
-const SYSTEM_INSTRUCTION = `أنت مساعد إداري ذكي للوحة تحكم متجر Billy Store الإلكتروني (ألعاب PS4/PS5 واشتراكات PS Plus).
-رد دائماً باللغة العربية فقط.
-استخدم الأدوات (tools) المتاحة لك لتنفيذ طلبات الأدمن أو جلب بيانات حقيقية — لا تخترع أرقاماً أو بيانات من عندك.
-لو طلب الأدمن غامضاً أو ناقص معلومة أساسية (مثل سعر منتج جديد بدون تحديد الاسم)، اسأل سؤالاً توضيحياً قصيراً كنص عادي بدل استدعاء أي أداة بمعطيات ناقصة أو مخمَّنة.`;
-
-export interface AIFunctionCall {
-  name: string;
-  args: Record<string, unknown>;
-  id?: string;
-}
-
-export interface AIPart {
+interface AITextPart {
   text?: string;
-  functionCall?: AIFunctionCall;
-  functionResponse?: { name: string; id?: string; response: Record<string, unknown> };
-  // Newer "thinking" Gemini models require this to be echoed back verbatim alongside a
-  // functionCall part in the next turn's history, or the API rejects the request.
-  thoughtSignature?: string;
-}
-
-export interface AIMessage {
-  role: 'user' | 'model';
-  parts: AIPart[];
-}
-
-export interface AIResult {
-  text: string | null;
-  functionCall: AIFunctionCall | null;
-  thoughtSignature: string | null;
-}
-
-export interface AIFunctionDeclaration {
-  name: string;
-  description: string;
-  parameters: Record<string, unknown>;
 }
 
 export class AIApiError extends Error {
@@ -51,55 +22,12 @@ export class AIApiError extends Error {
   }
 }
 
-export async function callAI(history: AIMessage[], tools: AIFunctionDeclaration[]): Promise<AIResult> {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) throw new AIApiError('GEMINI_API_KEY غير مُعرَّف بمتغيرات البيئة');
-
-  let res: Response;
-  try {
-    res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${apiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: history,
-          tools: tools.length > 0 ? [{ functionDeclarations: tools }] : undefined,
-          systemInstruction: { parts: [{ text: SYSTEM_INSTRUCTION }] },
-        }),
-      }
-    );
-  } catch {
-    throw new AIApiError('تعذّر الاتصال بخدمة Gemini');
-  }
-
-  if (!res.ok) {
-    throw new AIApiError(`Gemini API responded with ${res.status}`);
-  }
-
-  const data = await res.json();
-  const candidate = data?.candidates?.[0];
-  const parts: AIPart[] = candidate?.content?.parts ?? [];
-
-  const functionCallPart = parts.find(p => p.functionCall);
-  if (functionCallPart?.functionCall) {
-    return {
-      text: null,
-      functionCall: functionCallPart.functionCall,
-      thoughtSignature: functionCallPart.thoughtSignature ?? null,
-    };
-  }
-
-  const text = parts.map(p => p.text ?? '').join('').trim();
-  return { text: text || null, functionCall: null, thoughtSignature: null };
-}
-
-// One-shot plain-text rewrite call — deliberately separate from callAI's function-calling loop
-// (no tools, no history, no thoughtSignature). Used by src/lib/game-info.ts to turn RAWG's raw
-// English description into an Arabic description matching the catalog's editorial voice
-// (see copywriting-audit.md), decoupled from the main assistant chat's system prompt/context so
-// quality/length stay consistent regardless of how the admin phrased their request. Shares the
-// same GEMINI_API_KEY quota as the main assistant chat (~140 req/day) — not a separate budget.
+// One-shot plain-text rewrite call — deliberately separate from any function-calling loop
+// (no tools, no history). Used by src/lib/game-info.ts to turn RAWG's raw English description
+// into an Arabic description matching the catalog's editorial voice (see copywriting-audit.md),
+// decoupled from the main assistant chat's system prompt/context so quality/length stay
+// consistent regardless of how the admin phrased their request. Shares the same GEMINI_API_KEY
+// quota as any other Gemini call in this file (~140 req/day) — not a separate budget.
 export async function rewriteGameDescriptionAr(input: {
   gameName: string;
   englishDescription: string;
@@ -130,7 +58,7 @@ export async function rewriteGameDescriptionAr(input: {
   if (!res.ok) throw new AIApiError(`Gemini API responded with ${res.status}`);
 
   const data = await res.json();
-  const parts: AIPart[] = data?.candidates?.[0]?.content?.parts ?? [];
+  const parts: AITextPart[] = data?.candidates?.[0]?.content?.parts ?? [];
   return parts.map(p => p.text ?? '').join('').trim();
 }
 
@@ -168,7 +96,7 @@ export async function cleanPsnDescriptionAr(gameName: string, rawArabicText: str
   if (!res.ok) throw new AIApiError(`Gemini API responded with ${res.status}`);
 
   const data = await res.json();
-  const parts: AIPart[] = data?.candidates?.[0]?.content?.parts ?? [];
+  const parts: AITextPart[] = data?.candidates?.[0]?.content?.parts ?? [];
   return parts.map(p => p.text ?? '').join('').trim();
 }
 
@@ -203,7 +131,7 @@ export async function findWebUrl(query: string): Promise<string | null> {
 
   const data = await res.json();
   const candidate = data?.candidates?.[0];
-  const parts: AIPart[] = candidate?.content?.parts ?? [];
+  const parts: AITextPart[] = candidate?.content?.parts ?? [];
   const text = parts.map(p => p.text ?? '').join('');
 
   const match = text.match(/https?:\/\/\S+/);
