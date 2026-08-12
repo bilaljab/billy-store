@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { selfFetch } from './self-fetch';
-import type { AIFunctionDeclaration } from './ai-provider';
+import type { AIToolDeclaration } from './ai/types';
 import { findGamePosterUrl } from './poster-search';
 import { findGameInfo } from './game-info';
 
@@ -9,7 +9,7 @@ export type RiskTier = 'safe' | 'single-confirm' | 'double-confirm';
 type Args = Record<string, unknown>;
 type JsonSchema = Record<string, unknown>;
 
-interface AdminProduct {
+export interface AdminProduct {
   id: number;
   name: string;
   description: string;
@@ -46,9 +46,23 @@ export interface ToolDef {
   execute?: (args: Args, req: NextRequest) => Promise<{ ok: boolean; status: number; data: unknown }>;
 }
 
-async function fetchAllProducts(req: NextRequest): Promise<AdminProduct[]> {
-  const { data } = await selfFetch('/api/admin/products', req);
-  return Array.isArray(data) ? (data as AdminProduct[]) : [];
+// Per-request memoization: a single double-confirm bulk-delete confirm already calls this three
+// times (batch resolve → summarize → computeAffectedCount), each a full self-fetch HTTP
+// round-trip. Keyed on the NextRequest object itself, so it's automatically scoped to one
+// request and needs no eviction — confirm/route.ts runs on a distinct NextRequest, so its fresh
+// computeAffectedCount() re-validation is genuinely fresh, not served from a stale cache.
+const catalogCache = new WeakMap<NextRequest, Promise<AdminProduct[]>>();
+
+// Exported for reuse by the fuzzy-match layer (src/lib/ai/fuzzy-match.ts) — the catalog fetched
+// here for batch-name resolution must go through this same self-fetch path (inherits
+// /api/admin/products' deleted_at IS NULL filter) rather than a new raw DB query.
+export async function fetchAllProducts(req: NextRequest): Promise<AdminProduct[]> {
+  const cached = catalogCache.get(req);
+  if (cached) return cached;
+
+  const promise = selfFetch('/api/admin/products', req).then(({ data }) => (Array.isArray(data) ? (data as AdminProduct[]) : []));
+  catalogCache.set(req, promise);
+  return promise;
 }
 
 async function fetchTargetedRules(req: NextRequest): Promise<TargetedRule[]> {
@@ -162,16 +176,27 @@ export const TOOLS: ToolDef[] = [
   {
     name: 'findGameInfo',
     description:
-      'يبحث عن بيانات لعبة حقيقية من قاعدة بيانات RAWG (وصف عربي مُعاد صياغته بأسلوب أدبي، رابط صورة غلاف، ' +
-      'تاريخ الإصدار، الأنواع) لاستخدامها عند إضافة منتج جديد عبر createProduct. مرّر قيمة description ' +
-      'المسترجعة كما هي لـcreateProduct دون إعادة صياغتها من جديد — هي جاهزة أصلاً. بحث أفضل جهد فقط، قد لا يجد نتيجة مطابقة.',
+      'يبحث عن بيانات لعبة حقيقية من متجر PlayStation الرسمي (اسم رسمي، وصف عربي رسمي مُكثَّف، رابط صورة غلاف حقيقي، ' +
+      'تاريخ الإصدار، الأنواع) لاستخدامها عند إضافة منتج جديد عبر createProduct. استدعِ هذه الأداة دائماً وبشكل استباقي ' +
+      'أول ما يطلب الأدمن إضافة لعبة بالاسم — حتى لو الاسم قصير أو اختصار أو مكتوب بالعربي (مثل "fc 27" أو "GTA 6" أو ' +
+      '"جراند 6") — قبل createProduct، بدون انتظار طلب صريح من الأدمن للاسم/الوصف الرسمي. gameName هو استعلام بحث فقط ' +
+      'ولا يُخزَّن بأي مكان — مرّر الاسم الرسمي الكامل بالإنجليزية بعد ما توسّعه بمعرفتك من أي اختصار أو ترجمة عربية ' +
+      '(بدون لاحقة منصة أو إصدار). مرّر قيمة description المسترجعة كما هي لـcreateProduct دون إعادة صياغتها من جديد — ' +
+      'هي جاهزة أصلاً. بحث أفضل جهد فقط، قد لا يجد نتيجة مطابقة — استخدم اسم الأدمن الحرفي حينها. لو الأدمن ذكر السعر ' +
+      '(وبشكل اختياري الفئة/التميز) بنفس رسالته الأصلية، مرّرهم هنا أيضاً بـprice/category/featured فيصير ممكن إكمال ' +
+      'الإضافة مباشرة بخطوة واحدة أسرع.',
     parameters: {
       type: 'object',
-      properties: { gameName: { type: 'string', description: 'اسم اللعبة بالإنجليزي أو كما يُعرف رسمياً' } },
+      properties: {
+        gameName: { type: 'string', description: 'الاسم الرسمي الكامل بالإنجليزية بعد توسيع أي اختصار أو ترجمة أي اسم عربي — للبحث فقط، لا يُخزَّن' },
+        price: { type: 'number', description: 'اختياري — سعر المنتج لو ذكره الأدمن بنفس الرسالة، يسرّع الإضافة' },
+        category: { type: 'string', enum: ['games', 'subscription'], description: 'اختياري — افتراضياً games' },
+        featured: { type: 'boolean', description: 'اختياري' },
+      },
       required: ['gameName'],
     },
     riskTier: 'safe',
-    route: '(external: api.rawg.io)',
+    route: '(external: store.playstation.com)',
     method: 'GET',
     buildRequest: async () => ({ path: '' }),
     summarize: async () => '',
@@ -186,7 +211,7 @@ export const TOOLS: ToolDef[] = [
   // ── Single-confirm write tools ──
   {
     name: 'createProduct',
-    description: 'يضيف منتجاً جديداً بالمتجر. الاسم والسعر مطلوبان.',
+    description: 'يضيف منتجاً جديداً بالمتجر. الاسم والسعر مطلوبان. لإضافة لعبة، استدعِ findGameInfo أولاً واستباقياً (حتى باسم قصير/اختصار/عربي) واستخدم قيمه (name/description/image/release_date) حرفياً — لا تنتظر طلباً صريحاً. اسم المنتج المخزَّن (name) يأتي حصراً من findGameInfo، أو من نص الأدمن الحرفي (بما فيه اختصاره أو عربيته كما هي) لو فشلت الأداة أو ما لقت نتيجة — التوسيع/الترجمة مسموح فقط داخل استعلام findGameInfo، ممنوع تماماً بحقل name نفسه.',
     parameters: {
       type: 'object',
       properties: {
@@ -225,7 +250,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     name: 'updateProduct',
-    description: 'يعدّل منتجاً موجوداً عبر رقم المعرّف (id). أرسل فقط الحقول المطلوب تغييرها.',
+    description: 'يعدّل منتجاً موجوداً عبر رقم المعرّف (id). أرسل فقط الحقول المطلوب تغييرها. لو غيّرت الاسم (name)، استخدم بالضبط ما كتبه الأدمن — لا تؤلف اسماً رسمياً كاملاً من عندك.',
     parameters: {
       type: 'object',
       properties: {
@@ -323,7 +348,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     name: 'createTargetedDiscount',
-    description: 'ينشئ قاعدة خصم مستهدفة جديدة: إما لمنتجات محددة (type=product مع productIds) أو نطاق سعري (type=range مع minPrice/maxPrice).',
+    description: 'ينشئ قاعدة خصم مستهدفة جديدة: إما لمنتجات محددة (type=product مع productIds أو productNames) أو نطاق سعري (type=range مع minPrice/maxPrice). لو الأدمن سمّى المنتجات بالاسم (خصوصاً أكتر من عدد قليل)، استخدم productNames بالأسماء كما كُتبت حرفياً بدل ما تحاول تحل الأسماء لـproductIds بنفسك.',
     parameters: {
       type: 'object',
       properties: {
@@ -331,6 +356,7 @@ export const TOOLS: ToolDef[] = [
         percentage: { type: 'number' },
         label: { type: 'string' },
         productIds: { type: 'array', items: { type: 'number' } },
+        productNames: { type: 'array', items: { type: 'string' }, description: 'أسماء المنتجات كما كتبها الأدمن حرفياً — تُستخدم بدل productIds لو المنتجات ذُكرت بالاسم' },
         minPrice: { type: 'number' },
         maxPrice: { type: 'number' },
       },
@@ -362,7 +388,7 @@ export const TOOLS: ToolDef[] = [
   },
   {
     name: 'updateTargetedDiscount',
-    description: 'يعدّل قاعدة خصم مستهدفة موجودة عبر رقم المعرّف (id).',
+    description: 'يعدّل قاعدة خصم مستهدفة موجودة عبر رقم المعرّف (id). لو الأدمن سمّى المنتجات بالاسم، استخدم productNames بدل ما تحاول تحل الأسماء لـproductIds بنفسك.',
     parameters: {
       type: 'object',
       properties: {
@@ -371,6 +397,7 @@ export const TOOLS: ToolDef[] = [
         percentage: { type: 'number' },
         label: { type: 'string' },
         productIds: { type: 'array', items: { type: 'number' } },
+        productNames: { type: 'array', items: { type: 'string' }, description: 'أسماء المنتجات كما كتبها الأدمن حرفياً — تُستخدم بدل productIds لو المنتجات ذُكرت بالاسم' },
         minPrice: { type: 'number' },
         maxPrice: { type: 'number' },
       },
@@ -446,11 +473,14 @@ export const TOOLS: ToolDef[] = [
   // ── Double-confirm write tools (two real steps required by the UI) ──
   {
     name: 'bulkDeleteProducts',
-    description: 'ينقل مجموعة منتجات (بالمعرّفات) لسلة المحذوفات دفعة واحدة. قابلة للاسترجاع خلال 7 أيام من قسم المحذوفات بلوحة التحكم.',
+    description: 'ينقل مجموعة منتجات (بالمعرّفات أو الأسماء) لسلة المحذوفات دفعة واحدة. قابلة للاسترجاع خلال 7 أيام من قسم المحذوفات بلوحة التحكم. لو الأدمن سمّى المنتجات بالاسم، استخدم itemNames بدل ما تحاول تحل الأسماء لـids بنفسك.',
     parameters: {
       type: 'object',
-      properties: { ids: { type: 'array', items: { type: 'number' } } },
-      required: ['ids'],
+      properties: {
+        ids: { type: 'array', items: { type: 'number' } },
+        itemNames: { type: 'array', items: { type: 'string' }, description: 'أسماء المنتجات كما كتبها الأدمن حرفياً — تُستخدم بدل ids لو المنتجات ذُكرت بالاسم' },
+      },
+      required: [],
     },
     riskTier: 'double-confirm',
     route: '/api/admin/products/bulk-delete',
@@ -533,8 +563,28 @@ export function getTool(name: string): ToolDef | undefined {
   return TOOLS.find(t => t.name === name);
 }
 
-export function toAIDeclarations(): AIFunctionDeclaration[] {
-  return TOOLS
-    .filter(t => !DISABLED_TOOLS.has(t.name))
-    .map(({ name, description, parameters }) => ({ name, description, parameters }));
+// Batchable tools accept a companion productNames/itemNames text list (resolved server-side via
+// fuzzy matching + per-batch LLM verification, see src/lib/ai/batch.ts) alongside their normal
+// id-based argument, for admin requests that name items by text rather than numeric id. Maps
+// each tool name to which id-based argument the resolved ids get written into. Deliberately
+// scoped to these three only: bulkUpdatePrices is category-scoped (no name list makes sense),
+// importProducts takes full new-row payloads (not references to existing products).
+export const BATCHABLE_TOOLS = new Map<string, 'productIds' | 'ids'>([
+  ['createTargetedDiscount', 'productIds'],
+  ['updateTargetedDiscount', 'productIds'],
+  ['bulkDeleteProducts', 'ids'],
+]);
+
+// TOOLS is a static const, so this is safe to compute once and reuse — chat/route.ts's hop loop
+// otherwise rebuilds this (14 tool schemas with long Arabic descriptions, re-serialized into
+// every request body) on every single hop of every request.
+let cachedDeclarations: AIToolDeclaration[] | null = null;
+
+export function toAIDeclarations(): AIToolDeclaration[] {
+  if (!cachedDeclarations) {
+    cachedDeclarations = TOOLS
+      .filter(t => !DISABLED_TOOLS.has(t.name))
+      .map(({ name, description, parameters }) => ({ name, description, parameters }));
+  }
+  return cachedDeclarations;
 }

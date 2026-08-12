@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Send, Bot } from 'lucide-react';
 import AssistantConfirmCard from '@/components/admin/AssistantConfirmCard';
 import AssistantFinalConfirmModal from '@/components/admin/AssistantFinalConfirmModal';
+import AssistantThinkingIndicator from '@/components/admin/AssistantThinkingIndicator';
 
 interface ChatMessage {
   role: 'user' | 'model';
@@ -193,6 +194,8 @@ export default function AssistantPage() {
               </div>
             </div>
           ))}
+
+          {sending && <AssistantThinkingIndicator />}
 
           {pendingConfirm && !finalConfirmOpen && (
             <AssistantConfirmCard
