@@ -1,18 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
-export default function AnnouncementBar() {
-  const [announcement, setAnnouncement] = useState<{ text: string; active: boolean } | null>(null);
+export default function AnnouncementBar({ initialAnnouncement }: { initialAnnouncement: { text: string; active: boolean } | null }) {
   const [dismissed, setDismissed] = useState(false);
 
-  useEffect(() => {
-    fetch('/api/announcement')
-      .then(r => r.json())
-      .then(d => { if (d && d.active) setAnnouncement(d); })
-      .catch(() => {});
-  }, []);
-
-  if (!announcement || dismissed) return null;
+  if (!initialAnnouncement?.active || dismissed) return null;
+  const announcement = initialAnnouncement;
 
   return (
     <div id="announcement-bar" className="bg-gradient-to-l from-brand to-brand-ink text-white text-sm font-bold py-2 px-4 text-center relative z-[60]">
