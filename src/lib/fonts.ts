@@ -7,4 +7,5 @@ export const stc = localFont({
   ],
   variable: '--font-stc',
   display: 'swap',
+  fallback: ['Tahoma', 'sans-serif'],
 });
