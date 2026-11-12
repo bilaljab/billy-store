@@ -8,16 +8,16 @@ interface BadgeProps {
 }
 
 const VARIANT_CLASSES: Record<NonNullable<BadgeProps['variant']>, string> = {
-  category: 'bg-chip text-brand',
-  discount: 'bg-sale text-white',
-  gold: 'bg-gold text-brand-ink',
-  neutral: 'bg-surface text-muted border border-chip',
+  category: 'bg-chip text-accent',
+  discount: 'bg-sale text-canvas-a',
+  gold: 'bg-gold/15 text-gold',
+  neutral: 'bg-raised text-muted border border-line',
 };
 
 export default function Badge({ variant = 'neutral', icon, children, className = '' }: BadgeProps) {
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-pill px-3 py-1 text-xs font-bold ${VARIANT_CLASSES[variant]} ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-bold ${VARIANT_CLASSES[variant]} ${className}`}
     >
       {icon}
       {children}

@@ -24,10 +24,10 @@ export default function AssistantFinalConfirmModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onCancel}></div>
-      <div className="relative bg-surface border border-red-300 rounded-3xl p-8 w-full max-w-md shadow-float">
-        <div className="flex items-center gap-2 text-red-700 mb-2">
-          <AlertTriangle size={22} className="text-current flex-shrink-0" />
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-xs" onClick={onCancel}></div>
+      <div className="relative bg-surface border border-red-500/40 rounded-3xl p-8 w-full max-w-md shadow-float">
+        <div className="flex items-center gap-2 text-red-300 mb-2">
+          <AlertTriangle size={22} className="text-current shrink-0" />
           <h3 className="text-xl font-black">تأكيد نهائي — عملية لا يمكن التراجع عنها فوراً</h3>
         </div>
         <p className="text-ink text-sm leading-relaxed mb-5 whitespace-pre-line">{humanSummary}</p>
@@ -40,12 +40,12 @@ export default function AssistantFinalConfirmModal({
           type="text"
           value={typed}
           onChange={e => setTyped(e.target.value)}
-          className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors mb-4"
+          className="w-full bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-hidden focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors mb-4"
           autoFocus
         />
 
         {error && (
-          <p className="text-red-700 text-sm mb-4 bg-red-50 border border-red-300 rounded-xl px-4 py-3">{error}</p>
+          <p className="text-red-300 text-sm mb-4 bg-red-500/10 border border-red-500/40 rounded-xl px-4 py-3">{error}</p>
         )}
 
         <div className="flex gap-3">
@@ -59,7 +59,7 @@ export default function AssistantFinalConfirmModal({
           <button
             onClick={onCancel}
             disabled={confirming}
-            className="min-h-11 bg-surface border-2 border-black/15 text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
+            className="min-h-11 bg-surface border border-line text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
           >
             إلغاء
           </button>

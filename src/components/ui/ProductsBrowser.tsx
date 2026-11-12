@@ -1,137 +1,122 @@
 'use client';
 import { useState } from 'react';
+import { motion } from 'motion/react';
 import { useSearchParams } from 'next/navigation';
-import ScrollReveal from './ScrollReveal';
+import { Search, SearchX, TriangleAlert, X } from 'lucide-react';
 import ProductCard from './ProductCard';
-import { Gamepad2, Star, Target } from 'lucide-react';
+import Button from './Button';
+import type { CatalogProduct } from '@/lib/catalog';
 
-interface Product {
-  id: number;
-  name: string;
-  description: string;
-  price: number;
-  image: string | null;
-  category: string;
-  featured: number;
-  release_date?: string | null;
-  discount: { percentage: number; label: string } | null;
-}
+const CATEGORIES = [
+  { value: 'all', label: 'الكل' },
+  { value: 'games', label: 'الألعاب' },
+  { value: 'subscription', label: 'الاشتراكات' },
+] as const;
 
-const CATEGORY_VALUES = ['all', 'games', 'subscription'] as const;
+const SORTS = [
+  { value: 'default', label: 'الترتيب الافتراضي' },
+  { value: 'asc', label: 'السعر: من الأرخص' },
+  { value: 'desc', label: 'السعر: من الأغلى' },
+  { value: 'discount', label: 'أكبر خصم' },
+] as const;
 
-export default function ProductsBrowser({ products, error }: { products: Product[]; error: boolean }) {
-  // القراءة من جهة العميل (لا searchParams بالـServer Component) حتى تبقى الصفحة static/ISR
+type Category = typeof CATEGORIES[number]['value'];
+type Sort = typeof SORTS[number]['value'];
+
+export default function ProductsBrowser({ products, error }: { products: CatalogProduct[]; error: boolean }) {
+  // القراءة من جهة العميل (لا searchParams بالـServer Component) حتى تبقى الصفحة static/ISR.
+  // كل قيمة تمر عبر allow-list؛ أي قيمة غير معروفة تسقط للافتراضي.
   const searchParams = useSearchParams();
-  const requested = searchParams.get('category');
-  const initialCategory = CATEGORY_VALUES.find(v => v === requested) ?? 'all';
-
-  const [category, setCategory] = useState<string>(initialCategory);
-  const [search, setSearch] = useState('');
-  const [sort, setSort] = useState<'default' | 'asc' | 'desc' | 'discount'>('default');
-
-  const sorted = [...products].sort((a, b) => {
-    if (sort === 'asc') return a.price - b.price;
-    if (sort === 'desc') return b.price - a.price;
-    if (sort === 'discount') {
-      const dA = a.discount;
-      const dB = b.discount;
-      // Products with discount first, sorted by discount percentage desc
-      if (dA && !dB) return -1;
-      if (!dA && dB) return 1;
-      if (dA && dB) return dB.percentage - dA.percentage;
-    }
-    return 0;
-  });
-  const filtered = sorted.filter(p =>
-    (category === 'all' || p.category === category) &&
-    (p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.description?.toLowerCase().includes(search.toLowerCase()))
+  const [category, setCategory] = useState<Category>(
+    CATEGORIES.find(c => c.value === searchParams.get('category'))?.value ?? 'all'
   );
+  const [sort, setSort] = useState<Sort>(SORTS.find(s => s.value === searchParams.get('sort'))?.value ?? 'default');
+  const [search, setSearch] = useState((searchParams.get('q') ?? '').slice(0, 100));
 
-  const categories = [
-    { value: 'all', label: 'الكل', icon: <Target size={16} className="text-current" /> },
-    { value: 'games', label: 'الألعاب', icon: <Gamepad2 size={16} className="text-current" /> },
-    { value: 'subscription', label: 'الاشتراكات', icon: <Star size={16} className="text-current" /> },
-  ];
+  const term = search.trim().toLowerCase();
+  const matchesSearch = (p: CatalogProduct) =>
+    !term || p.name.toLowerCase().includes(term) || p.description?.toLowerCase().includes(term);
+
+  const searched = products.filter(matchesSearch);
+  const counts: Record<Category, number> = {
+    all: searched.length,
+    games: searched.filter(p => p.category === 'games').length,
+    subscription: searched.filter(p => p.category === 'subscription').length,
+  };
+
+  const filtered = searched
+    .filter(p => category === 'all' || p.category === category)
+    .sort((a, b) => {
+      if (sort === 'asc') return a.price - b.price;
+      if (sort === 'desc') return b.price - a.price;
+      if (sort === 'discount') return (b.discount?.percentage ?? 0) - (a.discount?.percentage ?? 0);
+      return 0;
+    });
+
+  const reset = () => { setSearch(''); setCategory('all'); setSort('default'); };
 
   return (
     <>
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-4 mb-10">
-        {/* Category tabs */}
-        <div className="flex gap-2 bg-surface border-2 border-black/15 rounded-card p-1.5 shadow-soft">
-          {categories.map(cat => (
-            <button key={cat.value} onClick={() => setCategory(cat.value)}
-              className={`flex items-center gap-2 min-h-11 px-4 py-2 rounded-lg font-bold text-sm transition-all duration-300 ${
-                category === cat.value
-                  ? 'bg-brand text-white shadow-lg shadow-brand/30'
-                  : 'text-muted hover:text-ink'
-              }`}>
-              <span>{cat.icon}</span>
-              {cat.label}
-            </button>
-          ))}
+      <div className="mb-4 flex flex-col gap-3 lg:flex-row lg:items-center">
+        <div role="group" aria-label="الفئة" className="flex rounded-full bg-white/5 p-1">
+          {CATEGORIES.map(cat => {
+            const active = category === cat.value;
+            return (
+              <button key={cat.value} onClick={() => setCategory(cat.value)} aria-pressed={active}
+                className={`relative flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 text-sm font-bold transition-colors lg:px-5 ${active ? 'text-canvas-a' : 'text-muted hover:text-ink'}`}>
+                {active && <motion.span layoutId="category-pill" className="absolute inset-0 rounded-full bg-ink" transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }} />}
+                <span className="relative">{cat.label}</span>
+                <span className="relative text-xs tabular-nums opacity-70">{counts[cat.value]}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Sort */}
-        <div className="flex gap-1 bg-surface border-2 border-black/15 rounded-card p-1.5 shadow-soft">
-          {([['default','الافتراضي'],['asc','الأرخص'],['desc','الأغلى'],['discount','أكبر خصم 🏷️']] as const).map(([val,label]) => (
-            <button key={val} onClick={() => setSort(val)}
-              className={`min-h-11 inline-flex items-center justify-center px-3 rounded-lg text-xs font-bold transition-all ${sort === val ? 'bg-brand text-white' : 'text-muted hover:text-ink'}`}>
-              {label}
-            </button>
-          ))}
-        </div>
-
-        {/* Search */}
-        <div className="flex-1 relative">
+        <div className="relative lg:flex-1">
+          <label htmlFor="product-search" className="sr-only">ابحث عن لعبة أو اشتراك</label>
+          <Search size={16} className="pointer-events-none absolute inset-s-3.5 top-1/2 -translate-y-1/2 text-muted" aria-hidden="true" />
           <input
-            type="text"
+            type="search"
             id="product-search"
             name="search"
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder="ابحث عن لعبة أو اشتراك..."
-            aria-label="ابحث عن لعبة أو اشتراك"
-            className="w-full bg-surface border-2 border-black/15 rounded-card px-4 py-3 text-ink placeholder-muted focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors text-sm shadow-soft"
+            className="field rounded-full! ps-10!"
           />
-          <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
         </div>
       </div>
 
-      {/* Results count */}
-      {!error && (
-        <p className="text-muted text-sm mb-6">
-          {filtered.length} منتج {search && `لـ "${search}"`}
+      <div className="relative mb-5 flex items-center justify-between gap-3">
+        <p className="text-sm text-muted" role="status">
+          {!error && <><span className="tabular-nums">{filtered.length}</span> منتج{term && <> لـ «{search.trim()}»</>}</>}
         </p>
-      )}
+        <label htmlFor="product-sort" className="sr-only">ترتيب المنتجات</label>
+        <select id="product-sort" value={sort} onChange={e => setSort(e.target.value as Sort)}
+          className="field w-auto! cursor-pointer rounded-full! font-bold">
+          {SORTS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
+        </select>
+      </div>
 
-      {/* Grid */}
       <h2 className="sr-only">نتائج البحث</h2>
       {error ? (
-        <div className="text-center py-24">
-          <div className="mb-4 flex items-center justify-center"><Gamepad2 size={60} className="text-muted" /></div>
-          <h3 className="text-xl font-bold text-ink mb-2">حدث خطأ بتحميل المنتجات</h3>
-          <p className="text-muted">حاول تحديث الصفحة</p>
+        <div className="rounded-2xl border border-line bg-surface px-6 py-16 text-center">
+          <TriangleAlert size={40} className="mx-auto mb-4 text-gold" aria-hidden="true" />
+          <h3 className="mb-2 text-xl font-bold text-ink">حدث خطأ بتحميل المنتجات</h3>
+          <p className="mb-6 text-muted">حاول تحديث الصفحة</p>
+          <Button variant="secondary" onClick={() => window.location.reload()}>تحديث الصفحة</Button>
         </div>
       ) : filtered.length === 0 ? (
-        <div className="text-center py-24">
-          <div className="mb-4 flex items-center justify-center"><Gamepad2 size={60} className="text-muted" /></div>
-          <h3 className="text-xl font-bold text-ink mb-2">لا توجد نتائج</h3>
-          <p className="text-muted">جرب البحث بكلمة مختلفة أو تصفح فئة أخرى</p>
+        <div className="rounded-2xl border border-line bg-surface px-6 py-16 text-center">
+          <SearchX size={40} className="mx-auto mb-4 text-muted" aria-hidden="true" />
+          <h3 className="mb-2 text-xl font-bold text-ink">لا توجد نتائج</h3>
+          <p className="mb-6 text-muted">جرب البحث بكلمة مختلفة أو تصفح فئة أخرى</p>
+          <Button variant="secondary" onClick={reset} icon={<X size={16} aria-hidden="true" />}>مسح البحث والفلاتر</Button>
         </div>
       ) : (
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6">
+        <div className="focus-grid grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((product, i) => (
-            i < 4 ? (
-              <ProductCard key={product.id} product={product} priority={i === 0} />
-            ) : (
-              <ScrollReveal key={product.id} direction="up" delay={i % 4 * 80}>
-                <ProductCard product={product} />
-              </ScrollReveal>
-            )
+            <ProductCard key={product.id} product={product} priority={i === 0} />
           ))}
         </div>
       )}

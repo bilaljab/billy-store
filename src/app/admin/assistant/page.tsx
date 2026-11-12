@@ -148,7 +148,7 @@ export default function AssistantPage() {
       <header className="bg-surface border-b border-chip px-6 py-4 flex items-center justify-between sticky top-0 z-40 shadow-soft">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-lg bg-brand/10 border border-brand/30 flex items-center justify-center">
-            <Bot size={18} className="text-brand" />
+            <Bot size={18} className="text-accent" />
           </div>
           <div>
             <h1 className="font-black text-ink text-sm">المساعد الذكي</h1>
@@ -156,10 +156,10 @@ export default function AssistantPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/admin/dashboard" className="text-muted hover:text-brand text-sm transition-colors">
+          <Link href="/admin/dashboard" className="text-muted hover:text-accent text-sm transition-colors">
             ← الداشبورد
           </Link>
-          <button onClick={handleLogout} className="bg-red-50 hover:bg-red-100 border border-red-300 text-red-700 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
+          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/40 text-red-300 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
             تسجيل خروج
           </button>
         </div>
@@ -169,7 +169,7 @@ export default function AssistantPage() {
           never overlaps or intercepts clicks on the send button below */}
       <main className="flex-1 max-w-3xl w-full mx-auto px-4 pt-8 pb-24 flex flex-col gap-4">
         {error && (
-          <div role="alert" className="bg-red-50 border border-red-300 text-red-700 rounded-xl px-4 py-3 text-sm text-center">
+          <div role="alert" className="bg-red-500/10 border border-red-500/40 text-red-300 rounded-xl px-4 py-3 text-sm text-center">
             {error}
           </div>
         )}
@@ -187,7 +187,7 @@ export default function AssistantPage() {
                 className={
                   m.role === 'user'
                     ? 'bg-brand/10 border border-brand/30 rounded-2xl p-4 max-w-[85%] text-ink'
-                    : 'bg-surface border-2 border-black/15 rounded-2xl p-5 max-w-[85%] text-ink shadow-soft'
+                    : 'bg-surface border border-line rounded-2xl p-5 max-w-[85%] text-ink shadow-soft'
                 }
               >
                 <p className="whitespace-pre-line leading-relaxed">{m.text}</p>
@@ -222,7 +222,7 @@ export default function AssistantPage() {
             onKeyDown={e => { if (e.key === 'Enter') handleSend(); }}
             disabled={sending || !!pendingConfirm}
             placeholder="اكتب أمرك هنا..."
-            className="flex-1 bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors disabled:opacity-50"
+            className="flex-1 bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-hidden focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors disabled:opacity-50"
           />
           <button
             onClick={handleSend}

@@ -36,6 +36,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ar" dir="rtl" className={stc.variable} data-scroll-behavior="smooth">
       <body className="min-h-screen font-sans">
+        <a href="#main" className="sr-only focus:not-sr-only focus:fixed focus:inset-s-4 focus:top-4 focus:z-70 focus:rounded-xl focus:bg-brand focus:px-4 focus:py-3 focus:font-bold focus:text-white">
+          تخطي إلى المحتوى
+        </a>
         <AnnouncementBar initialAnnouncement={announcement} />
         <VisitTracker />
         {children}

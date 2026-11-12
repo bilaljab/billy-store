@@ -1,4 +1,5 @@
 'use client';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff } from 'lucide-react';
@@ -35,22 +36,17 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 grid-bg relative overflow-hidden">
-      <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-brand/10 rounded-full blur-3xl pointer-events-none"></div>
-      <div className="absolute bottom-1/3 left-1/4 w-48 h-48 bg-brand-ink/10 rounded-full blur-3xl pointer-events-none"></div>
-
-      <div className="w-full max-w-md relative z-10">
+    <div className="min-h-screen flex items-center justify-center px-4 bg-[radial-gradient(60%_50%_at_50%_0%,rgb(var(--brand-rgb)/.18),transparent)]">
+      <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 mx-auto rounded-2xl bg-brand/10 border-2 border-brand/30 flex items-center justify-center mb-4">
-            <span className="text-brand font-black text-xl">BS</span>
-          </div>
+          <Image src="/logos/billy-store-logo.png" alt="Billy Store" width={1097} height={723} priority sizes="150px" className="h-16 w-auto mx-auto mb-5" />
           <h1 className="text-3xl font-black text-ink">لوحة التحكم</h1>
-          <p className="text-muted mt-2">بيلي ستور - Admin Panel</p>
+          <p className="text-muted mt-2">سجل الدخول لإدارة المتجر</p>
         </div>
 
-        <div className="bg-surface border-2 border-black/15 rounded-card p-8 shadow-float">
+        <div className="bg-surface border border-line rounded-card p-8 shadow-float">
           {error && (
-            <div role="alert" className="bg-red-50 border border-red-300 text-red-700 rounded-xl px-4 py-3 mb-6 text-sm text-center">
+            <div role="alert" className="bg-red-500/10 border border-red-500/40 text-red-300 rounded-xl px-4 py-3 mb-6 text-sm text-center">
               {error}
             </div>
           )}
@@ -66,7 +62,7 @@ export default function AdminLoginPage() {
                 placeholder="admin"
                 required
                 autoComplete="username"
-                className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors"
+                className="w-full bg-surface border border-line rounded-xl px-4 py-3 text-ink placeholder-muted/60 focus:outline-hidden focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors"
               />
             </div>
             <div>
@@ -80,7 +76,7 @@ export default function AdminLoginPage() {
                   placeholder="••••••••"
                   required
                   autoComplete="current-password"
-                  className="w-full bg-surface border-2 border-black/15 rounded-xl px-4 py-3 pl-12 text-ink placeholder-muted/60 focus:outline-none focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors"
+                  className="w-full bg-surface border border-line rounded-xl px-4 py-3 pl-12 text-ink placeholder-muted/60 focus:outline-hidden focus:ring-2 focus:ring-brand/50 focus:border-brand transition-colors"
                 />
                 <button type="button" onClick={() => setShowPassword(s => !s)}
                   aria-label={showPassword ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور'}

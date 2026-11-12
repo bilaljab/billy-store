@@ -15,8 +15,8 @@ interface BulkPriceUndoDialogProps {
 export default function BulkPriceUndoDialog({ items, onConfirm, onCancel, confirming }: BulkPriceUndoDialogProps) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onCancel}></div>
-      <div className="relative bg-surface border-2 border-black/15 rounded-3xl p-8 w-full max-w-lg max-h-[80vh] flex flex-col shadow-float">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-xs" onClick={onCancel}></div>
+      <div className="relative bg-surface border border-line rounded-3xl p-8 w-full max-w-lg max-h-[80vh] flex flex-col shadow-float">
         <h3 className="text-xl font-black text-ink mb-2">تراجع عن آخر تعديل جماعي للأسعار</h3>
         <p className="text-muted text-sm mb-4">
           سترجع أسعار {items.length} منتج للقيم التالية. راجع القائمة جيداً — أي منتج تغيّر سعره يدوياً بعد التعديل الجماعي سيظهر هنا بسعره الحالي الفعلي.
@@ -30,7 +30,7 @@ export default function BulkPriceUndoDialog({ items, onConfirm, onCancel, confir
                 <span className="text-sm whitespace-nowrap flex items-center gap-1.5">
                   <span className="text-muted">{item.currentPrice ?? '—'}</span>
                   <span className="text-muted">←</span>
-                  <span className="text-brand font-bold">{item.oldPrice}</span>
+                  <span className="text-accent font-bold">{item.oldPrice}</span>
                 </span>
               </div>
             ))}
@@ -48,7 +48,7 @@ export default function BulkPriceUndoDialog({ items, onConfirm, onCancel, confir
           <button
             onClick={onCancel}
             disabled={confirming}
-            className="min-h-11 bg-surface border-2 border-black/15 text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
+            className="min-h-11 bg-surface border border-line text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
           >
             إلغاء
           </button>

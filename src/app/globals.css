@@ -1,79 +1,254 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+/*
+  ---break---
+*/
 
+@plugin 'tailwindcss-animate';
+
+/* The store is dark-only, so vendor components' `dark:` styles always apply */
+@custom-variant dark (&);
+
+@theme {
+  --color-brand: rgb(var(--brand-rgb));
+  --color-brand-ink: rgb(var(--brand-ink-rgb));
+
+  --color-accent: rgb(var(--accent-rgb));
+  --color-ink: rgb(var(--ink-rgb));
+  --color-muted: rgb(var(--muted-rgb));
+
+  --color-canvas-a: rgb(var(--canvas-a-rgb));
+  --color-canvas-b: rgb(var(--canvas-b-rgb));
+
+  --color-surface: rgb(var(--surface-rgb));
+  --color-raised: rgb(var(--raised-rgb));
+  --color-line: rgb(var(--line-rgb));
+  --color-chip: rgb(var(--chip-bg-rgb));
+  --color-gold: rgb(var(--gold-bg-rgb));
+  --color-sale: rgb(var(--sale-rgb));
+
+  /* shadcn-style names expected by Magic UI / Aceternity components */
+  --color-background: rgb(var(--surface-rgb));
+  --color-foreground: rgb(var(--ink-rgb));
+  --color-border: rgb(var(--line-rgb));
+  /* The CLI installs vendor surfaces as dark:bg-slate-950; point that at our surface */
+  --color-slate-950: rgb(var(--surface-rgb));
+
+  --radius-card: 24px;
+  --radius-pill: 999px;
+
+  --shadow-float: 0 24px 48px -20px rgba(0, 0, 0, .75), 0 2px 8px -2px rgba(0, 0, 0, .5);
+  --shadow-soft: 0 10px 24px -12px rgba(0, 0, 0, .6);
+
+  --font-sans: var(--font-stc), Tahoma, sans-serif;
+  --font-display: var(--font-stc), Tahoma, sans-serif;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
 @layer base {
-  :root {
-    --brand: #0A5CC0;
-    --brand-ink: #083f87;
-    --ink: #0F2B52;
-    --muted: #4A6084;
-    --canvas-a: #EAF3FF;
-    --canvas-b: #F1EEFC;
-    --surface: #FFFFFF;
-    --chip-bg: #DCEAFB;
-    --gold-bg: #FFF3CE;
-    --sale: #DC2626;
-    /* RGB triplets (no #, space-separated) so Tailwind can build opacity variants
-       (e.g. border-brand/50) via rgb(var(--x-rgb) / <alpha-value>) — a plain
-       var(--brand) hex reference can't be alpha-blended by Tailwind at build time,
-       which silently produced zero CSS for every hover:border-brand/NN etc. site-wide. */
-    --brand-rgb: 10 92 192;
-    --brand-ink-rgb: 8 63 135;
-    --ink-rgb: 15 43 82;
-    --muted-rgb: 74 96 132;
-    --canvas-a-rgb: 234 243 255;
-    --canvas-b-rgb: 241 238 252;
-    --surface-rgb: 255 255 255;
-    --chip-bg-rgb: 220 234 251;
-    --gold-bg-rgb: 255 243 206;
-    --sale-rgb: 220 38 38;
-    --radius-lg: 28px;
-    --radius-pill: 999px;
-    --shadow-float: 0 24px 48px -16px rgba(15,43,82,.16), 0 2px 10px -2px rgba(15,43,82,.08);
-    --shadow-soft: 0 10px 24px -10px rgba(15,43,82,.12);
-  }
-
-  html { direction: rtl; scroll-behavior: smooth; color-scheme: light; }
-  body {
-    background: linear-gradient(135deg, var(--canvas-a) 0%, var(--canvas-b) 100%);
-    color: var(--ink);
-    overflow-x: hidden;
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
   }
 }
 
-::-webkit-scrollbar { width: 6px; }
-::-webkit-scrollbar-track { background: var(--canvas-a); }
-::-webkit-scrollbar-thumb { background: var(--brand); border-radius: 3px; }
-
-.ps-btn {
+@utility ps-btn {
+  /* Legacy filled button, still used by not-found and admin empty states */
   background-color: var(--brand);
   color: white;
   font-weight: 700;
   padding: 0.75rem 2rem;
-  border-radius: var(--radius-pill);
-  transition: all 0.3s;
+  border-radius: 12px;
+  transition:
+    background-color 0.2s,
+    transform 0.2s var(--ease-out);
   display: inline-block;
-}
-.ps-btn:hover {
-  background-color: var(--brand-ink);
-  box-shadow: var(--shadow-soft);
-  transform: translateY(-2px);
+  &:hover {
+    background-color: var(--brand-ink);
+    transform: translateY(-1px);
+  }
 }
 
-.card-hover { transition: transform 0.3s ease, box-shadow 0.3s ease; }
-.card-hover:hover {
-  box-shadow: var(--shadow-float);
-  transform: translateY(-4px);
+@utility card-hover {
+  transition:
+    transform 0.3s var(--ease-out),
+    border-color 0.2s,
+    box-shadow 0.3s;
+  &:hover {
+    box-shadow: var(--shadow-float);
+    transform: translateY(-3px);
+  }
+}
+
+@utility field {
+  /* Shared form control (search, selects, admin inputs can opt in) */
+  width: 100%;
+  min-height: 2.75rem;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  color: var(--ink);
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  &::placeholder {
+    color: var(--muted);
+  }
+  &:hover {
+    border-color: rgb(var(--muted-rgb) / 0.5);
+  }
+  &:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgb(var(--brand-rgb) / 0.3);
+  }
+}
+
+@utility rail {
+  /* Horizontal product rail: snap-scroll on touch, plain grid from lg up */
+  /* Containing block for absolutely-positioned descendants (sr-only text in cards):
+       without it they escape the scroll clip and widen the whole document. */
+  position: relative;
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+  margin-inline: -1rem;
+  padding-inline: 1rem;
+  scroll-padding-inline: 1rem;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  & > * {
+    flex: 0 0 44%;
+    scroll-snap-align: start;
+  }
+  @media (min-width: 640px) {
+    & > * {
+      flex-basis: 30%;
+    }
+  }
+  @media (min-width: 1024px) {
+    gap: 1.25rem;
+    margin-inline: 0;
+    padding-inline: 0;
+    scroll-padding-inline: 0;
+    & > * {
+      flex-basis: calc((100% - 4 * 1.25rem) / 5);
+    }
+  }
+}
+
+/*
+ * Billy Store design tokens — dark marketplace theme.
+ * Colour roles: brand = filled actions (white text on it), accent = brand as text/icon
+ * on dark surfaces, gold = PS Plus / featured, sale = discounts, green = WhatsApp/availability.
+ * Every colour has an RGB triplet so Tailwind can build opacity variants (bg-brand/20 …).
+ */
+@layer base {
+  :root {
+    --brand: #1F5BFF;
+    --brand-ink: #1846CC;
+    --accent: #8AB4FF;
+    --ink: #FAFAFA;
+    --muted: #A3A3AD;
+    --canvas-a: #050506;
+    --canvas-b: #0A0A0C;
+    --surface: #101013;
+    --raised: #18181C;
+    --chip-bg: #212126;
+    --line: #2A2A31;
+    --gold-bg: #F5B93A;
+    --sale: #FF5D5D;
+
+    --brand-rgb: 31 91 255;
+    --brand-ink-rgb: 24 70 204;
+    --accent-rgb: 138 180 255;
+    --ink-rgb: 250 250 250;
+    --muted-rgb: 163 163 173;
+    --canvas-a-rgb: 5 5 6;
+    --canvas-b-rgb: 10 10 12;
+    --surface-rgb: 16 16 19;
+    --raised-rgb: 24 24 28;
+    --chip-bg-rgb: 33 33 38;
+    --line-rgb: 42 42 49;
+    --gold-bg-rgb: 245 185 58;
+    --sale-rgb: 255 93 93;
+    --ease-out: cubic-bezier(.16, 1, .3, 1);
+  }
+
+  html { direction: rtl; scroll-behavior: smooth; color-scheme: dark; }
+  body {
+    background: var(--canvas-a);
+    color: var(--ink);
+    overflow-x: hidden;
+    caret-color: var(--accent);
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Tailwind's focus-ring offset defaults to white, which reads as a halo on dark surfaces */
+  *, ::before, ::after { --tw-ring-offset-color: var(--canvas-a); }
+  ::selection { background: rgb(var(--brand-rgb) / .55); color: #fff; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  h1, h2, h3 { text-wrap: balance; }
+  /* Native <select> option lists ignore the page palette unless told */
+  select option { background: var(--raised); color: var(--ink); }
+}
+
+@layer utilities {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--line) transparent;
+  }
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--line);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted);
+  }
 }
 
 .grid-bg {
-  background-image: radial-gradient(rgba(15,43,82,.08) 1px, transparent 1px);
+  background-image: radial-gradient(rgb(var(--ink-rgb) / .06) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(30px); }
+/* ── Effects adapted from Magic UI / Aceternity UI / React Bits (see components/fx) ── */
+
+/* Magic UI "marquee": each repeated track slides one full width, forever */
+@keyframes marquee { to { transform: translateX(calc(-100% - var(--gap))); } }
+.animate-marquee { animation: marquee var(--duration, 40s) linear infinite; }
+
+/* Aceternity "focus cards": hovering one poster recedes its siblings (pointer devices only) */
+@media (hover: hover) {
+  .focus-grid .poster { transition: opacity .3s, filter .3s, transform .3s var(--ease-out); }
+  .focus-grid:has(.poster:hover) .poster:not(:hover) { opacity: .4; filter: saturate(.5) blur(1px); transform: scale(.98); }
+}
+
+/* Hero slide progress bar */
+@keyframes fillBar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(18px); }
   to { opacity: 1; transform: translateY(0); }
 }
 @keyframes fadeIn {
@@ -81,48 +256,56 @@
   to { opacity: 1; }
 }
 
-@keyframes psglyphDrift {
-  0%   { transform: translate(0, 0) rotate(0deg); }
-  25%  { transform: translate(6px, -10px) rotate(3deg); }
-  50%  { transform: translate(-4px, -16px) rotate(-2deg); }
-  75%  { transform: translate(-8px, -6px) rotate(2deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-.animate-slide-up { animation: slideUp 0.6s ease-out forwards; }
-.animate-fade-in { animation: fadeIn 0.5s ease-out forwards; }
+/* `both` fill keeps the element at its start state only while the delay runs;
+   with reduced motion the catch-all below collapses it to an instant, visible state. */
+.animate-rise { animation: riseIn .7s var(--ease-out) both; }
+.animate-slide-up { animation: riseIn .6s var(--ease-out) both; }
+.animate-fade-in { animation: fadeIn .5s ease-out both; }
+.animation-delay-100 { animation-delay: 100ms; }
 .animation-delay-200 { animation-delay: 200ms; }
+.animation-delay-300 { animation-delay: 300ms; }
 .animation-delay-400 { animation-delay: 400ms; }
 .animation-delay-600 { animation-delay: 600ms; }
 
-.animate-psglyph-drift {
-  animation-name: psglyphDrift;
-  animation-timing-function: ease-in-out;
-  animation-iteration-count: infinite;
-}
-
-.collapse-grid { transition: grid-template-rows 0.3s ease-in-out; }
+.collapse-grid { transition: grid-template-rows 0.3s var(--ease-out); }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  .animate-slide-up, .animate-fade-in, .ps-btn,
-  .card-hover, .animate-psglyph-drift, .collapse-grid {
-    animation: none !important;
-    transition: none !important;
-  }
-  /* Catch-all for inline Tailwind transition/animate utilities (Navbar scroll,
-     ScrollToTop, WhatsAppFloat, etc.) that aren't covered by the class list above. */
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
 }
 
-/* The app's only two translucent surfaces (Navbar when scrolled, modal backdrop)
-   fall back to solid, blur-free backgrounds for both preferences. */
+/* Translucent surfaces (sticky navbar, modal backdrop, mobile buy bar) fall back
+   to solid, blur-free backgrounds for both preferences. */
 @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
-  .navbar-glass { backdrop-filter: none; background: var(--surface); }
-  .modal-scrim { backdrop-filter: none; background: rgba(0, 0, 0, 0.85); }
+  .navbar-glass { backdrop-filter: none; background: var(--canvas-a); }
+  .modal-scrim { backdrop-filter: none; background: rgba(0, 0, 0, 0.9); }
+}
+/*
+  ---break---
+*/
+@theme inline {
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+  @keyframes marquee {
+  from {
+    transform: translateX(0);
+    }
+  to {
+    transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+  from {
+    transform: translateY(0);
+    }
+  to {
+    transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
 }

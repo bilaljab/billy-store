@@ -1,26 +1,25 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { ChevronUp } from 'lucide-react';
+import { useOnProductPage } from './WhatsAppFloat';
 
 export default function ScrollToTop() {
   const [visible, setVisible] = useState(false);
+  const offset = useOnProductPage() ? 'max-md:bottom-24' : '';
 
   useEffect(() => {
     const handler = () => setVisible(window.scrollY > 400);
-    window.addEventListener('scroll', handler);
+    window.addEventListener('scroll', handler, { passive: true });
     return () => window.removeEventListener('scroll', handler);
   }, []);
 
-  const scrollUp = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-
   return (
     <button
-      onClick={scrollUp}
-      className={`fixed bottom-6 right-6 z-50 w-12 h-12 bg-brand hover:bg-brand-ink text-white rounded-full flex items-center justify-center shadow-lg shadow-brand/30 transition-all duration-300 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10 pointer-events-none'}`}
+      onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+      className={`fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full border border-line bg-raised text-ink shadow-float transition-[opacity,transform,border-color] duration-300 hover:border-accent/60 ${offset} ${visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-10 opacity-0'}`}
       aria-label="العودة لأعلى"
     >
-      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 15l7-7 7 7" />
-      </svg>
+      <ChevronUp size={22} aria-hidden="true" />
     </button>
   );
 }

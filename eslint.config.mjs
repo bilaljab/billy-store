@@ -5,6 +5,8 @@ const compat = new FlatCompat({
 });
 
 const eslintConfig = [
+  // Registry components installed verbatim by the shadcn CLI — kept unmodified so they can be re-pulled.
+  { ignores: ['src/components/vendor/**'] },
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
   {
     rules: {

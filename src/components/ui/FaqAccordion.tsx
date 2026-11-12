@@ -1,7 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { Package, Zap, CreditCard, ShieldCheck, Gamepad2, Star, MessageCircle, Trophy } from 'lucide-react';
-import IconChip from './IconChip';
+import { Plus, Package, Zap, CreditCard, ShieldCheck, Gamepad2, Star, MessageCircle, Trophy } from 'lucide-react';
 
 const faqs = [
   { q: 'كيف أستلم المنتج بعد الشراء؟', a: 'بعد إتمام الدفع، نرسل لك بيانات حساب PlayStation جاهز يحتوي على اللعبة. تسجّل الدخول به وتفعّله كحساب أساسي (Primary) على جهازك — خطوة تتيح لعب اللعبة من كل الحسابات المحلية على نفس الجهاز، حتى بدون اتصال بالإنترنت لاحقاً. بعدها حمّل اللعبة من مكتبة الألعاب واستمتع باللعب من حسابك أنت.', icon: <Package size={20} /> },
@@ -17,21 +16,28 @@ const faqs = [
 export default function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <div className="space-y-3">
-      {faqs.map((faq, i) => (
-        <div key={i} className={`bg-surface border rounded-2xl overflow-hidden transition-all duration-300 shadow-soft ${open === i ? 'border-brand/50' : 'border-chip hover:border-brand/30'}`}>
-          <button onClick={() => setOpen(open === i ? null : i)} aria-expanded={open === i} className="w-full flex items-center gap-4 p-5 text-right">
-            <IconChip icon={faq.icon} size="sm" />
-            <span className="flex-1 font-bold text-ink text-base text-right">{faq.q}</span>
-            <span className={`text-brand text-xl transition-transform duration-300 flex-shrink-0 ${open === i ? 'rotate-45' : ''}`}>+</span>
-          </button>
-          <div className={`grid collapse-grid ${open === i ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`} aria-hidden={open !== i}>
-            <div className="overflow-hidden">
-              <p className="px-5 pb-5 pr-16 text-ink leading-loose text-sm">{faq.a}</p>
+    <div className="divide-y divide-line border-y border-line">
+      {faqs.map((faq, i) => {
+        const isOpen = open === i;
+        return (
+          <div key={faq.q}>
+            <h2>
+              <button onClick={() => setOpen(isOpen ? null : i)} aria-expanded={isOpen} aria-controls={`faq-panel-${i}`} id={`faq-button-${i}`}
+                className="group flex min-h-16 w-full items-center gap-4 py-4 text-start">
+                <span className={`shrink-0 transition-colors ${isOpen ? 'text-accent' : 'text-muted group-hover:text-ink'}`} aria-hidden="true">{faq.icon}</span>
+                <span className={`flex-1 text-base font-bold transition-colors sm:text-lg ${isOpen ? 'text-ink' : 'text-ink/90 group-hover:text-ink'}`}>{faq.q}</span>
+                <Plus size={20} aria-hidden="true" className={`shrink-0 text-muted transition-transform duration-300 ${isOpen ? 'rotate-45 text-accent' : ''}`} />
+              </button>
+            </h2>
+            <div id={`faq-panel-${i}`} role="region" aria-labelledby={`faq-button-${i}`} inert={!isOpen}
+              className={`collapse-grid grid ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}>
+              <div className="overflow-hidden">
+                <p className="max-w-prose pb-6 ps-9 leading-loose text-muted">{faq.a}</p>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

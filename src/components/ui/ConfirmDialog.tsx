@@ -55,7 +55,7 @@ export default function ConfirmDialog({ title, message, onConfirm, onCancel }: C
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <motion.div
-        className="absolute inset-0 modal-scrim bg-black/70 backdrop-blur-sm"
+        className="absolute inset-0 modal-scrim bg-black/70 backdrop-blur-xs"
         onClick={() => startClose('cancel')}
         initial={{ opacity: 0 }}
         animate={{ opacity: isOpen ? 1 : 0 }}
@@ -66,7 +66,7 @@ export default function ConfirmDialog({ title, message, onConfirm, onCancel }: C
         aria-modal="true"
         aria-labelledby="confirm-dialog-title"
         aria-describedby="confirm-dialog-message"
-        className="relative bg-surface border-2 border-black/15 rounded-3xl p-8 w-full max-w-sm"
+        className="relative bg-surface border border-line rounded-3xl p-8 w-full max-w-sm"
         initial={panelInitial}
         animate={panelAnimate}
         transition={reduceMotion ? { duration: 0.15, ease: 'easeOut' } : { type: 'spring', bounce: 0, duration: 0.35 }}
@@ -76,11 +76,11 @@ export default function ConfirmDialog({ title, message, onConfirm, onCancel }: C
         <p id="confirm-dialog-message" className="text-muted text-sm mb-6">{message}</p>
         <div className="flex gap-3">
           <button ref={confirmRef} onClick={() => startClose('confirm')}
-            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-black py-3 rounded-xl transition-all active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2">
+            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-black py-3 rounded-xl transition-all active:scale-[0.98] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2">
             تأكيد الحذف
           </button>
           <button ref={cancelRef} onClick={() => startClose('cancel')}
-            className="bg-surface border-2 border-black/15 text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
+            className="bg-surface border border-line text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink active:scale-[0.98] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
             إلغاء
           </button>
         </div>

@@ -2,7 +2,7 @@ import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
-type ButtonVariant = 'primary' | 'secondary' | 'ghost';
+type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'whatsapp';
 type ButtonSize = 'sm' | 'default' | 'lg';
 
 interface ButtonProps {
@@ -23,15 +23,16 @@ interface ButtonProps {
 }
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary: 'bg-brand text-white shadow-soft hover:bg-brand-ink hover:shadow-float',
-  secondary: 'bg-surface text-ink border border-chip hover:border-brand',
-  ghost: 'bg-transparent text-brand hover:bg-chip',
+  primary: 'bg-ink text-canvas-a hover:bg-white/85',
+  secondary: 'bg-white/10 text-ink backdrop-blur-sm hover:bg-white/20',
+  ghost: 'bg-transparent text-accent hover:bg-chip',
+  whatsapp: 'bg-green-700 text-white hover:bg-green-600',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
-  sm: 'text-sm px-4 py-2 gap-1.5',
-  default: 'text-base px-6 py-3 gap-2',
-  lg: 'text-lg px-8 py-4 gap-2.5',
+  sm: 'min-h-10 text-sm px-4 py-2 gap-1.5',
+  default: 'min-h-11 text-base px-5 py-2.5 gap-2',
+  lg: 'min-h-13 text-lg px-7 py-3 gap-2.5',
 };
 
 export default function Button({
@@ -50,7 +51,7 @@ export default function Button({
   title,
 }: ButtonProps) {
   const classes = cn(
-    'inline-flex items-center justify-center rounded-pill font-bold transition-all duration-300 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2',
+    'inline-flex items-center justify-center rounded-full font-bold transition-colors duration-200 active:scale-[0.98]',
     VARIANT_CLASSES[variant],
     SIZE_CLASSES[size],
     fullWidth && 'w-full',

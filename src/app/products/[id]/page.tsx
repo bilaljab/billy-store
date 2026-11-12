@@ -26,9 +26,12 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import ProductActions from '@/components/ui/ProductActions';
 import RelatedProducts from '@/components/ui/RelatedProducts';
-import PsGlyphField from '@/components/ui/PsGlyphField';
+import ProductArt from '@/components/ui/ProductArt';
+import Price from '@/components/ui/Price';
+import { Backlight, BorderBeam } from '@/components/fx';
 import Badge from '@/components/ui/Badge';
-import { Gamepad2, Star } from 'lucide-react';
+import { ChevronLeft, CircleCheck, Clock, Eye, Headset, ShieldCheck, Star, Wallet } from 'lucide-react';
+import { getBestDiscount, applyDiscount } from '@/lib/discounts';
 import { buildInquiryMessage } from '@/lib/messages';
 
 // Single DB connection for all data on this page
@@ -60,32 +63,14 @@ const getPageData = cache(async (id: string) => {
       featured: Number(col(r, 'featured') ?? 0),
     };
 
-    // Calculate best applicable discount (targeted takes priority over global)
-    let discount: { percentage: number; label: string } | null = null;
-
-    // Check targeted discounts first
-    if (targetedDiscountResult.rows[0]) {
-      const rules = JSON.parse(String(col(targetedDiscountResult.rows[0], 'value')));
-      for (const rule of rules) {
-        if (!rule.active) continue;
-        let applies = false;
-        if (rule.type === 'product' && rule.productIds.includes(product.id)) applies = true;
-        if (rule.type === 'range') {
-          const aboveMin = rule.minPrice === null || product.price >= rule.minPrice;
-          const belowMax = rule.maxPrice === null || product.price <= rule.maxPrice;
-          if (aboveMin && belowMax) applies = true;
-        }
-        if (applies && (!discount || rule.percentage > discount.percentage)) {
-          discount = { percentage: rule.percentage, label: rule.label };
-        }
-      }
-    }
-
-    // Fall back to global discount
-    if (!discount && globalDiscountResult.rows[0]) {
-      const d = JSON.parse(String(col(globalDiscountResult.rows[0], 'value')));
-      if (d.active) discount = { percentage: d.percentage, label: d.label };
-    }
+    // Best applicable discount (targeted beats global) — shared rule in lib/discounts
+    const targeted = targetedDiscountResult.rows[0]
+      ? JSON.parse(String(col(targetedDiscountResult.rows[0], 'value')))
+      : [];
+    const global = globalDiscountResult.rows[0]
+      ? JSON.parse(String(col(globalDiscountResult.rows[0], 'value')))
+      : null;
+    const discount = getBestDiscount(product, targeted, global);
 
     const vRow = viewsResult.rows[0];
     const views = vRow ? Number((vRow as Record<string, unknown>)['views'] ?? 0) : 0;
@@ -126,7 +111,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
   const { product, discount, views } = data;
   const categoryLabel = product.category === 'subscription' ? 'اشتراك PS Plus' : 'لعبة PlayStation';
-  const discountedPrice = discount ? Math.round(product.price * (1 - discount.percentage / 100)) : null;
+  const discountedPrice = discount ? applyDiscount(product.price, discount) : null;
   const waMsg = encodeURIComponent(buildInquiryMessage(product.name, discountedPrice ?? product.price));
 
   const jsonLd = {
@@ -145,6 +130,14 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     },
   };
 
+  const isSub = product.category === 'subscription';
+  const assurances = [
+    { Icon: Clock, text: 'تسليم رقمي خلال دقائق بعد تأكيد الدفع' },
+    { Icon: ShieldCheck, text: 'ضمان استبدال مدى الحياة' },
+    { Icon: Wallet, text: 'الدفع بتحويل بنكي أو STC Pay' },
+    { Icon: Headset, text: 'دعم على مدار الساعة عبر واتساب' },
+  ];
+
   return (
     <div className="min-h-screen">
       <script
@@ -152,100 +145,93 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Navbar />
-      <main className="pt-24 pb-20 px-4 max-w-6xl mx-auto">
-        <div className="flex items-center gap-2 text-sm text-muted mb-8">
-          <Link href="/" className="hover:text-brand transition-colors">الرئيسية</Link>
-          <span>/</span>
-          <Link href="/products" className="hover:text-brand transition-colors">المنتجات</Link>
-          <span>/</span>
-          <span className="text-ink font-bold line-clamp-1">{product.name}</span>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-          <div className="relative aspect-square bg-gradient-to-br from-chip to-surface border border-chip rounded-card overflow-hidden shadow-soft">
-            {product.image ? (
-              <Image
-                src={product.image}
-                alt={product.name}
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                {product.category === 'subscription' ? (
-                  <div className="w-32 h-32 rounded-full bg-gold border-2 border-gold flex items-center justify-center">
-                    <span className="text-5xl text-brand-ink font-bold">PS+</span>
-                  </div>
-                ) : (
-                  <div className="w-32 h-32 rounded-2xl bg-chip border-2 border-brand/30 flex items-center justify-center">
-                    <Gamepad2 size={72} className="text-brand" />
-                  </div>
-                )}
-              </div>
-            )}
-            {discount && (
-              <div className="absolute top-4 right-4 bg-sale text-white font-bold text-lg px-3 py-1.5 rounded-xl">
-                -{discount.percentage}%
-              </div>
-            )}
-            <PsGlyphField layout="scatter" density="sparse" />
+      <main id="main" className="relative">
+        {/* The cover's own colours, blurred, light the top of the page */}
+        {product.image && (
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-184 overflow-hidden" aria-hidden="true">
+            <Image src={product.image} alt="" fill sizes="40vw" className="scale-125 object-cover opacity-50 blur-3xl saturate-150" />
+            <div className="absolute inset-0 bg-linear-to-b from-canvas-a/20 via-canvas-a/70 to-canvas-a" />
           </div>
+        )}
 
-          <div className="flex flex-col gap-5">
-            <div className="flex items-center gap-2 flex-wrap">
-              <Badge variant="category">{categoryLabel}</Badge>
-              {product.featured === 1 && (
-                <Badge variant="gold" icon={<Star size={16} className="text-current" />}>منتج مميز</Badge>
-              )}
-              {views > 0 && (
-                <span className="text-xs text-muted flex items-center gap-1">
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
-                  {views} مشاهدة
-                </span>
-              )}
+        <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-24 sm:px-6 sm:pt-28">
+          <nav aria-label="مسار التنقل" className="mb-6 flex items-center gap-1.5 text-sm text-muted">
+            <Link href="/" className="inline-flex min-h-11 items-center transition-colors hover:text-ink">الرئيسية</Link>
+            <ChevronLeft size={14} aria-hidden="true" />
+            <Link href="/products" className="inline-flex min-h-11 items-center transition-colors hover:text-ink">المنتجات</Link>
+            <ChevronLeft size={14} aria-hidden="true" />
+            <span className="line-clamp-1 font-bold text-ink" aria-current="page">{product.name}</span>
+          </nav>
+
+          <div className="grid items-start gap-8 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-12">
+            <div className="max-md:mx-auto max-md:w-full max-md:max-w-xs md:sticky md:top-24">
+              <Backlight blur={product.image ? 30 : 0}>
+                <div className="relative aspect-square overflow-hidden rounded-3xl bg-raised ring-1 ring-white/15">
+                  <ProductArt product={product} priority sizes="(max-width: 768px) 92vw, 44vw" />
+                </div>
+              </Backlight>
             </div>
 
-            <h1 className="text-3xl sm:text-4xl tracking-tight font-bold font-display text-ink leading-tight">{product.name}</h1>
-
-            <div className="bg-surface border-2 border-black/15 rounded-card p-5 shadow-soft">
-              <h2 className="text-muted text-sm font-bold mb-3">الوصف</h2>
-              <p className="text-ink leading-loose">{product.description}</p>
-            </div>
-
-            <div className="bg-gradient-to-l from-chip to-surface border border-chip rounded-card p-5 flex items-center justify-between shadow-soft">
+            <div className="flex flex-col gap-6">
               <div>
-                <p className="text-muted text-sm mb-1">السعر</p>
-                {discount ? (
-                  <>
-                    <div className="text-muted text-sm line-through">{product.price} ريال</div>
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-5xl font-bold text-sale">{discountedPrice}</span>
-                      <span className="text-muted text-lg font-bold">ريال سعودي</span>
-                    </div>
-                    <Badge variant="discount" className="mt-1.5">
-                      خصم {discount.percentage}% — {discount.label}
-                    </Badge>
-                  </>
-                ) : (
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-bold text-brand">{product.price}</span>
-                    <span className="text-muted text-lg font-bold">ريال سعودي</span>
-                  </div>
-                )}
+                <div className="mb-3 flex flex-wrap items-center gap-2">
+                  <Badge variant={isSub ? 'gold' : 'category'}>{categoryLabel}</Badge>
+                  {product.featured === 1 && (
+                    <Badge variant="gold" icon={<Star size={14} fill="currentColor" aria-hidden="true" />}>منتج مميز</Badge>
+                  )}
+                  {views > 0 && (
+                    <span className="inline-flex items-center gap-1 text-xs text-muted">
+                      <Eye size={14} aria-hidden="true" />
+                      <span className="tabular-nums">{views}</span> مشاهدة
+                    </span>
+                  )}
+                </div>
+                <h1 className="font-display text-4xl font-bold leading-[1.3] text-ink sm:text-5xl sm:leading-tight">{product.name}</h1>
               </div>
-              <div className="text-right">
-                <p className="text-green-600 text-sm font-bold">✓ متوفر</p>
-                <p className="text-muted text-xs mt-1">تسليم رقمي سريع</p>
-              </div>
-            </div>
 
-            <ProductActions product={{ id: product.id, name: product.name, price: discountedPrice ?? product.price }} waMsg={waMsg} />
-            <Link href="/products" className="text-center text-muted hover:text-brand text-sm transition-colors">← العودة للمنتجات</Link>
+              <div className="relative rounded-3xl border border-line bg-surface/80 p-6 backdrop-blur-sm">
+                <BorderBeam size={100} duration={9} />
+                <Price price={product.price} discount={discount} size="lg" />
+                {discount && <p className="mt-3 text-sm font-bold text-sale">{discount.label}</p>}
+                <p className="mt-3 flex items-center gap-2 text-sm text-green-400">
+                  <CircleCheck size={16} aria-hidden="true" />
+                  متوفر — تسليم رقمي سريع
+                </p>
+              </div>
+
+              <ProductActions product={{ id: product.id, name: product.name, price: discountedPrice ?? product.price }} waMsg={waMsg} />
+
+              <ul className="divide-y divide-line rounded-3xl border border-line">
+                {assurances.map(({ Icon, text }) => (
+                  <li key={text} className="flex items-center gap-3 px-4 py-3 text-sm text-ink">
+                    <Icon size={18} className="shrink-0 text-accent" aria-hidden="true" />
+                    {text}
+                  </li>
+                ))}
+              </ul>
+
+              {product.description && (
+                <section>
+                  <h2 className="mb-2 text-lg font-bold text-ink">الوصف</h2>
+                  <p className="max-w-prose whitespace-pre-line leading-loose text-muted">{product.description}</p>
+                </section>
+              )}
+
+              <section>
+                <h2 className="mb-2 text-lg font-bold text-ink">طريقة الاستلام</h2>
+                <p className="max-w-prose leading-loose text-muted">
+                  {isSub
+                    ? 'نوفر لك بيانات حساب PlayStation جاهز بالاشتراك المطلوب. تسجّل الدخول به وتفعّله كحساب أساسي (Primary) على جهازك، فتستفيد من مزايا PS Plus من كل الحسابات المحلية على نفس الجهاز.'
+                    : 'بعد إتمام الدفع نرسل لك بيانات حساب PlayStation جاهز يحتوي على اللعبة. تسجّل الدخول به وتفعّله كحساب أساسي (Primary) على جهازك، ثم تحمّل اللعبة وتلعبها من حسابك أنت.'}
+                  {' '}
+                  <Link href="/faq" className="font-bold text-accent underline-offset-4 hover:underline">تفاصيل أكثر في الأسئلة الشائعة</Link>
+                </p>
+              </section>
+            </div>
           </div>
+
+          <RelatedProducts currentId={product.id} category={product.category} />
         </div>
-        <RelatedProducts currentId={product.id} category={product.category} />
       </main>
       <Footer />
     </div>

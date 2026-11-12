@@ -7,11 +7,11 @@
 export default function AssistantThinkingIndicator() {
   return (
     <div className="flex justify-start">
-      <div className="bg-dark-card border border-dark-border rounded-2xl p-5 max-w-[85%] flex items-center gap-2 text-slate-400">
+      <div className="bg-surface border border-line rounded-2xl p-5 max-w-[85%] flex items-center gap-2 text-muted">
         <span className="flex gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.3s]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce [animation-delay:-0.15s]" />
-          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-bounce" />
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse [animation-delay:-0.3s]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse [animation-delay:-0.15s]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
         </span>
         <span className="text-sm">المساعد يفكّر...</span>
       </div>
