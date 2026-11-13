@@ -47,7 +47,7 @@ export default function HeroSlider({ products }: { products: CatalogProduct[] })
           initial={{ opacity: 0, scale: 1.06 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0 : 1.1, ease: [0.16, 1, 0.3, 1] }}>
           {product.image ? (
-            <Image src={product.image} alt="" fill priority={index === 0} sizes="100vw" className="object-cover blur-2xl saturate-150 max-md:scale-150 md:blur-3xl" />
+            <Image src={product.image} alt="" fill priority={index === 0} loading={index === 0 ? undefined : 'eager'} sizes="100vw" className="object-cover blur-2xl saturate-150 max-md:scale-150 md:blur-3xl" />
           ) : (
             <div className={`absolute inset-0 ${isSub
               ? 'bg-[radial-gradient(70%_70%_at_30%_30%,rgb(var(--gold-bg-rgb)/.35),transparent)]'
@@ -94,7 +94,7 @@ export default function HeroSlider({ products }: { products: CatalogProduct[] })
             exit={reduce ? undefined : { opacity: 0, scale: 0.97 }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="relative mx-auto aspect-square w-full max-w-68 overflow-hidden rounded-3xl shadow-[0_40px_80px_-20px_rgba(0,0,0,.9)] ring-1 ring-white/15 max-md:order-1 md:max-w-none">
-            <ProductArt product={product} priority={index === 0} sizes="(max-width: 768px) 70vw, 384px" />
+            <ProductArt product={product} priority={index === 0} eager sizes="(max-width: 768px) 70vw, 384px" />
           </motion.div>
         </AnimatePresence>
       </div>

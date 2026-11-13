@@ -9,7 +9,11 @@ export const useOnProductPage = () => /^\/products\/[^/]+/.test(usePathname());
 
 export default function WhatsAppFloat() {
   const [visible, setVisible] = useState(false);
-  const inAdmin = usePathname().startsWith('/admin');
+  // pathname is only trusted after mount (see Navbar): the server may not see the real route
+  const pathname = usePathname();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const inAdmin = mounted && pathname.startsWith('/admin');
   // The buy bar already is the WhatsApp action there, so the float would only duplicate it
   const offset = useOnProductPage() ? 'max-md:hidden' : '';
 

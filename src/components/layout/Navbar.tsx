@@ -74,7 +74,12 @@ export default function Navbar() {
     };
   }, []);
 
-  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+  // On Vercel the server-rendered HTML for `/` does not see pathname === '/', so a path-dependent
+  // element (the active underline) differs from the client's first render and React discards the
+  // tree (error #418). Resolving the active link only after mount keeps both renders identical.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const isActive = (href: string) => mounted && (href === '/' ? pathname === '/' : pathname.startsWith(href));
 
   const channels = (
     <div className="relative z-20 flex items-center">

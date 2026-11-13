@@ -5,6 +5,8 @@ interface ProductArtProps {
   product: { name: string; image: string | null; category: string };
   sizes: string;
   priority?: boolean;
+  /** Load immediately without a preload hint (slides that are about to be shown) */
+  eager?: boolean;
   /** Extra classes for the <Image> itself (hover zoom etc.) */
   imageClassName?: string;
   className?: string;
@@ -15,7 +17,7 @@ interface ProductArtProps {
  * get a branded cover — the PlayStation / PS Plus mark on a tinted panel —
  * so image-less items still read as deliberate tiles, not broken ones.
  */
-export default function ProductArt({ product, sizes, priority, imageClassName, className }: ProductArtProps) {
+export default function ProductArt({ product, sizes, priority, eager, imageClassName, className }: ProductArtProps) {
   if (product.image) {
     return (
       <Image
@@ -24,7 +26,7 @@ export default function ProductArt({ product, sizes, priority, imageClassName, c
         fill
         sizes={sizes}
         className={cn('object-cover', imageClassName, className)}
-        {...(priority ? { priority: true } : { loading: 'lazy' as const })}
+        {...(priority ? { priority: true } : { loading: eager ? ('eager' as const) : ('lazy' as const) })}
       />
     );
   }
