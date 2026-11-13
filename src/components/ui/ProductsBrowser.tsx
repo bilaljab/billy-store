@@ -74,7 +74,8 @@ export default function ProductsBrowser({ products, error }: { products: Catalog
                 className={`relative flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 text-sm font-bold transition-colors lg:px-5 ${active ? 'text-canvas-a' : 'text-muted hover:text-ink'}`}>
                 {active && <motion.span layoutId="category-pill" className="absolute inset-0 rounded-full bg-ink" transition={{ type: 'spring', bounce: 0.15, duration: 0.5 }} />}
                 <span className="relative">{cat.label}</span>
-                <span className="relative text-xs tabular-nums opacity-70">{counts[cat.value]}</span>
+                {/* no opacity: dimmed digits failed contrast on the active (light) pill */}
+                <span className="relative text-xs tabular-nums">{counts[cat.value]}</span>
               </button>
             );
           })}

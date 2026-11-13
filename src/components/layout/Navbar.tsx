@@ -27,7 +27,7 @@ const CHANNELS = [
 function Logo() {
   return (
     <Link href="/" className="relative z-20 flex shrink-0 items-center rounded-lg" aria-label="Billy Store — الرئيسية">
-      <Image src="/logos/billy-store-logo.png" alt="Billy Store" width={1097} height={723} priority sizes="120px" className="h-9 w-auto" />
+      <Image src="/logos/billy-store-logo.png" alt="Billy Store" width={1097} height={723} priority sizes="72px" className="h-9 w-auto" />
     </Link>
   );
 }

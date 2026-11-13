@@ -73,7 +73,6 @@ export default async function HomePage() {
       <Navbar />
 
       <main id="main">
-        <h1 className="sr-only">بيلي ستور Billy Store: ألعاب PS5 وPS4 واشتراكات PS Plus بسعر أقل من المتجر الرسمي</h1>
 
         {showcase.length > 0 ? (
           <HeroSlider products={showcase} />
@@ -97,13 +96,14 @@ export default async function HomePage() {
           {/* ── STATEMENT ── */}
           <BlurFade>
             <section className="grid items-end gap-8 lg:grid-cols-[1.4fr_1fr]">
-              <p className="font-display text-4xl font-bold leading-[1.35] text-ink text-balance sm:text-6xl sm:leading-[1.3]">
+              {/* The page's visible H1 (the hero above is a product carousel, its titles are h2) */}
+              <h1 className="font-display text-4xl font-bold leading-[1.35] text-ink text-balance sm:text-6xl sm:leading-[1.3]">
                 نفس المتعة، نفس اللعبة
                 <span className="block text-accent">بسعر أقل من المتجر الرسمي بكثير</span>
-              </p>
+              </h1>
               <div>
                 <p className="max-w-md leading-relaxed text-muted">
-                  تشكيلة ضخمة من ألعاب PS4 و PS5 واشتراكات PS Plus. تسليم رقمي خلال دقائق وخدمة عملاء على مدار الساعة.
+                  بيلي ستور (Billy Store): تشكيلة ضخمة من ألعاب PS4 و PS5 واشتراكات PS Plus. تسليم رقمي خلال دقائق وخدمة عملاء على مدار الساعة.
                 </p>
                 <dl className="mt-6 flex gap-8">
                   {counters.map(({ n, label }) => (

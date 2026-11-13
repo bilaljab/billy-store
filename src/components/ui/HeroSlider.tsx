@@ -51,7 +51,8 @@ export default function HeroSlider({ products }: { products: CatalogProduct[] })
             // spans ~2500 device px tall on phones (x1.5 zoom to crop out cover logos), so smaller
             // sources (384w) still looked pixelated.
             // Blur is desktop-only (filter on the mobile LCP layer measured slower).
-            <Image src={product.image} alt="" fill loading="eager" sizes="(max-width: 768px) 360px, 640px" className="object-cover saturate-150 max-md:scale-150 md:scale-105 md:blur-sm" />
+            // First slide: priority = preload + fetchpriority=high (it was loading at Low priority).
+            <Image src={product.image} alt="" fill {...(index === 0 ? { priority: true } : { loading: 'eager' as const })} sizes="(max-width: 768px) 360px, 640px" className="object-cover saturate-150 max-md:scale-150 md:scale-105 md:blur-sm" />
           ) : (
             <div className={`absolute inset-0 ${isSub
               ? 'bg-[radial-gradient(70%_70%_at_30%_30%,rgb(var(--gold-bg-rgb)/.35),transparent)]'
