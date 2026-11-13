@@ -47,10 +47,10 @@ export default function HeroSlider({ products }: { products: CatalogProduct[] })
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0 : 1.1, ease: [0.16, 1, 0.3, 1] }}>
           {product.image ? (
-            // Mobile: tiny 128px source, no filter — stays out of LCP (measured: bigger/blurred mobile
-            // backdrop became the LCP element, +0.6-1.1s). Desktop: 640px + light blur so the
-            // upscaled source shows the poster without JPEG blocks.
-            <Image src={product.image} alt="" fill loading="eager" sizes="(max-width: 768px) 128px, 640px" quality={40} className="object-cover saturate-150 max-md:scale-150 md:scale-105 md:blur-sm" />
+            // Backdrop is the mobile LCP element: keep its download small (128px CSS = 384w at DPR3;
+            // 640px on mobile pulled 1920w and cost +0.6-1.1s). Default quality + light blur hide
+            // the JPEG blocks that q40 showed when upscaled.
+            <Image src={product.image} alt="" fill loading="eager" sizes="(max-width: 768px) 128px, 640px" className="object-cover saturate-150 max-md:scale-150 md:scale-105 md:blur-sm" />
           ) : (
             <div className={`absolute inset-0 ${isSub
               ? 'bg-[radial-gradient(70%_70%_at_30%_30%,rgb(var(--gold-bg-rgb)/.35),transparent)]'
