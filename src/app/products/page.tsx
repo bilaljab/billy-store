@@ -1,4 +1,3 @@
-import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Flame } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
@@ -43,11 +42,7 @@ export default async function ProductsPage() {
           </div>
         )}
 
-        {/* Suspense مطلوب لأن ProductsBrowser يقرأ useSearchParams — بدونه تسقط الصفحة
-            لـdynamic rendering ويضيع revalidate أعلاه */}
-        <Suspense fallback={null}>
-          <ProductsBrowser products={products} error={error} />
-        </Suspense>
+        <ProductsBrowser products={products} error={error} />
       </main>
 
       <Footer />

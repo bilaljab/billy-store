@@ -1,7 +1,6 @@
 'use client';
-import { useState } from 'react';
+import { memo, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
-import { useSearchParams } from 'next/navigation';
 import { Search, SearchX, TriangleAlert, X } from 'lucide-react';
 import ProductCard from './ProductCard';
 import Button from './Button';
@@ -20,38 +19,47 @@ const SORTS = [
   { value: 'discount', label: 'أكبر خصم' },
 ] as const;
 
+const MemoCard = memo(ProductCard);
+
 type Category = typeof CATEGORIES[number]['value'];
 type Sort = typeof SORTS[number]['value'];
 
 export default function ProductsBrowser({ products, error }: { products: CatalogProduct[]; error: boolean }) {
-  // القراءة من جهة العميل (لا searchParams بالـServer Component) حتى تبقى الصفحة static/ISR.
+  const [category, setCategory] = useState<Category>('all');
+  const [sort, setSort] = useState<Sort>('default');
+  const [search, setSearch] = useState('');
+
+  // قراءة ?category/?sort/?q بعد الـmount (لا useSearchParams ولا searchParams بالسيرفر):
+  // بهالشكل يبقى الـHTML الأولي فيه كل المنتجات (بدون CSR bailout) والصفحة ISR.
   // كل قيمة تمر عبر allow-list؛ أي قيمة غير معروفة تسقط للافتراضي.
-  const searchParams = useSearchParams();
-  const [category, setCategory] = useState<Category>(
-    CATEGORIES.find(c => c.value === searchParams.get('category'))?.value ?? 'all'
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    setCategory(CATEGORIES.find(c => c.value === sp.get('category'))?.value ?? 'all');
+    setSort(SORTS.find(s => s.value === sp.get('sort'))?.value ?? 'default');
+    setSearch((sp.get('q') ?? '').slice(0, 100));
+  }, []);
+
+  const deferredSearch = useDeferredValue(search);
+  const term = deferredSearch.trim().toLowerCase();
+
+  const searched = useMemo(
+    () => products.filter(p => !term || p.name.toLowerCase().includes(term) || p.description?.toLowerCase().includes(term)),
+    [products, term]
   );
-  const [sort, setSort] = useState<Sort>(SORTS.find(s => s.value === searchParams.get('sort'))?.value ?? 'default');
-  const [search, setSearch] = useState((searchParams.get('q') ?? '').slice(0, 100));
-
-  const term = search.trim().toLowerCase();
-  const matchesSearch = (p: CatalogProduct) =>
-    !term || p.name.toLowerCase().includes(term) || p.description?.toLowerCase().includes(term);
-
-  const searched = products.filter(matchesSearch);
-  const counts: Record<Category, number> = {
+  const counts: Record<Category, number> = useMemo(() => ({
     all: searched.length,
     games: searched.filter(p => p.category === 'games').length,
     subscription: searched.filter(p => p.category === 'subscription').length,
-  };
+  }), [searched]);
 
-  const filtered = searched
+  const filtered = useMemo(() => searched
     .filter(p => category === 'all' || p.category === category)
     .sort((a, b) => {
       if (sort === 'asc') return a.price - b.price;
       if (sort === 'desc') return b.price - a.price;
       if (sort === 'discount') return (b.discount?.percentage ?? 0) - (a.discount?.percentage ?? 0);
       return 0;
-    });
+    }), [searched, category, sort]);
 
   const reset = () => { setSearch(''); setCategory('all'); setSort('default'); };
 
@@ -89,7 +97,7 @@ export default function ProductsBrowser({ products, error }: { products: Catalog
 
       <div className="relative mb-5 flex items-center justify-between gap-3">
         <p className="text-sm text-muted" role="status">
-          {!error && <><span className="tabular-nums">{filtered.length}</span> منتج{term && <> لـ «{search.trim()}»</>}</>}
+          {!error && <><span className="tabular-nums">{filtered.length}</span> منتج{term && <> لـ «{deferredSearch.trim()}»</>}</>}
         </p>
         <label htmlFor="product-sort" className="sr-only">ترتيب المنتجات</label>
         <select id="product-sort" value={sort} onChange={e => setSort(e.target.value as Sort)}
@@ -116,7 +124,10 @@ export default function ProductsBrowser({ products, error }: { products: Catalog
       ) : (
         <div className="focus-grid grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:grid-cols-5">
           {filtered.map((product, i) => (
-            <ProductCard key={product.id} product={product} priority={i === 0} />
+            // content-visibility: المتصفح يتخطى layout/paint للكروت خارج الشاشة (~400 كرت)
+            <div key={product.id} className="h-full" style={i < 8 ? undefined : { contentVisibility: 'auto', containIntrinsicSize: 'auto 280px' }}>
+              <MemoCard product={product} priority={i === 0} />
+            </div>
           ))}
         </div>
       )}

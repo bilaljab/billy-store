@@ -1,9 +1,7 @@
-'use client';
 import Link from 'next/link';
-import { useEffect, useState, memo } from 'react';
 import { Star } from 'lucide-react';
 import ProductArt from './ProductArt';
-import { applyDiscount, getBestDiscount, type AppliedDiscount, type DiscountRule, type GlobalDiscount } from '@/lib/discounts';
+import { applyDiscount, type AppliedDiscount } from '@/lib/discounts';
 
 interface Product {
   id: number;
@@ -14,46 +12,18 @@ interface Product {
   category: string;
   featured: number;
   release_date?: string | null;
-  /** Server-computed discount. When present (even null) the card skips the client fetch. */
+  /** Server-computed via getCatalog()/getBestDiscount */
   discount?: AppliedDiscount | null;
 }
 
-interface DiscountsData {
-  global: GlobalDiscount | null;
-  targeted: DiscountRule[];
-}
-
-// Module-level cache shared across all ProductCard instances
-let discountsCache: DiscountsData | undefined = undefined;
-let discountsPromise: Promise<void> | null = null;
-
-async function loadDiscounts() {
-  if (discountsCache !== undefined) return;
-  if (discountsPromise) return discountsPromise;
-  discountsPromise = fetch('/api/discounts')
-    .then(r => r.json())
-    .then(d => { discountsCache = d; })
-    .catch(() => { discountsCache = { global: null, targeted: [] }; });
-  return discountsPromise;
-}
-
-const ProductCard = memo(function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
-  const serverDiscount = product.discount;
-  const [fetched, setFetched] = useState<AppliedDiscount | null>(null);
-
-  useEffect(() => {
-    if (serverDiscount !== undefined) return;
-    loadDiscounts().then(() => {
-      if (discountsCache) setFetched(getBestDiscount(product, discountsCache.targeted, discountsCache.global));
-    });
-  }, [product, serverDiscount]);
-
-  const discount = serverDiscount !== undefined ? serverDiscount : fetched;
+/** Pure presentational card (server-renderable). Callers must pass the resolved `discount`. */
+export default function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
+  const discount = product.discount ?? null;
   const isSub = product.category === 'subscription';
 
   return (
     <Link href={`/products/${product.id}`} className="poster group flex h-full flex-col gap-3 rounded-2xl active:scale-[0.98]">
-      <div className="relative aspect-square overflow-hidden rounded-2xl bg-raised ring-1 ring-white/10 transition-[box-shadow,transform] duration-300 ease-out group-hover:-translate-y-1.5 group-hover:shadow-[0_24px_48px_-16px_rgba(0,0,0,.9)] group-hover:ring-2 group-hover:ring-white/70">
+      <div className="relative aspect-square overflow-hidden rounded-2xl bg-raised ring-1 ring-white/10 transition-transform duration-300 ease-out group-hover:-translate-y-1.5 group-hover:ring-2 group-hover:ring-white/70">
         <ProductArt
           product={product}
           sizes="(max-width: 640px) 46vw, (max-width: 1024px) 31vw, 20vw"
@@ -66,7 +36,7 @@ const ProductCard = memo(function ProductCard({ product, priority = false }: { p
           </span>
         )}
         {product.featured === 1 && (
-          <span className="absolute inset-s-2 top-2 inline-flex items-center gap-1 rounded-full bg-canvas-a/80 px-2 py-1 text-[11px] font-bold text-gold backdrop-blur-sm">
+          <span className="absolute inset-s-2 top-2 inline-flex items-center gap-1 rounded-full bg-canvas-a/90 px-2 py-1 text-[11px] font-bold text-gold">
             <Star size={12} fill="currentColor" aria-hidden="true" />
             مميز
           </span>
@@ -84,6 +54,4 @@ const ProductCard = memo(function ProductCard({ product, priority = false }: { p
       </div>
     </Link>
   );
-});
-
-export default ProductCard;
+}
