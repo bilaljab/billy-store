@@ -7,7 +7,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 export default function Rail({ title, href, linkLabel, children }: { title: string; href?: string; linkLabel?: string; children: ReactNode }) {
   const track = useRef<HTMLDivElement>(null);
   // RTL: "next" content lies to the left, i.e. a negative scroll delta
-  const scroll = (dir: 1 | -1) => track.current?.scrollBy({ left: -dir * track.current.clientWidth * 0.85, behavior: 'smooth' });
+  const scroll = (dir: 1 | -1) => track.current?.scrollBy({ left: -dir * track.current.clientWidth * 0.85, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
 
   return (
     <section>

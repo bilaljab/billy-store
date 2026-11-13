@@ -5,7 +5,7 @@
  * files stay untouched so they can be re-pulled; anything project-specific — RTL,
  * design tokens, reduced motion — lives here.
  */
-import type { ReactElement, ReactNode } from 'react';
+import { useEffect, useState, type ReactElement, type ReactNode } from 'react';
 import { useReducedMotion } from 'motion/react';
 import { Marquee as VendorMarquee } from '@/components/vendor/marquee';
 import { BorderBeam as VendorBorderBeam } from '@/components/vendor/border-beam';
@@ -28,7 +28,16 @@ export function Marquee({ children, className, duration = 40 }: { children: Reac
 export function BorderBeam({ size = 90, duration = 8, colorFrom = 'var(--accent)', colorTo = 'var(--brand)', delay = 0 }:
   { size?: number; duration?: number; colorFrom?: string; colorTo?: string; delay?: number }) {
   const reduce = useReducedMotion();
-  if (reduce) return null;
+  // JS-driven infinite loop: only mount where there is room for it (md+), never for reduced motion.
+  const [wide, setWide] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const sync = () => setWide(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+  if (reduce || !wide) return null;
   return <VendorBorderBeam size={size} duration={duration} colorFrom={colorFrom} colorTo={colorTo} delay={delay} />;
 }
 
@@ -51,8 +60,11 @@ export function NumberTicker({ value, className }: { value: number; className?: 
 
 /** Magic UI blur fade, triggered when the block scrolls into view. */
 export function BlurFade({ children, className, delay = 0 }: { children: ReactNode; className?: string; delay?: number }) {
+  const reduce = useReducedMotion();
+  if (reduce) return <div className={className}>{children}</div>;
+  // blur 0: animating `filter` over whole rails/grids is costly; opacity + y is enough.
   return (
-    <VendorBlurFade inView direction="up" offset={14} blur="8px" duration={0.55} delay={delay} className={className}>
+    <VendorBlurFade inView direction="up" offset={14} blur="0px" duration={0.55} delay={delay} className={className}>
       {children}
     </VendorBlurFade>
   );

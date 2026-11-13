@@ -60,17 +60,24 @@ export default function Navbar() {
   // AnnouncementBar sits in normal flow above the fixed navbar; the navbar's top
   // offset must shrink in lockstep as the bar scrolls away or a gap is left above it.
   useEffect(() => {
+    const bar = document.getElementById('announcement-bar');
+    if (!bar) return; // no announcement: offset stays 0
+    let height = bar.offsetHeight;
+    let frame = 0;
     const sync = () => {
-      const bar = document.getElementById('announcement-bar');
-      setTopOffset(Math.max(0, (bar ? bar.offsetHeight : 0) - window.scrollY));
+      frame = 0;
+      setTopOffset(Math.max(0, height - window.scrollY));
     };
+    const schedule = () => { if (!frame) frame = requestAnimationFrame(sync); };
     sync();
-    const observer = new MutationObserver(sync);
-    observer.observe(document.body, { childList: true, subtree: true });
-    window.addEventListener('scroll', sync, { passive: true });
+    // Bar is server-rendered; only its own size (dismiss, wrapping on resize) can change.
+    const observer = new ResizeObserver(() => { height = bar.offsetHeight; schedule(); });
+    observer.observe(bar);
+    window.addEventListener('scroll', schedule, { passive: true });
     return () => {
-      window.removeEventListener('scroll', sync);
+      window.removeEventListener('scroll', schedule);
       observer.disconnect();
+      if (frame) cancelAnimationFrame(frame);
     };
   }, []);
 

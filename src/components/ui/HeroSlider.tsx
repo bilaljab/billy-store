@@ -44,10 +44,12 @@ export default function HeroSlider({ products }: { products: CatalogProduct[] })
       {/* Backdrop: the cover itself, enlarged and softened, cross-fading between slides */}
       <AnimatePresence initial={false}>
         <motion.div key={product.id} className="absolute inset-0 -z-10"
-          initial={{ opacity: 0, scale: 1.06 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }}
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
           transition={{ duration: reduce ? 0 : 1.1, ease: [0.16, 1, 0.3, 1] }}>
           {product.image ? (
-            <Image src={product.image} alt="" fill priority={index === 0} loading={index === 0 ? undefined : 'eager'} sizes="100vw" className="object-cover blur-2xl saturate-150 max-md:scale-150 md:blur-3xl" />
+            // Tiny low-quality source upscaled by the browser = soft backdrop with no CSS filter on a
+            // full-viewport layer (the sharp cover below is the real LCP image and owns `priority`).
+            <Image src={product.image} alt="" fill loading="eager" sizes="128px" quality={40} className="object-cover saturate-150 max-md:scale-150" />
           ) : (
             <div className={`absolute inset-0 ${isSub
               ? 'bg-[radial-gradient(70%_70%_at_30%_30%,rgb(var(--gold-bg-rgb)/.35),transparent)]'
@@ -62,9 +64,9 @@ export default function HeroSlider({ products }: { products: CatalogProduct[] })
         {/* Copy */}
         <AnimatePresence mode="wait" initial={false}>
           <motion.div key={product.id} aria-live="polite"
-            initial={reduce ? false : { opacity: 0, y: 24, filter: 'blur(8px)' }}
-            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-            exit={reduce ? undefined : { opacity: 0, y: -12, filter: 'blur(6px)' }}
+            initial={reduce ? false : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? undefined : { opacity: 0, y: -12 }}
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="max-md:order-2">
             <p className={`mb-3 text-sm font-bold ${isSub ? 'text-gold' : 'text-accent'}`}>

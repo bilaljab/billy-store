@@ -240,8 +240,8 @@
 
 /* Aceternity "focus cards": hovering one poster recedes its siblings (pointer devices only) */
 @media (hover: hover) {
-  .focus-grid .poster { transition: opacity .3s, filter .3s, transform .3s var(--ease-out); }
-  .focus-grid:has(.poster:hover) .poster:not(:hover) { opacity: .4; filter: saturate(.5) blur(1px); transform: scale(.98); }
+  .focus-grid .poster { transition: opacity .3s, transform .3s var(--ease-out); }
+  .focus-grid:has(.poster:hover) .poster:not(:hover) { opacity: .4; transform: scale(.98); }
 }
 
 /* Hero slide progress bar */

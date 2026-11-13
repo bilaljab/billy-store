@@ -165,7 +165,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
 
           <div className="grid items-start gap-8 md:grid-cols-[minmax(0,5fr)_minmax(0,6fr)] md:gap-12">
             <div className="max-md:mx-auto max-md:w-full max-md:max-w-xs md:sticky md:top-24">
-              <Backlight blur={product.image ? 30 : 0}>
+              <Backlight blur={product.image ? 18 : 0}>
                 <div className="relative aspect-square overflow-hidden rounded-3xl bg-raised ring-1 ring-white/15">
                   <ProductArt product={product} priority sizes="(max-width: 768px) 92vw, 44vw" />
                 </div>
