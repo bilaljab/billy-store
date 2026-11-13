@@ -5,8 +5,9 @@ import { WHATSAPP_URL, WHATSAPP_DISPLAY, INSTAGRAM_URL, INSTAGRAM_HANDLE, TELEGR
 
 const SHOP = [
   ['/products', 'كل المنتجات'],
-  ['/products?category=games', 'ألعاب PS4 و PS5'],
-  ['/products?category=subscription', 'اشتراكات PS Plus'],
+  ['/ps5', 'ألعاب PS5'],
+  ['/ps4', 'ألعاب PS4'],
+  ['/ps-plus', 'اشتراكات PS Plus'],
   ['/products?sort=discount', 'العروض والخصومات'],
 ];
 

@@ -21,9 +21,20 @@ async function getAnnouncement(): Promise<{ text: string; active: boolean } | nu
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://billy-store.vercel.app'),
-  title: 'Billy Store - متجر ألعاب بلايستيشن',
-  description: 'تسوق أفضل ألعاب PlayStation 4 و 5 واشتراكات PS Plus بأسعار لا تنافس. بيلي ستور - متجرك الموثوق للألعاب الرقمية.',
+  title: 'بيلي ستور Billy Store | ألعاب PS5 وPS4 واشتراك PS Plus',
+  description: 'بيلي ستور: ألعاب PS5 وPS4 رقمية واشتراكات PS Plus بسعر أقل من المتجر الرسمي. تسليم خلال دقائق، دفع بتحويل بنكي أو STC Pay، منذ 2017.',
   keywords: 'بيلي ستور, ألعاب بلايستيشن, PS Plus, PS4, PS5, ألعاب رقمية, السعودية',
+  alternates: { canonical: '/' }, // pages with their own alternates override this
+  openGraph: {
+    type: 'website',
+    locale: 'ar_SA',
+    siteName: 'Billy Store',
+    title: 'بيلي ستور Billy Store | ألعاب PS5 وPS4 واشتراك PS Plus',
+    description: 'ألعاب PS4 و PS5 واشتراكات PS Plus بأسعار أقل من المتجر الرسمي، تسليم رقمي خلال دقائق.',
+    images: [{ url: '/logos/billy-store-logo.png' }],
+  },
+  twitter: { card: 'summary' },
+  verification: { google: 'GnpBPqp19SiNuY2iYHk6xSNZVpxwEuLGHS9Na2DF2vM' },
   icons: {
     icon: '/logos/billy-store-icon.png',
     shortcut: '/logos/billy-store-icon.png',

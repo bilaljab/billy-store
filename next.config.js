@@ -26,6 +26,11 @@ const nextConfig = {
     formats: ['image/webp', 'image/avif'],
   },
 
+  // crawlers request /favicon.ico directly; serve the existing icon instead of a 404
+  async rewrites() {
+    return [{ source: '/favicon.ico', destination: '/logos/billy-store-icon.png' }];
+  },
+
   async headers() {
     return [
       {

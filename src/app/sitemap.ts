@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { COLLECTIONS } from '@/lib/collections';
 
 // Crawlers (Googlebot etc.) hit /sitemap.xml far more often than a normal page,
 // so cache this for an hour instead of querying Turso on every request.
@@ -7,7 +8,7 @@ export const revalidate = 3600;
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://billy-store.vercel.app';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes: MetadataRoute.Sitemap = ['', '/products', '/about', '/faq'].map(path => ({
+  const staticRoutes: MetadataRoute.Sitemap = ['', ...COLLECTIONS.map(c => `/${c.slug}`), '/products', '/about', '/faq'].map(path => ({
     url: `${SITE_URL}${path}`,
   }));
 

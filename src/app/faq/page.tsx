@@ -5,6 +5,7 @@ import FaqAccordion from '@/components/ui/FaqAccordion';
 import Button from '@/components/ui/Button';
 import { WhatsAppIcon, InstagramIcon, TelegramIcon } from '@/components/ui/BrandIcons';
 import { WHATSAPP_URL, INSTAGRAM_URL, TELEGRAM_URL } from '@/lib/contact';
+import { STORE_FAQS, faqJsonLd } from '@/lib/faqs';
 
 export const metadata: Metadata = {
   title: 'الأسئلة الشائعة | Billy Store',
@@ -15,6 +16,7 @@ export const metadata: Metadata = {
 export default function FAQPage() {
   return (
     <div className="min-h-screen">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ '@context': 'https://schema.org', ...faqJsonLd(STORE_FAQS) }).replace(/</g, '\\u003c') }} />
       <Navbar />
       <main id="main" className="mx-auto max-w-3xl px-4 pb-20 pt-28 sm:px-6 sm:pt-36">
         <header className="mb-10">

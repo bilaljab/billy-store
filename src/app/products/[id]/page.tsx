@@ -1,6 +1,7 @@
 import Navbar from '@/components/layout/Navbar';
 import { cache } from 'react';
 import type { Metadata } from 'next';
+import { platformsOf, collectionFor } from '@/lib/collections';
 
 // ISR: serve from cache, rebuild in background every 30 seconds
 // This means near-instant page loads after first visit
@@ -85,14 +86,18 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!data) return {};
 
   const { product } = data;
-  const description = product.description
-    ? product.description.slice(0, 160)
+  // cut at a word boundary so the snippet doesn't end mid-word
+  const d = product.description;
+  const description = d
+    ? d.length <= 155 ? d : d.slice(0, 155).replace(/\s+\S*$/, '') + '…'
     : `تسوق ${product.name} بأفضل سعر من بيلي ستور — تسليم رقمي بدون انتظار.`;
+  // keep "<name> | Billy Store" within ~60 chars
+  const shortName = product.name.length > 48 ? product.name.slice(0, 47).replace(/\s+\S*$/, '') + '…' : product.name;
   const url = `${SITE_URL}/products/${product.id}`;
   const image = product.image || `${SITE_URL}/logos/billy-store-icon.png`;
 
   return {
-    title: `${product.name} | Billy Store`,
+    title: `${shortName} | Billy Store`,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -114,23 +119,54 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const discountedPrice = discount ? applyDiscount(product.price, discount) : null;
   const waMsg = encodeURIComponent(buildInquiryMessage(product.name, discountedPrice ?? product.price));
 
+  const isSub = product.category === 'subscription';
+  const platform = platformsOf(product.name).join(' و');
+  const collection = collectionFor(product);
+  const productUrl = `${SITE_URL}/products/${product.id}`;
+  const finalPrice = discountedPrice ?? product.price;
+  // Store-specific lead line: the PSN description is the same text every reseller shows
+  const lead = isSub
+    ? `${product.name} على حساب PlayStation جاهز، بسعر ${finalPrice} ر.س بدل سعر المتجر الرسمي. تفعّله على جهازك PS4 أو PS5 خلال دقائق من تأكيد الدفع.`
+    : `${product.name} نسخة رقمية لجهاز ${platform} على حساب PlayStation جاهز، بسعر ${finalPrice} ر.س. تستلمها خلال دقائق من تأكيد الدفع وتلعبها من حسابك أنت.`;
+  const specs = [
+    ['النوع', isSub ? 'اشتراك PlayStation Plus' : 'لعبة رقمية'],
+    ['المنصة', isSub ? 'PS4 وPS5' : platform],
+    ['طريقة التسليم', 'حساب PlayStation جاهز، يُفعَّل كحساب أساسي'],
+    ['وقت التسليم', 'خلال دقائق من تأكيد الدفع'],
+    ['الدفع', 'تحويل بنكي أو STC Pay'],
+    ['الضمان', 'استبدال مدى الحياة'],
+  ];
+
   const jsonLd = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    description: product.description || undefined,
-    image: product.image || `${SITE_URL}/logos/billy-store-icon.png`,
-    category: categoryLabel,
-    offers: {
-      '@type': 'Offer',
-      url: `${SITE_URL}/products/${product.id}`,
-      priceCurrency: 'SAR',
-      price: discountedPrice ?? product.price,
-      availability: 'https://schema.org/InStock',
-    },
+    '@graph': [
+      {
+        '@type': 'Product',
+        name: product.name,
+        description: product.description || lead,
+        image: [product.image || `${SITE_URL}/logos/billy-store-icon.png`],
+        category: categoryLabel,
+        offers: {
+          '@type': 'Offer',
+          url: productUrl,
+          priceCurrency: 'SAR',
+          price: finalPrice,
+          availability: 'https://schema.org/InStock',
+          seller: { '@type': 'Organization', name: 'Billy Store' },
+        },
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'الرئيسية', item: SITE_URL },
+          collection
+            ? { '@type': 'ListItem', position: 2, name: collection.h1, item: `${SITE_URL}/${collection.slug}` }
+            : { '@type': 'ListItem', position: 2, name: 'المنتجات', item: `${SITE_URL}/products` },
+          { '@type': 'ListItem', position: 3, name: product.name, item: productUrl },
+        ],
+      },
+    ],
   };
-
-  const isSub = product.category === 'subscription';
   const assurances = [
     { Icon: Clock, text: 'تسليم رقمي خلال دقائق بعد تأكيد الدفع' },
     { Icon: ShieldCheck, text: 'ضمان استبدال مدى الحياة' },
@@ -142,7 +178,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
     <div className="min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }}
       />
       <Navbar />
       <main id="main" className="relative">
@@ -158,7 +194,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
           <nav aria-label="مسار التنقل" className="mb-6 flex items-center gap-1.5 text-sm text-muted">
             <Link href="/" className="inline-flex min-h-11 items-center transition-colors hover:text-ink">الرئيسية</Link>
             <ChevronLeft size={14} aria-hidden="true" />
-            <Link href="/products" className="inline-flex min-h-11 items-center transition-colors hover:text-ink">المنتجات</Link>
+            <Link href={collection ? `/${collection.slug}` : '/products'} className="inline-flex min-h-11 items-center transition-colors hover:text-ink">{collection ? collection.h1 : 'المنتجات'}</Link>
             <ChevronLeft size={14} aria-hidden="true" />
             <span className="line-clamp-1 font-bold text-ink" aria-current="page">{product.name}</span>
           </nav>
@@ -210,12 +246,25 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                 ))}
               </ul>
 
-              {product.description && (
-                <section>
-                  <h2 className="mb-2 text-lg font-bold text-ink">الوصف</h2>
-                  <p className="max-w-prose whitespace-pre-line leading-loose text-muted">{product.description}</p>
-                </section>
-              )}
+              <section>
+                <h2 className="mb-2 text-lg font-bold text-ink">الوصف</h2>
+                <p className="max-w-prose leading-loose text-ink/90">{lead}</p>
+                {product.description && (
+                  <p className="mt-3 max-w-prose whitespace-pre-line leading-loose text-muted">{product.description}</p>
+                )}
+              </section>
+
+              <section>
+                <h2 className="mb-2 text-lg font-bold text-ink">تفاصيل المنتج</h2>
+                <dl className="divide-y divide-line rounded-3xl border border-line text-sm">
+                  {specs.map(([k, v]) => (
+                    <div key={k} className="flex gap-4 px-4 py-3">
+                      <dt className="w-28 shrink-0 text-muted">{k}</dt>
+                      <dd className="text-ink">{v}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </section>
 
               <section>
                 <h2 className="mb-2 text-lg font-bold text-ink">طريقة الاستلام</h2>

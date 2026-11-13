@@ -11,7 +11,10 @@ import { WhatsAppIcon, InstagramIcon, TelegramIcon } from '@/components/ui/Brand
 import { BlurFade, BorderBeam, Marquee, NumberTicker, Spotlight } from '@/components/fx';
 import { getCatalog, type CatalogProduct } from '@/lib/catalog';
 import { applyDiscount } from '@/lib/discounts';
+import { TIERS, tierOf } from '@/lib/psplus';
 import { whatsappLink, GENERAL_INQUIRY, INSTAGRAM_URL, TELEGRAM_URL } from '@/lib/contact';
+
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://billy-store.vercel.app';
 
 // ISR: the whole page is rebuilt at most once a minute, not per visitor
 export const revalidate = 60;
@@ -31,9 +34,6 @@ const STEPS = [
   { title: 'استلم والعب', desc: 'تستلم بيانات حساب جاهز خلال دقائق، وتفعله على جهازك.' },
 ];
 
-/** PS Plus tiers as named in the catalogue; a subscription is filed under the first tier its name mentions. */
-const TIERS = ['Essential', 'Extra', 'Premium', 'Deluxe'] as const;
-const tierOf = (name: string) => TIERS.find(t => name.toLowerCase().includes(t.toLowerCase()));
 
 function Posters({ products }: { products: CatalogProduct[] }) {
   return <>{products.map(p => <ProductCard key={p.id} product={p} />)}</>;
@@ -50,7 +50,7 @@ export default async function HomePage() {
   const newest = products.slice(0, 12);
   const games = products.filter(p => p.category === 'games');
   const subscriptions = products.filter(p => p.category === 'subscription').sort((a, b) => a.price - b.price);
-  const tiers = TIERS.map(tier => ({ tier, plans: subscriptions.filter(p => tierOf(p.name) === tier) })).filter(t => t.plans.length > 0);
+  const tiers = TIERS.map(t => ({ tier: t.en, plans: subscriptions.filter(p => tierOf(p.name)?.key === t.key) })).filter(t => t.plans.length > 0);
   const untiered = subscriptions.filter(p => !tierOf(p.name));
   const counters = [
     { n: games.length, label: 'لعبة' },
@@ -60,10 +60,20 @@ export default async function HomePage() {
 
   return (
     <div className="min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify({
+          '@context': 'https://schema.org',
+          '@graph': [
+            { '@type': 'Organization', name: 'Billy Store', alternateName: 'بيلي ستور', url: SITE_URL, logo: `${SITE_URL}/logos/billy-store-logo.png`, sameAs: [INSTAGRAM_URL, TELEGRAM_URL] },
+            { '@type': 'WebSite', name: 'Billy Store', url: SITE_URL, inLanguage: 'ar' },
+          ],
+        }).replace(/</g, '\\u003c') }}
+      />
       <Navbar />
 
       <main id="main">
-        <h1 className="sr-only">Billy Store — نفس المتعة، نفس اللعبة، بسعر أقل من المتجر الرسمي بكثير</h1>
+        <h1 className="sr-only">بيلي ستور Billy Store: ألعاب PS5 وPS4 واشتراكات PS Plus بسعر أقل من المتجر الرسمي</h1>
 
         {showcase.length > 0 ? (
           <HeroSlider products={showcase} />
@@ -125,7 +135,7 @@ export default async function HomePage() {
                     <h2 className="font-display text-3xl font-bold text-ink sm:text-5xl">اشتراكات PS Plus</h2>
                     <p className="mt-2 max-w-xl leading-relaxed text-muted">اختر الباقة والمدة — تفعيل خلال دقائق على حسابك.</p>
                   </div>
-                  <Button href="/products?category=subscription" variant="secondary">كل الاشتراكات</Button>
+                  <Button href="/ps-plus" variant="secondary">كل الاشتراكات</Button>
                 </div>
 
                 <div className={`grid gap-4 ${tiers.length >= 3 ? 'lg:grid-cols-3' : tiers.length === 2 ? 'sm:grid-cols-2' : ''}`}>
