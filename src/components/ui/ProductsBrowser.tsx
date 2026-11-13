@@ -1,8 +1,8 @@
 'use client';
-import { memo, useDeferredValue, useEffect, useMemo, useState } from 'react';
+import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { motion } from 'motion/react';
 import { Search, SearchX, TriangleAlert, X } from 'lucide-react';
-import ProductCard from './ProductCard';
+import ProductGrid from './ProductGrid';
 import Button from './Button';
 import type { CatalogProduct } from '@/lib/catalog';
 
@@ -18,8 +18,6 @@ const SORTS = [
   { value: 'desc', label: 'السعر: من الأغلى' },
   { value: 'discount', label: 'أكبر خصم' },
 ] as const;
-
-const MemoCard = memo(ProductCard);
 
 type Category = typeof CATEGORIES[number]['value'];
 type Sort = typeof SORTS[number]['value'];
@@ -123,14 +121,7 @@ export default function ProductsBrowser({ products, error }: { products: Catalog
           <Button variant="secondary" onClick={reset} icon={<X size={16} aria-hidden="true" />}>مسح البحث والفلاتر</Button>
         </div>
       ) : (
-        <div className="focus-grid grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:grid-cols-5">
-          {filtered.map((product, i) => (
-            // content-visibility: المتصفح يتخطى layout/paint للكروت خارج الشاشة (~400 كرت)
-            <div key={product.id} className="h-full" style={i < 8 ? undefined : { contentVisibility: 'auto', containIntrinsicSize: 'auto 280px' }}>
-              <MemoCard product={product} priority={i === 0} />
-            </div>
-          ))}
-        </div>
+        <ProductGrid key={`${category}|${sort}|${term}`} products={filtered} />
       )}
     </>
   );

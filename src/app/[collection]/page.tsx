@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import ProductCard from '@/components/ui/ProductCard';
+import ProductGrid from '@/components/ui/ProductGrid';
 import FaqAccordion from '@/components/ui/FaqAccordion';
 import PsPlusTiers from '@/components/ui/PsPlusTiers';
 import Button from '@/components/ui/Button';
@@ -104,13 +104,7 @@ export default async function CollectionPage({ params }: { params: Promise<{ col
             <Button href={whatsappLink(`مرحباً، أبحث عن ${c.h1}`)} external variant="whatsapp" icon={<WhatsAppIcon />}>راسلنا على واتساب</Button>
           </div>
         ) : (
-          <div className="focus-grid grid grid-cols-2 gap-x-3 gap-y-8 sm:grid-cols-3 sm:gap-x-5 lg:grid-cols-4 xl:grid-cols-5">
-            {items.map((p, i) => (
-              <div key={p.id} className="h-full" style={i < 8 ? undefined : { contentVisibility: 'auto', containIntrinsicSize: 'auto 280px' }}>
-                <ProductCard product={p} priority={i === 0} />
-              </div>
-            ))}
-          </div>
+          <ProductGrid products={items} />
         )}
 
         <section className="mx-auto mt-20 max-w-3xl">
