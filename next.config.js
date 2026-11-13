@@ -1,11 +1,26 @@
+const isDev = process.env.NODE_ENV !== 'production';
+const csp = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${isDev ? " 'unsafe-eval'" : ''}`, // unsafe-eval only in dev (webpack HMR)
+  "style-src 'self' 'unsafe-inline'",
+  "font-src 'self'",
+  "img-src 'self' data: blob: https:",
+  "connect-src 'self'",
+  "frame-ancestors 'none'",
+].join('; ');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   productionBrowserSourceMaps: false,
 
   images: {
     unoptimized: false,
+    // Allow-list (not '**'): otherwise anyone can use /_next/image as an open proxy on our Vercel bill.
+    // Hosts: Cloudinary uploads, PSN Store covers (findGameInfo), RAWG covers (legacy source).
     remotePatterns: [
-      { protocol: 'https', hostname: '**' },
+      { protocol: 'https', hostname: 'res.cloudinary.com' },
+      { protocol: 'https', hostname: 'image.api.playstation.com' },
+      { protocol: 'https', hostname: 'media.rawg.io' },
     ],
     minimumCacheTTL: 31536000,
     formats: ['image/webp', 'image/avif'],
@@ -23,6 +38,8 @@ const nextConfig = {
           { key: 'X-XSS-Protection', value: '1; mode=block' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // CSP lives here (static, no nonce) so public pages don't need a middleware invocation.
+          { key: 'Content-Security-Policy', value: csp },
         ],
       },
       // Cache static assets aggressively
@@ -56,7 +73,7 @@ const nextConfig = {
 
   // Experimental: faster builds and smaller bundles
   experimental: {
-    optimizePackageImports: ['@libsql/client'],
+    optimizePackageImports: ['lucide-react', 'motion'],
   },
 }
 
