@@ -9,6 +9,7 @@ export interface CatalogProduct {
   category: string;
   featured: number;
   release_date: string | null;
+  featured_order: number | null;
   discount: AppliedDiscount | null;
 }
 

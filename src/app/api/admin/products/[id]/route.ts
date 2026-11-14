@@ -14,15 +14,15 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   const { id } = await params;
   await initDb();
   const body = await req.json();
-  const { name, description, price, image, category, featured, release_date } = body;
+  const { name, description, price, image, category, featured, release_date, featured_order } = body;
   if (!name || !price) return NextResponse.json({ error: 'الاسم والسعر مطلوبان' }, { status: 400 });
   if (typeof name !== 'string' || name.trim().length > 200) return NextResponse.json({ error: 'اسم غير صالح' }, { status: 400 });
   if (typeof price !== 'number' || price <= 0 || price > 99999) return NextResponse.json({ error: 'سعر غير صالح' }, { status: 400 });
   const safeReleaseDate = release_date ? String(release_date).slice(0, 10) : null;
   const db = getDb();
   await db.execute({
-    sql: 'UPDATE products SET name=?, description=?, price=?, image=?, category=?, featured=?, release_date=?, updated_at=CURRENT_TIMESTAMP WHERE id=?',
-    args: [name.trim().slice(0, 200), String(description || '').trim().slice(0, 2000), price, isValidImageUrl(image), category || 'games', featured ? 1 : 0, safeReleaseDate, id],
+    sql: 'UPDATE products SET name=?, description=?, price=?, image=?, category=?, featured=?, release_date=?, featured_order=CASE WHEN ?=0 THEN NULL ELSE COALESCE(?, featured_order) END, updated_at=CURRENT_TIMESTAMP WHERE id=?',
+    args: [name.trim().slice(0, 200), String(description || '').trim().slice(0, 2000), price, isValidImageUrl(image), category || 'games', featured ? 1 : 0, safeReleaseDate, featured ? 1 : 0, Number.isInteger(featured_order) ? featured_order : null, id],
   });
   const result = await db.execute({ sql: 'SELECT * FROM products WHERE id = ?', args: [id] });
   return NextResponse.json(serializeProduct(result.rows[0]));

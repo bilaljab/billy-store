@@ -16,6 +16,7 @@ export function serializeProduct(r: Row) {
     category: String(col(r, 'category') ?? 'games'),
     featured: Number(col(r, 'featured') ?? 0),
     release_date: col(r, 'release_date') ? String(col(r, 'release_date')) : null,
+    featured_order: col(r, 'featured_order') == null ? null : Number(col(r, 'featured_order')),
   };
 }
 
@@ -104,6 +105,11 @@ export async function initDb() {
   // Add ip column if upgrading from old schema
   try {
     await db.execute("ALTER TABLE site_visits ADD COLUMN ip TEXT NOT NULL DEFAULT 'unknown'");
+  } catch { /* column already exists */ }
+
+  // Manual order of the featured rail (1 = first); NULL = after the ordered ones
+  try {
+    await db.execute('ALTER TABLE products ADD COLUMN featured_order INTEGER');
   } catch { /* column already exists */ }
 
   // Soft-delete support for products (used by bulk-delete + trash recovery section)
