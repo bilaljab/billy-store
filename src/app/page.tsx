@@ -48,7 +48,7 @@ export default async function HomePage() {
   const offers = products.filter(p => p.discount).sort((a, b) => b.discount!.percentage - a.discount!.percentage).slice(0, 12);
   const featured = products.filter(p => p.featured === 1)
     .sort((a, b) => (a.featured_order ?? 1e9) - (b.featured_order ?? 1e9)).slice(0, 12);
-  const newest = products.slice(0, 12);
+  const newest = products.filter(p => p.category === 'games').slice(0, 12);
   const games = products.filter(p => p.category === 'games');
   const subscriptions = products.filter(p => p.category === 'subscription').sort((a, b) => a.price - b.price);
   const tiers = TIERS.map(t => ({ tier: t.en, plans: subscriptions.filter(p => tierOf(p.name)?.key === t.key) })).filter(t => t.plans.length > 0);
