@@ -40,7 +40,7 @@ Full details and measurements in `docs/claude-history.md` (G#24–27, 30; Arabic
 - The model expands an abbreviation or Arabic name into an English official title **as a search query only**; the stored name comes solely from the PSN result. Search failure → literal name with no image.
 - Known limit: a game whose `ar-sa` name is fully transliterated ("شبح تسوشيما") isn't found by an English query (safe fallback to the literal name). Future fix: second search in `en-sa`.
 - Manual poster: "attach/replace image" button in `AssistantConfirmCard` (uploads via `/api/upload`).
-- **Uncommitted `psn-store.ts` change** (GraphQL search via persisted-query hash + `findPsnGameInfoById`): **owner decision 2026-11-14: must not be deployed.** Don't commit or deploy it without an explicit request.
+- Search goes through Sony's own persisted GraphQL query (`searchViaGraphql`, `SEARCH_HASH` captured from the live store page 2026-11-13); SSR-HTML parsing is kept as fallback. Sony moved results out of the SSR HTML that day, so the old path alone found nothing (tested: old 0/6 games, new 4/4 found). If Sony rotates the hash the call returns empty and the fallback runs; re-capture it from the store page's network tab (`getSearchResults`). `findPsnGameInfoById` is for manual bulk fills.
 - Scraping is a gray area under PSN terms (accepted); revisit if actual blocking occurs.
 
 ## Testing

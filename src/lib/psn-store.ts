@@ -399,27 +399,54 @@ function cleanOfficialName(rawName: string): string {
   return name.length >= 2 ? name : rawName.trim();
 }
 
+// Persisted-query hash of the store page's own getSearchResults operation (captured from the live
+// page's network tab, 2026-11-13). If Sony rotates it the call returns an error/empty and we fall back.
+const SEARCH_HASH = '4df6284f982e57bec70f23c77e2c219dc792eb19af7fb3d3a81767aa3f1958aa';
+
+async function searchViaGraphql(searchTerm: string, country = 'SA', language = 'ar'): Promise<NextDataProduct[]> {
+  try {
+    const variables = { countryCode: country, languageCode: language, nextCursor: '', pageOffset: 0, pageSize: 24, searchTerm };
+    const extensions = { persistedQuery: { version: 1, sha256Hash: SEARCH_HASH } };
+    const url = 'https://web.np.playstation.com/api/graphql/v1/op?operationName=getSearchResults' +
+      '&variables=' + encodeURIComponent(JSON.stringify(variables)) +
+      '&extensions=' + encodeURIComponent(JSON.stringify(extensions));
+    const res = await fetch(url, {
+      headers: { ...PSN_HEADERS, 'content-type': 'application/json', 'x-apollo-operation-name': 'getSearchResults' },
+    });
+    if (!res.ok) return [];
+    const json = (await res.json()) as { data?: { universalSearch?: { results?: unknown[] } } };
+    return (json.data?.universalSearch?.results ?? []).filter(isProductEntry);
+  } catch {
+    return [];
+  }
+}
+
 export async function findPsnGameInfo(gameName: string): Promise<PsnGameInfoResult> {
   const name = gameName.trim();
   if (!name) return { ok: false, error: 'اسم اللعبة فارغ' };
 
-  let searchHtml: string;
+  // Sony moved search results out of the SSR HTML (2026-11-13: apolloState has no Product entries,
+  // results load client-side). The page's own persisted GraphQL query returns them directly, already
+  // in PSN's relevance order. Old SSR-HTML path kept as a fallback in case Sony reverts.
   const t0 = Date.now();
-  try {
-    const res = await fetch(`${PSN_BASE}/${PSN_LOCALE}/search/${encodeURIComponent(name)}`, {
-      headers: PSN_HEADERS,
-    });
-    console.log(`[psn-store] search fetch took ${Date.now() - t0}ms, status=${res.status}`);
-    if (!res.ok) return { ok: false, error: 'تعذّر البحث بمتجر PlayStation' };
-    searchHtml = await res.text();
-  } catch (err) {
-    console.log(`[psn-store] search fetch FAILED after ${Date.now() - t0}ms:`, err);
-    return { ok: false, error: 'تعذّر الاتصال بمتجر PlayStation' };
+  let products: NextDataProduct[] = [];
+  let ordered = false;
+  const viaApi = await searchViaGraphql(name);
+  if (viaApi.length > 0) {
+    products = viaApi;
+    ordered = true;
+    console.log(`[psn-store] graphql search took ${Date.now() - t0}ms, ${products.length} products`);
+  } else {
+    try {
+      const res = await fetch(`${PSN_BASE}/${PSN_LOCALE}/search/${encodeURIComponent(name)}`, { headers: PSN_HEADERS });
+      if (!res.ok) return { ok: false, error: 'تعذّر البحث بمتجر PlayStation' };
+      const apolloState = extractNextData(await res.text())?.props?.apolloState ?? {};
+      ({ products, ordered } = extractOrderedProducts(apolloState));
+    } catch (err) {
+      console.log(`[psn-store] search fetch FAILED after ${Date.now() - t0}ms:`, err);
+      return { ok: false, error: 'تعذّر الاتصال بمتجر PlayStation' };
+    }
   }
-
-  const searchData = extractNextData(searchHtml);
-  const apolloState = searchData?.props?.apolloState ?? {};
-  const { products, ordered } = extractOrderedProducts(apolloState);
 
   const picked = pickBestProduct(name, products, ordered);
   console.log(
@@ -430,6 +457,19 @@ export async function findPsnGameInfo(gameName: string): Promise<PsnGameInfoResu
   const best = picked.product;
   if (!best.id) return { ok: false, error: 'لم يُعثر على لعبة مطابقة بمتجر PlayStation' };
 
+  return buildInfoFromProduct(best);
+}
+
+// Manual override for bulk fill scripts: search, then take the product with this exact PSN id
+// (skips the name-match heuristics when a human already verified the right product).
+export async function findPsnGameInfoById(query: string, productId: string, region?: { country: string; language: string }): Promise<PsnGameInfoResult> {
+  const best = (await searchViaGraphql(query, region?.country, region?.language)).find(p => p.id === productId);
+  if (!best) return { ok: false, error: 'لم يُعثر على لعبة مطابقة بمتجر PlayStation' };
+  return buildInfoFromProduct(best, region ? `${region.language}-${region.country.toLowerCase()}` : PSN_LOCALE);
+}
+
+async function buildInfoFromProduct(best: NextDataProduct, locale: string = PSN_LOCALE): Promise<PsnGameInfoResult> {
+  if (!best.id) return { ok: false, error: 'لم يُعثر على لعبة مطابقة بمتجر PlayStation' };
   const cleanedName = cleanOfficialName(best.name as string);
   if (cleanedName !== best.name) {
     console.log(`[psn-store] name cleaned: "${best.name}" → "${cleanedName}"`);
@@ -440,7 +480,7 @@ export async function findPsnGameInfo(gameName: string): Promise<PsnGameInfoResu
   let infoProduct: InfoProduct | null = null;
   const t1 = Date.now();
   try {
-    const res2 = await fetch(`${PSN_BASE}/${PSN_LOCALE}/product/${encodeURIComponent(best.id)}`, {
+    const res2 = await fetch(`${PSN_BASE}/${locale}/product/${encodeURIComponent(best.id)}`, {
       headers: PSN_HEADERS,
     });
     console.log(`[psn-store] product page fetch took ${Date.now() - t1}ms, status=${res2.status}`);
