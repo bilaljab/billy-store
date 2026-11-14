@@ -60,6 +60,7 @@ Template in `.env.example`. Real secrets live in `.env` / `.env.local` (gitignor
 ## Design (dark "cinematic PS Store" theme)
 
 - Tokens in `globals.css` (`@theme`): `accent` for blue text (not `text-brand`), `line` for borders, `gold` as text/tint color. **Do not redefine `--radius-pill` / `--shadow-*` in `:root`.**
+- **STC woff2 files are patched** by `scripts/patch-stc-marks.py` (the original font treats harakat as spacing letters, splitting words like "يُفعّل" mid-word). Re-run it if the font files are ever replaced.
 - **STC font has two weights only: Regular 400 and Bold 700.** Almost everything is Bold; card titles are Regular; **prices stay Bold** (owner decision, do not lighten). Don't reintroduce `font-black/semibold/medium`.
 - `src/components/vendor/` comes from the shadcn CLI (Magic UI / Aceternity). Don't hand-edit (exception: `resizable-navbar.tsx` is deliberately trimmed for performance). Customize via `src/components/fx/index.tsx` and `Navbar.tsx`.
 - `BlurFade` hides content until it enters the viewport via JS. Horizontal scroll containers (`.rail`, `Price`) must be `relative` (otherwise `sr-only` widens the page). Don't change `--chip-bg` to fix border contrast; use a dedicated border.

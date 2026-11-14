@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
           <Image src="/logos/billy-store-logo.png" alt="Billy Store" width={1097} height={723} priority sizes="150px" className="h-16 w-auto mx-auto mb-5" />
-          <h1 className="text-3xl font-black text-ink">لوحة التحكم</h1>
+          <h1 className="text-3xl font-bold text-ink">لوحة التحكم</h1>
           <p className="text-muted mt-2">سجل الدخول لإدارة المتجر</p>
         </div>
 
@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label htmlFor="login-username" className="block text-ink text-sm font-semibold mb-2">اسم المستخدم</label>
+              <label htmlFor="login-username" className="block text-ink text-sm font-bold mb-2">اسم المستخدم</label>
               <input
                 id="login-username"
                 type="text"
@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
               />
             </div>
             <div>
-              <label htmlFor="login-password" className="block text-ink text-sm font-semibold mb-2">كلمة المرور</label>
+              <label htmlFor="login-password" className="block text-ink text-sm font-bold mb-2">كلمة المرور</label>
               <div className="relative">
                 <input
                   id="login-password"
@@ -86,7 +86,7 @@ export default function AdminLoginPage() {
               </div>
             </div>
             <button type="submit" disabled={loading}
-              className="w-full min-h-11 bg-brand hover:bg-brand-ink disabled:opacity-50 text-white font-black py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand/30 text-lg">
+              className="w-full min-h-11 bg-brand hover:bg-brand-ink disabled:opacity-50 text-white font-bold py-4 rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-brand/30 text-lg">
               {loading ? 'جاري التحقق...' : 'دخول'}
             </button>
           </form>

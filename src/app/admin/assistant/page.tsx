@@ -151,7 +151,7 @@ export default function AssistantPage() {
             <Bot size={18} className="text-accent" />
           </div>
           <div>
-            <h1 className="font-black text-ink text-sm">المساعد الذكي</h1>
+            <h1 className="font-bold text-ink text-sm">المساعد الذكي</h1>
             <p className="text-muted text-xs">لوحة التحكم</p>
           </div>
         </div>
@@ -159,7 +159,7 @@ export default function AssistantPage() {
           <Link href="/admin/dashboard" className="text-muted hover:text-accent text-sm transition-colors">
             ← الداشبورد
           </Link>
-          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/40 text-red-300 text-sm font-semibold px-4 min-h-11 rounded-lg transition-all">
+          <button onClick={handleLogout} className="bg-red-500/10 hover:bg-red-500/20 border border-red-500/40 text-red-300 text-sm font-bold px-4 min-h-11 rounded-lg transition-all">
             تسجيل خروج
           </button>
         </div>

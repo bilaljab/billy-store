@@ -72,15 +72,15 @@ export default function ConfirmDialog({ title, message, onConfirm, onCancel }: C
         transition={reduceMotion ? { duration: 0.15, ease: 'easeOut' } : { type: 'spring', bounce: 0, duration: 0.35 }}
         onAnimationComplete={() => { if (!isOpen) handlePanelAnimationComplete(); }}
       >
-        <h3 id="confirm-dialog-title" className="text-xl font-black text-ink mb-2">{title}</h3>
+        <h3 id="confirm-dialog-title" className="text-xl font-bold text-ink mb-2">{title}</h3>
         <p id="confirm-dialog-message" className="text-muted text-sm mb-6">{message}</p>
         <div className="flex gap-3">
           <button ref={confirmRef} onClick={() => startClose('confirm')}
-            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-black py-3 rounded-xl transition-all active:scale-[0.98] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2">
+            className="flex-1 bg-red-500 hover:bg-red-600 text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-red-500/50 focus-visible:ring-offset-2">
             تأكيد الحذف
           </button>
           <button ref={cancelRef} onClick={() => startClose('cancel')}
-            className="bg-surface border border-line text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink active:scale-[0.98] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
+            className="bg-surface border border-line text-muted font-bold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink active:scale-[0.98] focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand/50 focus-visible:ring-offset-2">
             إلغاء
           </button>
         </div>

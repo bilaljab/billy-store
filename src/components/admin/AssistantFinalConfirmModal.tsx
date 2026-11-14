@@ -28,12 +28,12 @@ export default function AssistantFinalConfirmModal({
       <div className="relative bg-surface border border-red-500/40 rounded-3xl p-8 w-full max-w-md shadow-float">
         <div className="flex items-center gap-2 text-red-300 mb-2">
           <AlertTriangle size={22} className="text-current shrink-0" />
-          <h3 className="text-xl font-black">تأكيد نهائي — عملية لا يمكن التراجع عنها فوراً</h3>
+          <h3 className="text-xl font-bold">تأكيد نهائي — عملية لا يمكن التراجع عنها فوراً</h3>
         </div>
         <p className="text-ink text-sm leading-relaxed mb-5 whitespace-pre-line">{humanSummary}</p>
 
         <label htmlFor="assistant-final-confirm-input" className="block text-muted text-sm mb-2">
-          اكتب الرقم <span className="font-black text-ink">{confirmValue}</span> لتأكيد التنفيذ
+          اكتب الرقم <span className="font-bold text-ink">{confirmValue}</span> لتأكيد التنفيذ
         </label>
         <input
           id="assistant-final-confirm-input"
@@ -52,14 +52,14 @@ export default function AssistantFinalConfirmModal({
           <button
             onClick={() => onConfirm(typed.trim())}
             disabled={!matches || confirming}
-            className="flex-1 min-h-11 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white font-black py-3 rounded-xl transition-all"
+            className="flex-1 min-h-11 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white font-bold py-3 rounded-xl transition-all"
           >
             {confirming ? 'جارٍ التنفيذ...' : 'نعم، نفّذ الآن'}
           </button>
           <button
             onClick={onCancel}
             disabled={confirming}
-            className="min-h-11 bg-surface border border-line text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
+            className="min-h-11 bg-surface border border-line text-muted font-bold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
           >
             إلغاء
           </button>

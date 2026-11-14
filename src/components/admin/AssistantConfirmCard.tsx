@@ -45,7 +45,7 @@ export default function AssistantConfirmCard({
               <ImageIcon size={22} className="text-muted" />
             </div>
           )}
-          <label className="flex-1 bg-surface hover:bg-chip border border-line text-ink font-semibold py-2.5 px-3 rounded-lg transition-all text-sm text-center cursor-pointer">
+          <label className="flex-1 bg-surface hover:bg-chip border border-line text-ink font-bold py-2.5 px-3 rounded-lg transition-all text-sm text-center cursor-pointer">
             {uploadingImage ? 'جارٍ الرفع...' : imageUrl ? 'استبدال الصورة' : 'إرفاق صورة'}
             <input
               type="file"
@@ -66,7 +66,7 @@ export default function AssistantConfirmCard({
         <button
           onClick={onPrimary}
           disabled={confirming}
-          className={`flex-1 min-h-11 font-black py-3 rounded-xl transition-all disabled:opacity-50 ${
+          className={`flex-1 min-h-11 font-bold py-3 rounded-xl transition-all disabled:opacity-50 ${
             isDouble ? 'bg-red-600 hover:bg-red-700 text-white' : 'bg-brand hover:bg-brand-ink text-white'
           }`}
         >
@@ -75,7 +75,7 @@ export default function AssistantConfirmCard({
         <button
           onClick={onCancel}
           disabled={confirming}
-          className="min-h-11 bg-surface border border-line text-muted font-semibold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
+          className="min-h-11 bg-surface border border-line text-muted font-bold py-3 px-5 rounded-xl transition-all hover:border-brand/50 hover:text-ink disabled:opacity-50"
         >
           إلغاء
         </button>
