@@ -6,6 +6,7 @@ import AnnouncementBar from '@/components/ui/AnnouncementBar';
 import VisitTracker from '@/components/ui/VisitTracker';
 import WhatsAppFloat from '@/components/ui/WhatsAppFloat';
 import ScrollToTop from '@/components/ui/ScrollToTop';
+import { Analytics } from '@vercel/analytics/next';
 
 export const revalidate = 60;
 
@@ -55,6 +56,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {children}
         <WhatsAppFloat />
         <ScrollToTop />
+        <Analytics />
       </body>
     </html>
   );

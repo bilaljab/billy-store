@@ -2,6 +2,7 @@ import Navbar from '@/components/layout/Navbar';
 import { cache } from 'react';
 import type { Metadata } from 'next';
 import { platformsOf, collectionFor } from '@/lib/collections';
+import { arabicNameOf } from '@/lib/arabic-names';
 
 // ISR: serve from cache, rebuild in background every 30 seconds
 // This means near-instant page loads after first visit
@@ -95,9 +96,10 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const shortName = product.name.length > 48 ? product.name.slice(0, 47).replace(/\s+\S*$/, '') + '…' : product.name;
   const url = `${SITE_URL}/products/${product.id}`;
   const image = product.image || `${SITE_URL}/logos/billy-store-icon.png`;
+  const ar = arabicNameOf(product.name);
 
   return {
-    title: `${shortName} | Billy Store`,
+    title: ar ? `${ar} - ${shortName} | Billy Store` : `${shortName} | Billy Store`,
     description,
     alternates: { canonical: url },
     openGraph: {
@@ -124,10 +126,11 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
   const collection = collectionFor(product);
   const productUrl = `${SITE_URL}/products/${product.id}`;
   const finalPrice = discountedPrice ?? product.price;
+  const ar = arabicNameOf(product.name);
   // Store-specific lead line: the PSN description is the same text every reseller shows
   const lead = isSub
     ? `${product.name} على حساب PlayStation جاهز، بسعر ${finalPrice} ر.س بدل سعر المتجر الرسمي. تفعّله على جهازك PS4 أو PS5 خلال دقائق من تأكيد الدفع.`
-    : `${product.name} نسخة رقمية لجهاز ${platform} على حساب PlayStation جاهز، بسعر ${finalPrice} ر.س. تستلمها خلال دقائق من تأكيد الدفع وتلعبها من حسابك أنت.`;
+    : `${ar ? `لعبة ${ar} (${product.name})` : product.name} نسخة رقمية لجهاز ${platform} على حساب PlayStation جاهز، بسعر ${finalPrice} ر.س. تستلمها خلال دقائق من تأكيد الدفع وتلعبها من حسابك أنت.`;
   const specs = [
     ['النوع', isSub ? 'اشتراك PlayStation Plus' : 'لعبة رقمية'],
     ['المنصة', isSub ? 'PS4 وPS5' : platform],
@@ -215,7 +218,8 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   {product.featured === 1 && (
                     <Badge variant="gold" icon={<Star size={14} fill="currentColor" aria-hidden="true" />}>منتج مميز</Badge>
                   )}
-                  {views > 0 && (
+                  {/* CRO: a counter like "1 مشاهدة" reads as an unpopular product; only show real traction */}
+                  {views >= 50 && (
                     <span className="inline-flex items-center gap-1 text-xs text-muted">
                       <Eye size={14} aria-hidden="true" />
                       <span className="tabular-nums">{views}</span> مشاهدة
@@ -223,6 +227,7 @@ export default async function ProductDetailPage({ params }: { params: Promise<{ 
                   )}
                 </div>
                 <h1 className="font-display text-4xl font-bold leading-[1.3] text-ink sm:text-5xl sm:leading-tight">{product.name}</h1>
+                {ar && <p className="mt-2 text-xl font-bold text-muted">{ar}</p>}
               </div>
 
               <div className="relative rounded-3xl border border-line bg-surface/80 p-6 backdrop-blur-sm">

@@ -28,11 +28,12 @@ const DELIVERY_FAQ: Faq = {
 export const COLLECTIONS: Collection[] = [
   {
     slug: 'ps5',
-    title: 'ألعاب PS5 رقمية بأسعار أقل | Billy Store',
-    description: 'ألعاب PS5 رقمية بسعر أقل من المتجر الرسمي، تسليم خلال دقائق، دفع بتحويل بنكي أو STC Pay، وضمان استبدال مدى الحياة.',
+    // "العاب سوني 5" ~2.4k searches/month at KD 4 vs "العاب ps5" ~480 (OpenSEO, 2026-11-14)
+    title: 'ألعاب سوني 5 (PS5) رقمية بأسعار أقل | Billy Store',
+    description: 'ألعاب سوني 5 (PS5) رقمية بسعر أقل من المتجر الرسمي، تسليم خلال دقائق، دفع بتحويل بنكي أو STC Pay، وضمان استبدال مدى الحياة.',
     h1: 'ألعاب PS5',
     intro: [
-      'تشكيلة من أحدث ألعاب PlayStation 5 بنسخ رقمية، بسعر أقل من المتجر الرسمي بكثير.',
+      'تشكيلة من أحدث ألعاب سوني 5 (PlayStation 5) بنسخ رقمية، بسعر أقل من المتجر الرسمي بكثير.',
       'تستلم اللعبة على حساب PlayStation جاهز خلال دقائق من تأكيد الدفع، وتلعبها من حسابك أنت على نفس الجهاز.',
     ],
     match: p => p.category === 'games' && platformsOf(p.name).includes('PS5'),
@@ -44,11 +45,11 @@ export const COLLECTIONS: Collection[] = [
   },
   {
     slug: 'ps4',
-    title: 'ألعاب PS4 رقمية بأسعار أقل | Billy Store',
-    description: 'ألعاب PS4 رقمية بسعر أقل من المتجر الرسمي، تسليم خلال دقائق، دفع بتحويل بنكي أو STC Pay، وضمان استبدال مدى الحياة.',
+    title: 'ألعاب سوني 4 (PS4) رقمية بأسعار أقل | Billy Store',
+    description: 'ألعاب سوني 4 (PS4) رقمية بسعر أقل من المتجر الرسمي، تسليم خلال دقائق، دفع بتحويل بنكي أو STC Pay، وضمان استبدال مدى الحياة.',
     h1: 'ألعاب PS4',
     intro: [
-      'ألعاب PlayStation 4 بنسخ رقمية، بسعر أقل من المتجر الرسمي بكثير.',
+      'ألعاب سوني 4 (PlayStation 4) بنسخ رقمية، بسعر أقل من المتجر الرسمي بكثير.',
       'تستلم اللعبة على حساب PlayStation جاهز خلال دقائق من تأكيد الدفع، وتلعبها من حسابك أنت على نفس الجهاز.',
     ],
     match: p => p.category === 'games' && platformsOf(p.name).includes('PS4'),
@@ -60,11 +61,12 @@ export const COLLECTIONS: Collection[] = [
   },
   {
     slug: 'ps-plus',
-    title: 'اشتراك PS Plus بسعر أقل | Billy Store',
+    // "اشتراك بلس" ~2.4k searches/month at KD 0; its SERP is weak (OpenSEO, 2026-11-14)
+    title: 'اشتراك بلس (PS Plus) بسعر أقل | Billy Store',
     description: 'اشتراك بلايستيشن بلس أساسي وإضافي وفاخر (Essential وExtra وDeluxe) بسعر أقل من المتجر الرسمي، مع مقارنة مزايا كل باقة وتفعيل خلال دقائق.',
-    h1: 'اشتراكات PS Plus',
+    h1: 'اشتراك بلايستيشن بلس',
     intro: [
-      'اشترك في PlayStation Plus بسعر أقل من المتجر الرسمي، وفعّله على جهازك PS4 أو PS5 خلال دقائق.',
+      'اشتراك بلس (PlayStation Plus) بسعر أقل من المتجر الرسمي، تفعّله على جهازك PS4 أو PS5 خلال دقائق.',
       'نوفر لك حساب PlayStation جاهزًا بالاشتراك. تفعّله كحساب أساسي على جهازك، فتستفيد من مزايا PS Plus من كل الحسابات المحلية على نفس الجهاز.',
     ],
     match: p => p.category === 'subscription',

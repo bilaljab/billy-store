@@ -5,6 +5,7 @@ import { Search, SearchX, TriangleAlert, X } from 'lucide-react';
 import ProductGrid from './ProductGrid';
 import Button from './Button';
 import type { CatalogProduct } from '@/lib/catalog';
+import { arabicNameOf } from '@/lib/arabic-names';
 
 const CATEGORIES = [
   { value: 'all', label: 'الكل' },
@@ -41,7 +42,7 @@ export default function ProductsBrowser({ products, error }: { products: Catalog
   const term = deferredSearch.trim().toLowerCase();
 
   const searched = useMemo(
-    () => products.filter(p => !term || p.name.toLowerCase().includes(term) || p.description?.toLowerCase().includes(term)),
+    () => products.filter(p => !term || p.name.toLowerCase().includes(term) || arabicNameOf(p.name)?.includes(term) || p.description?.toLowerCase().includes(term)),
     [products, term]
   );
   const counts: Record<Category, number> = useMemo(() => ({
