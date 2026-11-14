@@ -91,6 +91,16 @@ export async function initDb() {
     visited_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  // Clicks on WhatsApp/Telegram/Instagram links: the closest thing to an order count
+  // (orders close in chat). product_id 0 = clicked outside a product page.
+  await db.execute(`CREATE TABLE IF NOT EXISTS contact_clicks (
+    day TEXT NOT NULL,
+    channel TEXT NOT NULL,
+    product_id INTEGER NOT NULL DEFAULT 0,
+    clicks INTEGER NOT NULL DEFAULT 0,
+    PRIMARY KEY (day, channel, product_id)
+  )`);
+
   // Add ip column if upgrading from old schema
   try {
     await db.execute("ALTER TABLE site_visits ADD COLUMN ip TEXT NOT NULL DEFAULT 'unknown'");

@@ -69,8 +69,12 @@ export default function AdminDashboard() {
   const [priceForm, setPriceForm] = useState({ mode: 'percentage', value: '', direction: 'increase', category: 'all' });
   const [savingPrice, setSavingPrice] = useState(false);
   const [priceResult, setPriceResult] = useState<string | null>(null);
-  const [stats, setStats] = useState<{ totalVisits: number; todayVisits: number; productViews: { id: number; name: string; category: string; price: number; image: string | null; views: number }[] } | null>(null);
-  const [statsSort, setStatsSort] = useState<'views' | 'price'>('views');
+  const [stats, setStats] = useState<{
+    totalVisits: number; todayVisits: number;
+    productViews: { id: number; name: string; category: string; price: number; image: string | null; views: number; clicks: number }[];
+    clicks: { today: number; week: number; total: number; byChannel: Record<string, { today: number; week: number; total: number }> };
+  } | null>(null);
+  const [statsSort, setStatsSort] = useState<'views' | 'clicks' | 'price'>('views');
   const [showStats, setShowStats] = useState(false);
   const [announcement, setAnnouncement] = useState<{ text: string; active: boolean } | null>(null);
   const [annForm, setAnnForm] = useState({ text: '', active: true });
@@ -1156,11 +1160,32 @@ export default function AdminDashboard() {
               </div>
             </div>
 
+            {/* Contact clicks: closest signal to orders (orders close in chat) */}
+            <div className="mb-5 rounded-2xl border border-line p-4">
+              <p className="mb-3 text-sm font-bold text-ink">ضغطات زر الطلب (واتساب وتيليجرام وإنستقرام)</p>
+              <div className="grid grid-cols-3 gap-3 text-center">
+                {([['today', 'اليوم'], ['week', 'آخر 7 أيام'], ['total', 'الإجمالي']] as const).map(([k, label]) => (
+                  <div key={k}>
+                    <p className="text-2xl font-bold tabular-nums text-green-400">{stats.clicks[k].toLocaleString()}</p>
+                    <p className="mt-1 text-xs text-muted">{label}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="mt-3 text-xs text-muted">
+                {([['whatsapp', 'واتساب'], ['telegram', 'تيليجرام'], ['instagram', 'إنستقرام']] as const)
+                  .map(([k, label]) => `${label}: ${stats.clicks.byChannel[k]?.total ?? 0}`).join('، ')}
+              </p>
+            </div>
+
             {/* Sort tabs */}
             <div className="flex gap-2 mb-3">
               <button onClick={() => setStatsSort('views')}
                 className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'views' ? 'bg-brand/20 border-brand/40 text-accent' : 'bg-surface border-chip text-muted'}`}>
                 ترتيب حسب المشاهدات
+              </button>
+              <button onClick={() => setStatsSort('clicks')}
+                className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'clicks' ? 'bg-brand/20 border-brand/40 text-accent' : 'bg-surface border-chip text-muted'}`}>
+                ترتيب حسب الطلبات
               </button>
               <button onClick={() => setStatsSort('price')}
                 className={`text-xs font-bold px-3 min-h-11 rounded-lg border transition-all ${statsSort === 'price' ? 'bg-brand/20 border-brand/40 text-accent' : 'bg-surface border-chip text-muted'}`}>
@@ -1177,11 +1202,12 @@ export default function AdminDashboard() {
                     <th className="text-right text-muted text-xs font-semibold py-2 px-3">المنتج</th>
                     <th className="text-right text-muted text-xs font-semibold py-2 px-3">السعر</th>
                     <th className="text-right text-muted text-xs font-semibold py-2 px-3">المشاهدات</th>
+                    <th className="text-right text-muted text-xs font-semibold py-2 px-3">الطلبات</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[...stats.productViews]
-                    .sort((a, b) => statsSort === 'views' ? b.views - a.views : b.price - a.price)
+                    .sort((a, b) => statsSort === 'views' ? b.views - a.views : statsSort === 'clicks' ? b.clicks - a.clicks : b.price - a.price)
                     .map((p, i) => (
                     <tr key={p.id} className="border-b border-chip/40 hover:bg-chip transition-colors">
                       <td className="py-2.5 px-3 text-muted text-xs">{i + 1}</td>
@@ -1208,6 +1234,9 @@ export default function AdminDashboard() {
                             {p.views > 0 ? p.views.toLocaleString() : '—'}
                           </span>
                         </div>
+                      </td>
+                      <td className={`py-2.5 px-3 text-xs font-bold tabular-nums ${p.clicks > 0 ? 'text-green-400' : 'text-muted'}`}>
+                        {p.clicks > 0 ? p.clicks.toLocaleString() : '—'}
                       </td>
                     </tr>
                   ))}

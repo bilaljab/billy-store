@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { og } from '@/lib/og';
 import { Flame } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
   title: 'جميع المنتجات | Billy Store',
   description: 'تصفح مكتبتنا الكاملة من ألعاب PlayStation واشتراكات PS Plus بأفضل الأسعار.',
   alternates: { canonical: '/products' },
+  openGraph: og('/products', 'جميع المنتجات | Billy Store', 'تصفح مكتبتنا الكاملة من ألعاب PlayStation واشتراكات PS Plus بأفضل الأسعار.'),
 };
 
 export default async function ProductsPage() {

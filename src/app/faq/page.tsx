@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { og } from '@/lib/og';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import FaqAccordion from '@/components/ui/FaqAccordion';
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
   title: 'الأسئلة الشائعة | Billy Store',
   description: 'كل ما تحتاج معرفته قبل الشراء من بيلي ستور: التسليم، الدفع، الضمان، وطريقة عمل اشتراكات PS Plus.',
   alternates: { canonical: '/faq' },
+  openGraph: og('/faq', 'الأسئلة الشائعة | Billy Store', 'كل ما تحتاج معرفته قبل الشراء من بيلي ستور: التسليم، الدفع، الضمان، وطريقة عمل اشتراكات PS Plus.'),
 };
 
 export default function FAQPage() {

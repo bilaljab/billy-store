@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { og } from '@/lib/og';
 import { CircleCheck, Gift, HandCoins, Handshake, Lock, Phone, Zap } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -10,6 +11,7 @@ export const metadata: Metadata = {
   title: 'من نحن | Billy Store',
   description: 'قصة بيلي ستور: من شغف اللعب إلى متجر موثوق لآلاف اللاعبين في المملكة العربية السعودية منذ 2017.',
   alternates: { canonical: '/about' },
+  openGraph: og('/about', 'من نحن | Billy Store', 'قصة بيلي ستور: من شغف اللعب إلى متجر موثوق لآلاف اللاعبين في المملكة العربية السعودية منذ 2017.'),
 };
 
 const STATS = [

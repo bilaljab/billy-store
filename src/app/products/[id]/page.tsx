@@ -3,6 +3,7 @@ import { cache } from 'react';
 import type { Metadata } from 'next';
 import { platformsOf, collectionFor } from '@/lib/collections';
 import { arabicNameOf } from '@/lib/arabic-names';
+import { og } from '@/lib/og';
 
 // ISR: serve from cache, rebuild in background every 30 seconds
 // This means near-instant page loads after first visit
@@ -102,12 +103,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
     title: ar ? `${ar} - ${shortName} | Billy Store` : `${shortName} | Billy Store`,
     description,
     alternates: { canonical: url },
-    openGraph: {
-      title: product.name,
-      description,
-      url,
-      images: [{ url: image }],
-    },
+    openGraph: og(url, ar ? `${ar} - ${product.name}` : product.name, description, image),
   };
 }
 

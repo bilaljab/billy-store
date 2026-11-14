@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { og } from '@/lib/og';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ChevronLeft } from 'lucide-react';
@@ -32,7 +33,7 @@ export async function generateMetadata({ params }: { params: Promise<{ collectio
     title: c.title,
     description: c.description,
     alternates: { canonical: `/${c.slug}` },
-    openGraph: { title: c.title, description: c.description, url: `/${c.slug}` },
+    openGraph: og(`/${c.slug}`, c.title, c.description),
   };
 }
 

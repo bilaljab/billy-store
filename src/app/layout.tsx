@@ -7,6 +7,7 @@ import VisitTracker from '@/components/ui/VisitTracker';
 import WhatsAppFloat from '@/components/ui/WhatsAppFloat';
 import ScrollToTop from '@/components/ui/ScrollToTop';
 import { Analytics } from '@vercel/analytics/next';
+import { og } from '@/lib/og';
 
 export const revalidate = 60;
 
@@ -26,14 +27,7 @@ export const metadata: Metadata = {
   description: 'بيلي ستور: ألعاب PS5 وPS4 رقمية واشتراكات PS Plus بسعر أقل من المتجر الرسمي. تسليم خلال دقائق، دفع بتحويل بنكي أو STC Pay، منذ 2017.',
   keywords: 'بيلي ستور, ألعاب بلايستيشن, PS Plus, PS4, PS5, ألعاب رقمية, السعودية',
   alternates: { canonical: '/' }, // pages with their own alternates override this
-  openGraph: {
-    type: 'website',
-    locale: 'ar_SA',
-    siteName: 'Billy Store',
-    title: 'بيلي ستور Billy Store | ألعاب PS5 وPS4 واشتراك PS Plus',
-    description: 'ألعاب PS4 و PS5 واشتراكات PS Plus بأسعار أقل من المتجر الرسمي، تسليم رقمي خلال دقائق.',
-    images: [{ url: '/logos/billy-store-logo.png' }],
-  },
+  openGraph: og('/', 'بيلي ستور Billy Store | ألعاب PS5 وPS4 واشتراك PS Plus', 'ألعاب PS4 و PS5 واشتراكات PS Plus بأسعار أقل من المتجر الرسمي، تسليم رقمي خلال دقائق.'),
   twitter: { card: 'summary' },
   verification: { google: 'GnpBPqp19SiNuY2iYHk6xSNZVpxwEuLGHS9Na2DF2vM' },
   icons: {
