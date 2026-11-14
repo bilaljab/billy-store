@@ -31,6 +31,18 @@ const nextConfig = {
     return [{ source: '/favicon.ico', destination: '/logos/billy-store-icon.png' }];
   },
 
+  // Old *.vercel.app host -> canonical domain (Vercel can't redirect its own auto-domain from settings)
+  async redirects() {
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: 'billy-store.vercel.app' }],
+        destination: 'https://billystoreksa.com/:path*',
+        permanent: true,
+      },
+    ];
+  },
+
   async headers() {
     return [
       {
