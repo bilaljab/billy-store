@@ -44,7 +44,7 @@ export default async function HomePage() {
 
   const hasArt = (p: CatalogProduct) => (p.image ? 1 : 0);
   // The showcase leads with real artwork: products with a cover first, featured breaking ties
-  const showcase = [...products].sort((a, b) => hasArt(b) - hasArt(a) || b.featured - a.featured).slice(0, 4);
+  const showcase = [...products].sort((a, b) => hasArt(b) - hasArt(a) || b.featured - a.featured || (a.featured_order ?? 1e9) - (b.featured_order ?? 1e9)).slice(0, 5);
   const offers = products.filter(p => p.discount).sort((a, b) => b.discount!.percentage - a.discount!.percentage).slice(0, 12);
   const featured = products.filter(p => p.featured === 1)
     .sort((a, b) => (a.featured_order ?? 1e9) - (b.featured_order ?? 1e9)).slice(0, 12);
