@@ -15,6 +15,7 @@ const CATEGORIES = [
 
 const SORTS = [
   { value: 'default', label: 'الترتيب الافتراضي' },
+  { value: 'newest', label: 'الأحدث' },
   { value: 'asc', label: 'السعر: من الأرخص' },
   { value: 'desc', label: 'السعر: من الأغلى' },
   { value: 'discount', label: 'أكبر خصم' },
@@ -54,6 +55,8 @@ export default function ProductsBrowser({ products, error }: { products: Catalog
   const filtered = useMemo(() => searched
     .filter(p => category === 'all' || p.category === category)
     .sort((a, b) => {
+      // الأحدث إصداراً أولاً؛ بدون تاريخ (اشتراكات/ألعاب بلا تاريخ) تنزل للآخر وتحافظ على ترتيب الإضافة (sort ثابت)
+      if (sort === 'newest') return (b.release_date ?? '').localeCompare(a.release_date ?? '');
       if (sort === 'asc') return a.price - b.price;
       if (sort === 'desc') return b.price - a.price;
       if (sort === 'discount') return (b.discount?.percentage ?? 0) - (a.discount?.percentage ?? 0);
